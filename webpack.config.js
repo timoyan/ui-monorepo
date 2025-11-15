@@ -6,6 +6,10 @@ module.exports = (env, argv) => {
   const isProduction = argv.mode === 'production';
 
   return {
+    // Enable ES modules output for tree-shaking
+    experiments: {
+      outputModule: true,
+    },
     // Create separate entry points for each component to make them independent
     entry: {
       'Button/index': './src/ui/Button/index.js',
@@ -14,6 +18,14 @@ module.exports = (env, argv) => {
     },
     output: {
       path: path.resolve(__dirname, 'build'),
+      // Output ES modules format for tree-shaking support
+      module: true,
+      library: {
+        type: 'module',
+      },
+      environment: {
+        module: true,
+      },
       filename: (pathData) => {
         const chunkName = pathData.chunk.name;
         const hash = isProduction ? '.[contenthash:8]' : '';
@@ -51,17 +63,31 @@ module.exports = (env, argv) => {
       extensions: ['.js', '.jsx', '.json'],
     },
     externals: {
+      // For ES modules output, use module type externals
       react: {
+        module: 'react',
         commonjs: 'react',
         commonjs2: 'react',
         amd: 'react',
         root: 'React',
       },
       'react-dom': {
+        module: 'react-dom',
         commonjs: 'react-dom',
         commonjs2: 'react-dom',
         amd: 'react-dom',
         root: 'ReactDOM',
+      },
+      // Externalize jsx-runtime for cleaner ES modules output
+      'react/jsx-runtime': {
+        module: 'react/jsx-runtime',
+        commonjs: 'react/jsx-runtime',
+        commonjs2: 'react/jsx-runtime',
+      },
+      'react/jsx-dev-runtime': {
+        module: 'react/jsx-dev-runtime',
+        commonjs: 'react/jsx-dev-runtime',
+        commonjs2: 'react/jsx-dev-runtime',
       },
     },
     module: {
@@ -106,19 +132,39 @@ module.exports = (env, argv) => {
         ? [
             new MiniCssExtractPlugin({
               filename: (pathData) => {
-                // Organize CSS files by component folder structure
                 const chunkName = pathData.chunk.name;
-                if (chunkName && chunkName !== 'index' && chunkName !== 'vendor' && chunkName !== 'common') {
-                  return `${chunkName}/${chunkName}.[contenthash:8].css`;
+                const hash = isProduction ? '.[contenthash:8]' : '';
+                
+                // Handle entry points like 'Button/index' -> 'Button/index.css'
+                if (chunkName && chunkName.includes('/')) {
+                  return `${chunkName}${hash}.css`;
                 }
-                return '[name].[contenthash:8].css';
+                
+                // Check if it's a UI component chunk (Button, Card, etc.)
+                if (chunkName && chunkName !== 'index' && chunkName !== 'vendor' && chunkName !== 'common') {
+                  return `${chunkName}/${chunkName}${hash}.css`;
+                }
+                
+                // Default structure for other chunks
+                return isProduction
+                  ? '[name].[contenthash:8].css'
+                  : '[name].css';
               },
               chunkFilename: (pathData) => {
                 const chunkName = pathData.chunk.name;
-                if (chunkName && chunkName !== 'index' && chunkName !== 'vendor' && chunkName !== 'common') {
-                  return `${chunkName}/${chunkName}.[contenthash:8].css`;
+                const hash = isProduction ? '.[contenthash:8]' : '';
+                
+                // Handle entry points like 'Button/index' -> 'Button/index.css'
+                if (chunkName && chunkName.includes('/')) {
+                  return `${chunkName}${hash}.css`;
                 }
-                return '[name].[contenthash:8].css';
+                
+                if (chunkName && chunkName !== 'index' && chunkName !== 'vendor' && chunkName !== 'common') {
+                  return `${chunkName}/${chunkName}${hash}.css`;
+                }
+                return isProduction
+                  ? '[name].[contenthash:8].css'
+                  : '[name].css';
               },
               ignoreOrder: true,
             }),
@@ -149,43 +195,7 @@ module.exports = (env, argv) => {
       minimize: isProduction,
       usedExports: true, // Enable tree-shaking
       sideEffects: true, // Check sideEffects in package.json
-      splitChunks: {
-        chunks: 'all',
-        cacheGroups: {
-          default: false,
-          vendors: false,
-          vendor: {
-            name: 'vendor',
-            chunks: 'all',
-            test: /node_modules/,
-            priority: 20,
-          },
-          // Disable common chunk to make each component completely independent
-          // common: {
-          //   name: 'common',
-          //   minChunks: 2,
-          //   chunks: 'all',
-          //   priority: 10,
-          //   reuseExistingChunk: true,
-          //   enforce: true,
-          // },
-          // Generate separate CSS files for each component in src/ui
-          uiButton: {
-            name: 'Button',
-            test: /[\\/]src[\\/]ui[\\/]Button[\\/]/,
-            chunks: 'all',
-            priority: 30,
-            enforce: true,
-          },
-          uiCard: {
-            name: 'Card',
-            test: /[\\/]src[\\/]ui[\\/]Card[\\/]/,
-            chunks: 'all',
-            priority: 30,
-            enforce: true,
-          },
-        },
-      },
+      splitChunks: false, // Disable code splitting for ES modules output
     },
   };
 };
