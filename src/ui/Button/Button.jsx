@@ -1,7 +1,7 @@
-import { styled } from '@linaria/react';
+import { css } from '@linaria/core';
 import React from 'react';
 
-const StyledButton = styled.button`
+const button = css`
   padding: 12px 24px;
   font-size: 16px;
   font-weight: 600;
@@ -28,7 +28,7 @@ const StyledButton = styled.button`
   }
 `;
 
-const ButtonSecondary = styled(StyledButton)`
+const buttonSecondary = css`
   background-color: #6c757d;
 
   &:hover {
@@ -37,7 +37,7 @@ const ButtonSecondary = styled(StyledButton)`
   }
 `;
 
-const ButtonSuccess = styled(StyledButton)`
+const buttonSuccess = css`
   background-color: #28a745;
 
   &:hover {
@@ -46,7 +46,7 @@ const ButtonSuccess = styled(StyledButton)`
   }
 `;
 
-const ButtonDanger = styled(StyledButton)`
+const buttonDanger = css`
   background-color: #dc3545;
 
   &:hover {
@@ -55,13 +55,19 @@ const ButtonDanger = styled(StyledButton)`
   }
 `;
 
-export const Button = ({ variant = 'primary', children, ...props }) => {
-  const ButtonComponent = {
-    primary: StyledButton,
-    secondary: ButtonSecondary,
-    success: ButtonSuccess,
-    danger: ButtonDanger,
-  }[variant] || StyledButton;
+export const Button = ({ variant = 'primary', children, className, ...props }) => {
+  const variantClass = {
+    primary: '',
+    secondary: buttonSecondary,
+    success: buttonSuccess,
+    danger: buttonDanger,
+  }[variant] || '';
 
-  return <ButtonComponent {...props}>{children}</ButtonComponent>;
+  const combinedClassName = [button, variantClass, className].filter(Boolean).join(' ');
+
+  return (
+    <button className={combinedClassName} {...props}>
+      {children}
+    </button>
+  );
 };

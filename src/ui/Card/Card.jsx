@@ -1,7 +1,7 @@
-import { styled } from '@linaria/react';
+import { css } from '@linaria/core';
 import React from 'react';
 
-const StyledCard = styled.div`
+const card = css`
   background: white;
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -13,33 +13,49 @@ const StyledCard = styled.div`
   }
 `;
 
-const CardHeader = styled.div`
+const cardHeader = css`
   margin-bottom: 16px;
   padding-bottom: 12px;
   border-bottom: 1px solid #e9ecef;
 `;
 
-const CardTitle = styled.h3`
+const cardTitle = css`
   margin: 0;
   font-size: 20px;
   font-weight: 600;
   color: #212529;
 `;
 
-const CardBody = styled.div`
+const cardBody = css`
   color: #495057;
   line-height: 1.6;
 `;
 
-const CardFooter = styled.div`
+const cardFooter = css`
   margin-top: 16px;
   padding-top: 12px;
   border-top: 1px solid #e9ecef;
 `;
 
-export const Card = ({ title, children, footer, ...props }) => {
+const CardHeader = ({ className, ...props }) => (
+  <div className={[cardHeader, className].filter(Boolean).join(' ')} {...props} />
+);
+
+const CardTitle = ({ className, ...props }) => (
+  <h3 className={[cardTitle, className].filter(Boolean).join(' ')} {...props} />
+);
+
+const CardBody = ({ className, ...props }) => (
+  <div className={[cardBody, className].filter(Boolean).join(' ')} {...props} />
+);
+
+const CardFooter = ({ className, ...props }) => (
+  <div className={[cardFooter, className].filter(Boolean).join(' ')} {...props} />
+);
+
+export const Card = ({ title, children, footer, className, ...props }) => {
   return (
-    <StyledCard {...props}>
+    <div className={[card, className].filter(Boolean).join(' ')} {...props}>
       {title && (
         <CardHeader>
           <CardTitle>{title}</CardTitle>
@@ -47,7 +63,7 @@ export const Card = ({ title, children, footer, ...props }) => {
       )}
       <CardBody>{children}</CardBody>
       {footer && <CardFooter>{footer}</CardFooter>}
-    </StyledCard>
+    </div>
   );
 };
 

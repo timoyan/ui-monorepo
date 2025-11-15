@@ -4,7 +4,8 @@
       "@babel/preset-env",
       {
         "useBuiltIns": "entry",
-        "corejs": 3
+        "corejs": 3,
+        "modules": false
       }
     ],
     [
@@ -16,7 +17,7 @@
     [
       "@linaria/babel-preset",
       {
-        "evaluate": true,
+        "evaluate": false,
         "displayName": true
       }
     ]
