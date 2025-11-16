@@ -8,15 +8,23 @@ jobs:
   test:
     timeout-minutes: 60
     runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.56.1-focal
     steps:
     - uses: actions/checkout@v4
-    - uses: actions/setup-node@v4
+    - name: Install pnpm
+      uses: pnpm/action-setup@v4
       with:
-        node-version: lts/*
+        version: latest
+    - name: Setup pnpm cache
+      uses: actions/cache@v4
+      with:
+        path: ~/.pnpm-store
+        key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
+        restore-keys: |
+          ${{ runner.os }}-pnpm-
     - name: Install dependencies
-      run: npm install -g pnpm && pnpm install
-    - name: Install Playwright Browsers
-      run: pnpm exec playwright install --with-deps
+      run: pnpm install --frozen-lockfile
     - name: Run Playwright tests
       run: pnpm exec playwright test
     - uses: actions/upload-artifact@v4
