@@ -1,4 +1,4 @@
-## UI Monorepo
+# UI Monorepo
 
 This repository is a small UI monorepo that contains:
 
@@ -11,7 +11,7 @@ This repository is a small UI monorepo that contains:
 
 The UI package is shipped as ES modules, with React treated as an external dependency and styles emitted as real `.css` files.
 
-## Tech stack
+## Tech Stack
 
 - **React 18 / 19**
 - **Next.js 14 / 15**
@@ -26,9 +26,9 @@ The UI package is shipped as ES modules, with React treated as an external depen
   - Biome (`@biomejs/biome`) for linting and formatting
   - Husky + lint-staged for pre-commit checks
 
-## Getting started
+## Getting Started
 
-### Install
+### Installation
 
 From the repo root:
 
@@ -36,7 +36,7 @@ From the repo root:
 pnpm install
 ```
 
-### Build all packages
+### Build All Packages
 
 ```bash
 pnpm -r build
@@ -51,37 +51,37 @@ This builds:
 - `packages/vite-react18`
 - `packages/vite-react19`
 
-## Running the example apps
+## Running the Example Apps
 
 All commands are run from the repo root.
 
-- **Next.js 14 (React 18)**:
+### Next.js 14 (React 18)
 
-  ```bash
-  pnpm --filter nextjs14 dev
-  ```
+```bash
+pnpm --filter nextjs14 dev
+```
 
-- **Next.js 15 (React 19 + React Compiler)**:
+### Next.js 15 (React 19 + React Compiler)
 
-  ```bash
-  pnpm --filter nextjs15 dev
-  ```
+```bash
+pnpm --filter nextjs15 dev
+```
 
-- **Vite + React 18**:
+### Vite + React 18
 
-  ```bash
-  pnpm --filter vite-react18 dev
-  ```
+```bash
+pnpm --filter vite-react18 dev
+```
 
-- **Vite + React 19**:
+### Vite + React 19
 
-  ```bash
-  pnpm --filter vite-react19 dev
-  ```
+```bash
+pnpm --filter vite-react19 dev
+```
 
-## UI package (`packages/ui-react18`)
+## UI Package (`packages/ui-react18`)
 
-### Structure (simplified)
+### Structure (Simplified)
 
 ```text
 packages/ui-react18/
@@ -117,7 +117,7 @@ The `ui-react18` package exposes ESM entry points via `package.json`:
 - `ui-react18/main` – main entry JS
 - `ui-react18/main/style.css` – aggregated stylesheet (used by the nextjs15 app)
 
-### Using the UI package
+### Using the UI Package
 
 In a consumer app:
 
@@ -135,7 +135,7 @@ import "ui-react18/Button/style.css";
 
 React and `react-dom` are externals; the host app must provide them.
 
-## Storybook (UI packages)
+## Storybook (UI Packages)
 
 From the repo root:
 
@@ -149,31 +149,31 @@ pnpm --filter ui-react19 storybook
 
 This runs Storybook for the shared UI components on port `6006`.
 
-## Linting & formatting (Biome)
+## Linting & Formatting (Biome)
 
 Biome is configured at the repo root in `biome.json`.
 
-- **Lint all**:
+### Lint All
 
-  ```bash
-  pnpm lint
-  ```
+```bash
+pnpm lint
+```
 
-- **Format (check only)**:
+### Format (Check Only)
 
-  ```bash
-  pnpm format
-  ```
+```bash
+pnpm format
+```
 
-- **Format and write changes**:
+### Format and Write Changes
 
-  ```bash
-  pnpm format -- --write
-  ```
+```bash
+pnpm format -- --write
+```
 
 In Cursor / VS Code, Biome is configured as the default formatter for JS/TS/TSX with format‑on‑save enabled via `.vscode/settings.json`.
 
-## Git hooks (Husky + lint-staged)
+## Git Hooks (Husky + lint-staged)
 
 - Husky is configured at the root and installs via the `prepare` script.
 - A `pre-commit` hook runs `pnpm lint-staged`, which:
