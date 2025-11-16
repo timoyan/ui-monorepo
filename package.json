@@ -13,6 +13,9 @@
 		"lint-staged": "^15.2.10"
 	},
 	"lint-staged": {
-		"*.*": ["biome format --write", "biome lint --write --unsafe"]
+		"*.*": [
+			"biome format --write --no-errors-on-unmatched",
+			"biome lint --write --unsafe --no-errors-on-unmatched"
+		]
 	}
 }

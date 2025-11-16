@@ -23,6 +23,7 @@ The UI package is shipped as ES modules, with React treated as an external depen
 - **Tooling**
   - pnpm workspaces
   - Biome (`@biomejs/biome`) for linting and formatting
+  - Husky + lint-staged for pre-commit checks
 
 ## Getting started
 
@@ -30,9 +31,17 @@ The UI package is shipped as ES modules, with React treated as an external depen
 
 From the repo root:
 
-pnpm install### Build all packages
+```bash
+pnpm install
+```
 
-pnpm -r buildThis builds:
+### Build all packages
+
+```bash
+pnpm -r build
+```
+
+This builds:
 
 - `packages/ui` (library bundle + CSS)
 - `packages/nextjs-14-app`
@@ -44,26 +53,35 @@ pnpm -r buildThis builds:
 
 All commands are run from the repo root.
 
-- **Next.js 14 (React 18)**
+- **Next.js 14 (React 18)**:
 
- 
+  ```bash
   pnpm --filter nextjs-14-app dev
-  - **Next.js 15 (React 19 + React Compiler)**
+  ```
 
- 
+- **Next.js 15 (React 19 + React Compiler)**:
+
+  ```bash
   pnpm --filter nextjs-15-app dev
-  - **Vite + React 18**
+  ```
 
- 
+- **Vite + React 18**:
+
+  ```bash
   pnpm --filter vite-react-18 dev
-  - **Vite + React 19**
+  ```
 
- 
+- **Vite + React 19**:
+
+  ```bash
   pnpm --filter vite-react-19 dev
-  ## UI package (`packages/ui`)
+  ```
+
+## UI package (`packages/ui`)
 
 ### Structure (simplified)
 
+```text
 packages/ui/
   src/ui/
     Button/
@@ -82,7 +100,10 @@ packages/ui/
       index.css
     main/
       main.js
-      main.css      # aggregated CSS for all components### Exports
+      main.css      # aggregated CSS for all components
+```
+
+### Exports
 
 The `ui` package exposes ESM entry points via `package.json`:
 
@@ -98,35 +119,61 @@ The `ui` package exposes ESM entry points via `package.json`:
 
 In a consumer app:
 
+```ts
 import { Button, Card } from "ui";
-import "ui/main/style.css";Or per component:
+import "ui/main/style.css";
+```
 
+Or per component:
+
+```ts
 import { Button } from "ui/Button";
-import "ui/Button/style.css";React and `react-dom` are externals; the host app must provide them.
+import "ui/Button/style.css";
+```
+
+React and `react-dom` are externals; the host app must provide them.
 
 ## Storybook (UI package)
 
 From the repo root:
 
-pnpm --filter ui storybookThis runs Storybook for the shared UI components on port `6006`.
+```bash
+pnpm --filter ui storybook
+```
+
+This runs Storybook for the shared UI components on port `6006`.
 
 ## Linting & formatting (Biome)
 
 Biome is configured at the repo root in `biome.json`.
 
-- **Lint all**
+- **Lint all**:
 
- 
+  ```bash
   pnpm lint
-  - **Format (check only)**
+  ```
 
- 
+- **Format (check only)**:
+
+  ```bash
   pnpm format
-  - **Format and write changes**
+  ```
 
- 
+- **Format and write changes**:
+
+  ```bash
   pnpm format -- --write
-  In Cursor / VS Code, Biome is configured as the default formatter for JS/TS/TSX with format‑on‑save enabled via `.vscode/settings.json`.
+  ```
+
+In Cursor / VS Code, Biome is configured as the default formatter for JS/TS/TSX with format‑on‑save enabled via `.vscode/settings.json`.
+
+## Git hooks (Husky + lint-staged)
+
+- Husky is configured at the root and installs via the `prepare` script.
+- A `pre-commit` hook runs `pnpm lint-staged`, which:
+  - formats **staged files** with `biome format --write`
+  - lints **staged files** with `biome lint --write --unsafe`
+- If Biome finds unfixable issues, the commit is blocked until they are resolved.
 
 ## Notes
 
