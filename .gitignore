@@ -28,6 +28,9 @@ pnpm-debug.log*
 
 # testing
 /coverage
+/test-results/
+/playwright-report/
+/playwright/.cache/
 
 # production
 /build
@@ -58,3 +61,7 @@ tsconfig.tsbuildinfo
 # Generated type declarations
 build-types/
 packages/*/build-types/
+
+# Playwright
+/blob-report/
+/playwright/.auth/
