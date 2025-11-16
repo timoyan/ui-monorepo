@@ -4,6 +4,7 @@ node_modules/
 # Build outputs
 build/
 dist/
+.next/
 
 # Logs
 npm-debug.log*
@@ -47,10 +48,6 @@ yarn-error.log*
 *.swp
 *.swo
 *~
-
-# Next.js build outputs
-packages/nextjs-18-app/.next/
-packages/nextjs-19-app/.next/
 
 # TypeScript build info
 *.tsbuildinfo

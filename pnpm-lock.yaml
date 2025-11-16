@@ -6,7 +6,7 @@ settings:
 
 importers:
 
-  packages/nextjs-18-app:
+  packages/nextjs-14-app:
     dependencies:
       next:
         specifier: ^14.2.0
@@ -31,7 +31,7 @@ importers:
         specifier: ^5.9.3
         version: 5.9.3
 
-  packages/nextjs-19-app:
+  packages/nextjs-15-app:
     dependencies:
       next:
         specifier: ^15.0.0
