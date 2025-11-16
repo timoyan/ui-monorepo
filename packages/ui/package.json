@@ -89,8 +89,7 @@
     "./main": {
       "types": "./build-types/index.d.ts",
       "default": "./build/main/main.js"
-    },
-    "./main/style.css": "./build/main/main.css"
+    }
   },
   "types": "./build-types/main/index.d.ts"
 }

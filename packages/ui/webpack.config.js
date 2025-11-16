@@ -3,40 +3,6 @@ const webpack = require('webpack');
 const fs = require('fs');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
-class AggregateCssPlugin {
-  apply(compiler) {
-    compiler.hooks.thisCompilation.tap('AggregateCssPlugin', (compilation) => {
-      const { Compilation } = compiler.webpack;
-      const stage = Compilation.PROCESS_ASSETS_STAGE_ADDITIONAL;
-      compilation.hooks.processAssets.tap(
-        { name: 'AggregateCssPlugin', stage },
-        (assets) => {
-          // Collect CSS from component entry assets
-          const sources = [];
-          const readAsset = (name) => {
-            const asset = compilation.getAsset(name);
-            return asset ? asset.source.source().toString() : '';
-          };
-          // Known component CSS outputs (no hashes per our config)
-          const candidates = ['Button/index.css', 'Card/index.css'];
-          for (const file of candidates) {
-            if (assets[file]) {
-              sources.push(readAsset(file));
-            }
-          }
-          const combined = sources.filter(Boolean).join('\n\n');
-          const outPath = 'main/main.css';
-          // Ensure directory asset exists by just emitting the file; webpack will handle dirs
-          compilation.emitAsset(
-            outPath,
-            new compiler.webpack.sources.RawSource(combined)
-          );
-        }
-      );
-    });
-  }
-}
-
 module.exports = (env, argv) => {
   const isProduction = argv.mode === 'production';
 
@@ -213,7 +179,6 @@ module.exports = (env, argv) => {
               },
               ignoreOrder: true,
             }),
-            new AggregateCssPlugin(),
             // Force source map generation for all chunks, including small empty chunks
             new webpack.SourceMapDevToolPlugin({
               filename: '[file].map',
