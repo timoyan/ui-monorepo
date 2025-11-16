@@ -1,3 +1,5 @@
+const webpack = require("webpack");
+
 module.exports = {
 	stories: ["../src/ui/**/*.stories.@(js|jsx|ts|tsx|mdx)"],
 	addons: [
@@ -99,6 +101,64 @@ module.exports = {
 		}
 
 		config.resolve.extensions.push(".js", ".jsx", ".ts", ".tsx");
+
+		// Force React 19 resolution for all modules (including Storybook internals)
+		const reactPath = require.resolve("react");
+		const reactDomPath = require.resolve("react-dom");
+		const reactDomClientPath = require.resolve("react-dom/client");
+		const reactJsxRuntimePath = require.resolve("react/jsx-runtime");
+		const reactJsxDevRuntimePath = require.resolve("react/jsx-dev-runtime");
+
+		config.resolve.alias = {
+			...config.resolve.alias,
+			react: reactPath,
+			"react/": `${reactPath.replace(/[\\/]react\.js$/, "")}/`,
+			"react/jsx-runtime": reactJsxRuntimePath,
+			"react/jsx-dev-runtime": reactJsxDevRuntimePath,
+			"react-dom": reactDomPath,
+			"react-dom/": `${reactDomPath.replace(/[\\/]react-dom\.js$/, "")}/`,
+			"react-dom/client": reactDomClientPath,
+		};
+
+		// Ensure Storybook's internal code also uses React 19
+		config.resolve.modules = [
+			...(config.resolve.modules || ["node_modules"]),
+			require.resolve("react").replace(/[\\/]react\.js$/, ""),
+			require.resolve("react-dom").replace(/[\\/]react-dom\.js$/, ""),
+		];
+
+		// Ensure react-dom subpaths are resolved
+		if (!config.resolve.conditionNames) {
+			config.resolve.conditionNames = ["import", "require", "default"];
+		}
+
+		// Ensure react-dom subpath exports work correctly
+		// React 19 uses package.json exports, so we need to ensure webpack resolves them
+		config.resolve.extensionAlias = {
+			...config.resolve.extensionAlias,
+			".js": [".js", ".jsx", ".ts", ".tsx"],
+			".jsx": [".jsx", ".js"],
+		};
+
+		// Replace Storybook's React imports with React 19
+		// This ensures all Storybook internals use React 19
+		config.plugins = [
+			...config.plugins,
+			new webpack.NormalModuleReplacementPlugin(/^react$/, reactPath),
+			new webpack.NormalModuleReplacementPlugin(
+				/^react\/jsx-runtime$/,
+				reactJsxRuntimePath,
+			),
+			new webpack.NormalModuleReplacementPlugin(
+				/^react\/jsx-dev-runtime$/,
+				reactJsxDevRuntimePath,
+			),
+			new webpack.NormalModuleReplacementPlugin(/^react-dom$/, reactDomPath),
+			new webpack.NormalModuleReplacementPlugin(
+				/^react-dom\/client$/,
+				reactDomClientPath,
+			),
+		];
 
 		return config;
 	},

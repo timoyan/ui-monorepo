@@ -2,7 +2,8 @@
 
 This repository is a small UI monorepo that contains:
 
-- **`packages/ui-react18`** – React component library (`Button`, `Card`) built with webpack 5, wyw‑in‑js, and extracted CSS.
+- **`packages/ui-react18`** – React 18 component library (`Button`, `Card`) built with webpack 5, wyw‑in‑js, and extracted CSS.
+- **`packages/ui-react19`** – React 19 component library (`Button`, `Card`) built with webpack 5, wyw‑in‑js, and extracted CSS.
 - **`packages/nextjs14`** – Next.js 14 app using the shared UI package (React 18).
 - **`packages/nextjs15`** – Next.js 15 app (App Router + React Compiler, React 19) using the shared UI package.
 - **`packages/vite-react18`** – Vite + React 18 example using the UI package.
@@ -44,6 +45,7 @@ pnpm -r build
 This builds:
 
 - `packages/ui-react18` (library bundle + CSS)
+- `packages/ui-react19` (library bundle + CSS)
 - `packages/nextjs14`
 - `packages/nextjs15`
 - `packages/vite-react18`
@@ -133,12 +135,16 @@ import "ui-react18/Button/style.css";
 
 React and `react-dom` are externals; the host app must provide them.
 
-## Storybook (UI package)
+## Storybook (UI packages)
 
 From the repo root:
 
 ```bash
+# For React 18 components
 pnpm --filter ui-react18 storybook
+
+# For React 19 components
+pnpm --filter ui-react19 storybook
 ```
 
 This runs Storybook for the shared UI components on port `6006`.
@@ -178,4 +184,6 @@ In Cursor / VS Code, Biome is configured as the default formatter for JS/TS/TSX 
 ## Notes
 
 - Use `pnpm -r build` to build everything instead of running each package individually.
-- The `ui-react18` library is designed to be tree‑shakeable and to ship only static CSS, with no runtime styling cost.
+- The `ui-react18` and `ui-react19` libraries are designed to be tree‑shakeable and to ship only static CSS, with no runtime styling cost.
+- `ui-react18` requires React 18+ (peer dependency `>=18.0.0`).
+- `ui-react19` requires React 19+ (peer dependency `>=19.0.0`).
