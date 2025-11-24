@@ -181,9 +181,97 @@ In Cursor / VS Code, Biome is configured as the default formatter for JS/TS/TSX 
   - lints **staged files** with `biome lint --write --unsafe`
 - If Biome finds unfixable issues, the commit is blocked until they are resolved.
 
+## Version Requirements
+
+### React Version Compatibility
+
+This monorepo maintains separate packages for different React versions to ensure compatibility and optimal performance.
+
+| Package | React Version | React DOM Version | Notes |
+|---------|--------------|-------------------|-------|
+| `ui-react18` | `>=18.0.0` | `>=18.0.0` | Compatible with React 18.x |
+| `ui-react19` | `>=19.0.0` | `>=19.0.0` | Requires React 19.x (uses React 19 features) |
+
+### Choosing the Right Package
+
+**Use `ui-react18` if:**
+- Your project uses React 18.x
+- You're using Next.js 14 or earlier
+- You need maximum compatibility
+
+**Use `ui-react19` if:**
+- Your project uses React 19.x
+- You're using Next.js 15 or later
+- You want to use React 19 features (e.g., `useActionState`, `useOptimistic`, React Compiler)
+
+### Package Installation
+
+```bash
+# For React 18 projects
+pnpm add ui-react18
+
+# For React 19 projects
+pnpm add ui-react19
+```
+
+### Peer Dependencies
+
+Both packages declare React as a peer dependency. Make sure your project has the correct React version installed:
+
+```json
+{
+  "dependencies": {
+    "react": "^18.2.0",  // For ui-react18
+    "react-dom": "^18.2.0"
+  }
+}
+```
+
+```json
+{
+  "dependencies": {
+    "react": "^19.0.0",  // For ui-react19
+    "react-dom": "^19.0.0"
+  }
+}
+```
+
+### Hooks and React Version Features
+
+If you create hooks that use React 19-specific features:
+
+1. **Place them in `ui-react19` only** - Don't add React 19 hooks to `ui-react18`
+2. **Document version requirements** - Use JSDoc comments to indicate React version requirements
+3. **Use peer dependencies** - Package.json will enforce version requirements
+4. **Provide fallbacks** - If needed, create React 18-compatible alternatives
+
+Example hook documentation:
+
+```typescript
+/**
+ * Uses React 19's useActionState hook.
+ * 
+ * @requires React 19.0.0 or higher
+ * @package ui-react19
+ * 
+ * @example
+ * ```tsx
+ * import { useMyActionState } from 'ui-react19/hooks';
+ * 
+ * function MyComponent() {
+ *   const [state, action, isPending] = useMyActionState(...);
+ *   // ...
+ * }
+ * ```
+ */
+export function useMyActionState() {
+  // React 19 only
+}
+```
+
 ## Notes
 
 - Use `pnpm -r build` to build everything instead of running each package individually.
 - The `ui-react18` and `ui-react19` libraries are designed to be tree‑shakeable and to ship only static CSS, with no runtime styling cost.
-- `ui-react18` requires React 18+ (peer dependency `>=18.0.0`).
-- `ui-react19` requires React 19+ (peer dependency `>=19.0.0`).
+- **Never mix packages** - Don't import from both `ui-react18` and `ui-react19` in the same project.
+- **Version enforcement** - Peer dependencies will warn if incorrect React version is installed.

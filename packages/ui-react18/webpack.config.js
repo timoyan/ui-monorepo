@@ -234,15 +234,6 @@ module.exports = (env, argv) => {
 							ignoreOrder: true,
 						}),
 						new AggregateCssPlugin(),
-						// Force source map generation for all chunks, including small empty chunks
-						new webpack.SourceMapDevToolPlugin({
-							filename: "[file].map",
-							append: "\n//# sourceMappingURL=[url]",
-							moduleFilenameTemplate:
-								"webpack://[namespace]/[resource-path]?[loaders]",
-							exclude: ["/node_modules/"],
-							noSources: false,
-						}),
 					]
 				: []),
 		],
@@ -256,8 +247,10 @@ module.exports = (env, argv) => {
 			historyApiFallback: true,
 			open: true,
 		},
-		// Use SourceMapDevToolPlugin instead of devtool for more control
-		devtool: false,
+		// Generate source maps for both production and development
+		// Production: separate .map files for better debugging
+		// Development: inline source maps for faster builds
+		devtool: isProduction ? "source-map" : "eval-source-map",
 		optimization: {
 			minimize: isProduction,
 			usedExports: true, // Enable tree-shaking
