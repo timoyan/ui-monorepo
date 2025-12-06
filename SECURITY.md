@@ -114,17 +114,19 @@ Previously, vulnerable versions (v10.2.0 through v11.0.3) could be pulled in.
 
 ### Mitigation
 
-✅ **pnpm override added** - The root `package.json` includes an override to force all `glob` versions to `>=10.5.0`:
+✅ **pnpm override added** - The root `package.json` includes an override to force all `glob` versions to `>=10.5.0 <11.0.0`:
 
 ```json
 {
   "pnpm": {
     "overrides": {
-      "glob": ">=10.5.0"
+      "glob": ">=10.5.0 <11.0.0"
     }
   }
 }
 ```
+
+**Note on version constraint**: The upper bound `<11.0.0` is included to maintain compatibility with older dependencies (like `rimraf@2.x` and `rimraf@3.x`) that support Node 18. `glob@11.0.0` and later versions require Node 20+, which would break compatibility with these packages. The constraint `>=10.5.0 <11.0.0` ensures we get a secure version (10.5.0+) while maintaining Node 18 compatibility.
 
 **To apply the override:**
 ```bash
