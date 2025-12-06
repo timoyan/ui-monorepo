@@ -181,6 +181,42 @@ In Cursor / VS Code, Biome is configured as the default formatter for JS/TS/TSX 
   - lints **staged files** with `biome lint --write --unsafe`
 - If Biome finds unfixable issues, the commit is blocked until they are resolved.
 
+## GitHub Actions
+
+This repository includes GitHub Actions workflows for continuous integration:
+
+### Build Verification (`build.yml`)
+
+- **Triggers**: Pull requests and pushes to `main`/`master` branches
+- **Purpose**: Builds and verifies all packages in the monorepo
+- **Packages built**:
+  - `nextjs14`
+  - `nextjs15`
+  - `ui-react18`
+  - `ui-react19`
+  - `vite-react18`
+  - `vite-react19`
+
+### Playwright Tests (`playwright.yml`)
+
+- **Triggers**: Pull requests and pushes to `main`/`master` branches
+- **Purpose**: Runs end-to-end tests using Playwright
+
+### Setting Up Branch Protection
+
+To require these checks to pass before merging pull requests:
+
+1. Go to your repository on GitHub
+2. Navigate to **Settings** → **Branches**
+3. Under **Branch protection rules**, add or edit the rule for `main`
+4. Enable **Require status checks to pass before merging**
+5. Select the following required status checks:
+   - `Build Verification / Build All Packages`
+   - `Playwright Tests / test` (if you want to require tests)
+6. Optionally enable **Require branches to be up to date before merging**
+
+This ensures that all builds must pass successfully before any pull request can be merged into `main`.
+
 ## Version Requirements
 
 ### React Version Compatibility
