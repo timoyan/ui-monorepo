@@ -5,7 +5,7 @@ settings:
   excludeLinksFromLockfile: false
 
 overrides:
-  happy-dom: '>=15.10.2'
+  happy-dom: '>=20.0.2'
 
 importers:
 

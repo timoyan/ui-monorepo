@@ -10,8 +10,8 @@ The `happy-dom` package (used as a transitive dependency via `@wyw-in-js/transfo
 
 - **CVE ID**: CVE-2024-51757
 - **Severity**: Critical
-- **Affected Versions**: All versions of `happy-dom` prior to 15.10.2
-- **Fixed Version**: 15.10.2 and later
+- **Affected Versions**: All versions of `happy-dom` prior to 20.0.2
+- **Fixed Version**: 20.0.2 and later (earliest fixed version)
 
 ### Impact
 
@@ -22,22 +22,22 @@ This vulnerability enables attackers to execute arbitrary code on the server by 
 ✅ **RESOLVED** - All instances of `happy-dom` have been upgraded to safe versions.
 
 The project uses `@wyw-in-js/transform@0.8.0`, which depends on:
-- `happy-dom@20.0.10` ✅ (Safe - version 20.0.10 is well above the fixed version 15.10.2)
+- `happy-dom@20.0.10` ✅ (Safe - version 20.0.10 is above the fixed version 20.0.2)
 
 Previously, `@linaria/shaker@5.0.3` → `@linaria/core@5.0.2` was pulling in:
-- `happy-dom@10.8.0` ❌ (Vulnerable - version 10.8.0 is below the fixed version 15.10.2)
+- `happy-dom@10.8.0` ❌ (Vulnerable - version 10.8.0 is below the fixed version 20.0.2)
 
 **This has been fixed** via pnpm override - all instances now use `happy-dom@20.0.10`.
 
 ### Mitigation
 
-✅ **pnpm override added** - The root `package.json` includes an override to force all `happy-dom` versions to `>=15.10.2`:
+✅ **pnpm override added** - The root `package.json` includes an override to force all `happy-dom` versions to `>=20.0.2`:
 
 ```json
 {
   "pnpm": {
     "overrides": {
-      "happy-dom": ">=15.10.2"
+      "happy-dom": ">=20.0.2"
     }
   }
 }
@@ -55,7 +55,7 @@ This will ensure that even transitive dependencies like `@linaria/core@5.0.2` wi
 pnpm why happy-dom
 ```
 
-All instances should show version >= 15.10.2.
+All instances should show version >= 20.0.2.
 
 ### Best Practices
 
