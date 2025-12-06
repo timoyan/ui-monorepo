@@ -249,3 +249,98 @@ All instances should show version >= 0.25.0.
 
 2025-02-10
 
+---
+
+## CVE-2025-30360 & CVE-2025-30359: webpack-dev-server Source Code Disclosure Vulnerabilities
+
+### Summary
+
+The `webpack-dev-server` package contains two vulnerabilities that allow attackers to steal source code when developers access malicious websites while running the development server.
+
+### Vulnerability Details
+
+- **CVE IDs**: CVE-2025-30360, CVE-2025-30359
+- **Advisory IDs**: GHSA-9jgg-88mc-972h, GHSA-4v9v-hfq4-rm2v
+- **Severity**: Moderate
+- **CVSS Scores**: 6.5 (CVE-2025-30360), 5.3 (CVE-2025-30359)
+- **Affected Versions**: `webpack-dev-server` <=5.2.0
+- **Fixed Versions**: `webpack-dev-server@5.2.1` or higher
+- **Component**: Development server only (production builds are not affected)
+
+### Impact
+
+**CVE-2025-30360 (GHSA-9jgg-88mc-972h):**
+- Source code may be stolen when accessing a malicious website with non-Chromium based browsers
+- The `Origin` header check allows IP address origins, enabling Cross-site WebSocket hijacking
+- Attackers can connect to the WebSocket and intercept Hot Module Reloading messages to extract source code
+- Does not affect Chrome 94+ and other Chromium-based browsers due to private network access blocking
+
+**CVE-2025-30359 (GHSA-4v9v-hfq4-rm2v):**
+- Source code may be stolen when accessing a malicious website
+- Attackers can inject `<script src="http://localhost:8080/main.js">` in their site
+- Combined with prototype pollution, attackers can get references to webpack runtime variables
+- Using `Function::toString` against values in `__webpack_modules__`, attackers can extract source code
+
+**Attack Scenarios:**
+- Developer runs webpack-dev-server on a predictable port (e.g., 8080)
+- Developer visits a malicious website while the dev server is running
+- Attacker's site connects to the dev server and extracts source code
+
+### Current Status
+
+✅ **RESOLVED** - All instances of `webpack-dev-server` have been upgraded to safe versions.
+
+The project uses `webpack-dev-server` as a transitive dependency via:
+- `@storybook/react-webpack5` → `@storybook/preset-react-webpack` → `@pmmmwh/react-refresh-webpack-plugin` → `webpack-dev-server`
+
+Previously, vulnerable version `4.15.2` (<=5.2.0) was being pulled in.
+
+**This has been fixed** via pnpm override - all instances now use `webpack-dev-server@>=5.2.1`.
+
+### Mitigation
+
+✅ **pnpm override added** - The root `package.json` includes an override to force all `webpack-dev-server` versions to `>=5.2.1`:
+
+```json
+{
+  "pnpm": {
+    "overrides": {
+      "webpack-dev-server": ">=5.2.1"
+    }
+  }
+}
+```
+
+**To apply the override:**
+```bash
+pnpm install
+```
+
+This will ensure that even transitive dependencies will use a safe version of `webpack-dev-server`.
+
+**Verify the fix:**
+```bash
+pnpm why webpack-dev-server
+pnpm audit
+```
+
+All instances should show version >= 5.2.1, and audit should show no vulnerabilities.
+
+### Important Notes
+
+- **Development Server Only**: These vulnerabilities affect only the development server feature
+- **Production Safe**: Production builds are **not affected**
+- **Best Practice**: Never run development servers on untrusted networks or expose them publicly
+- **Browser Protection**: Chrome 94+ and Chromium-based browsers are protected from CVE-2025-30360 due to private network access blocking
+
+### References
+
+- [GitHub Advisory: GHSA-9jgg-88mc-972h](https://github.com/advisories/GHSA-9jgg-88mc-972h)
+- [GitHub Advisory: GHSA-4v9v-hfq4-rm2v](https://github.com/advisories/GHSA-4v9v-hfq4-rm2v)
+- [CVE-2025-30360](https://nvd.nist.gov/vuln/detail/CVE-2025-30360)
+- [CVE-2025-30359](https://nvd.nist.gov/vuln/detail/CVE-2025-30359)
+
+### Last Updated
+
+2025-01-10
+
