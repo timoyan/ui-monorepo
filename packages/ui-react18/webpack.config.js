@@ -164,6 +164,7 @@ module.exports = (env, argv) => {
 						/node_modules/,
 						/\.test\.(ts|tsx|js|jsx)$/,
 						/\.spec\.(ts|tsx|js|jsx)$/,
+						/\.stories\.(ts|tsx|js|jsx)$/,
 						/test-setup\.(ts|tsx|js|jsx)$/,
 					],
 					use: [
