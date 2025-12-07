@@ -18,6 +18,13 @@
 		"@linaria/core": "^6.3.0",
 		"@linaria/react": "^6.3.0",
 		"@linaria/shaker": "^5.0.3",
+		"@storybook/addon-a11y": "8.6.14",
+		"@storybook/addon-essentials": "^8.6.14",
+		"@storybook/addon-interactions": "^8.6.14",
+		"@storybook/addon-links": "^8.6.14",
+		"@storybook/blocks": "^8.6.14",
+		"@storybook/react": "^8.6.14",
+		"@storybook/react-webpack5": "^8.6.14",
 		"@testing-library/jest-dom": "^6.1.5",
 		"@testing-library/react": "^14.1.2",
 		"@testing-library/user-event": "^14.5.1",
@@ -34,6 +41,7 @@
 		"mini-css-extract-plugin": "^2.9.4",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",
+		"storybook": "^8.6.14",
 		"style-loader": "^3.3.3",
 		"typescript": "^5.9.3",
 		"vitest": "^1.0.4",
@@ -48,7 +56,9 @@
 		"build": "webpack --mode production && tsc -p tsconfig.build.json",
 		"test": "vitest",
 		"test:watch": "vitest --watch",
-		"test:ui": "vitest --ui"
+		"test:ui": "vitest --ui",
+		"storybook": "storybook dev -p 6006",
+		"build-storybook": "storybook build"
 	},
 	"browserslist": {
 		"production": [">0.2%", "not dead", "not op_mini all"],

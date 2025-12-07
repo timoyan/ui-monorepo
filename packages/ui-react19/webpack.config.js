@@ -153,7 +153,12 @@ module.exports = (env, argv) => {
 			rules: [
 				{
 					test: /\.(ts|tsx|js|jsx)$/,
-					exclude: /node_modules/,
+					exclude: [
+						/node_modules/,
+						/\.test\.(ts|tsx|js|jsx)$/,
+						/\.spec\.(ts|tsx|js|jsx)$/,
+						/\.stories\.(ts|tsx|js|jsx)$/,
+					],
 					use: [
 						{
 							loader: "babel-loader",
