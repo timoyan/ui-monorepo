@@ -8,7 +8,7 @@ import { apiSlice } from "@/apis/apiSlice";
 import { ConnectedCartSample } from "../ConnectedCartSample";
 import { server } from "@/mocks/server";
 import { http, HttpResponse } from "msw";
-import { resetCartStore, addToCart } from "@/mocks/stores/cartStore";
+import type { CartItem } from "@/apis/cart";
 import { createMockCartItem } from "@/mocks/fixtures";
 
 function renderWithStore(ui: React.ReactElement) {
@@ -17,7 +17,6 @@ function renderWithStore(ui: React.ReactElement) {
 
 beforeEach(() => {
 	store.dispatch(apiSlice.util.resetApiState());
-	resetCartStore();
 });
 
 describe("ConnectedCartSample", () => {
@@ -35,6 +34,9 @@ describe("ConnectedCartSample", () => {
 	});
 
 	it("renders empty cart with Add item button", async () => {
+		server.use(
+			http.get("http://test.com/api/cart", () => HttpResponse.json([])),
+		);
 		renderWithStore(<ConnectedCartSample />);
 		const emptyMessage = await screen.findByText(/Cart is empty/i);
 
@@ -56,6 +58,25 @@ describe("ConnectedCartSample", () => {
 	});
 
 	it("adds item when Add item is clicked", async () => {
+		const cartItems: CartItem[] = [];
+		server.use(
+			http.get("http://test.com/api/cart", () => HttpResponse.json(cartItems)),
+			http.post("http://test.com/api/cart/add", async ({ request }) => {
+				const body = (await request.json()) as {
+					productId?: string;
+					productName?: string;
+					quantity?: number;
+				};
+				const item = createMockCartItem({
+					id: `item-${Date.now()}`,
+					productId: body.productId ?? "prod-1",
+					productName: body.productName,
+					quantity: body.quantity ?? 1,
+				});
+				cartItems.push(item);
+				return HttpResponse.json(item);
+			}),
+		);
 		renderWithStore(<ConnectedCartSample />);
 		await screen.findByText(/cart is empty/i);
 		const addButton = screen.getByRole("button", { name: /add item/i });
@@ -76,7 +97,9 @@ describe("ConnectedCartSample", () => {
 	});
 
 	it("disables Add item button and shows Adding… while add is in progress", async () => {
+		const cartItems: CartItem[] = [];
 		server.use(
+			http.get("http://test.com/api/cart", () => HttpResponse.json(cartItems)),
 			http.post("http://test.com/api/cart/add", async ({ request }) => {
 				await new Promise((resolve) => setTimeout(resolve, 300));
 				const body = (await request.json()) as {
@@ -84,11 +107,13 @@ describe("ConnectedCartSample", () => {
 					productName?: string;
 					quantity?: number;
 				};
-				const item = addToCart({
+				const item = createMockCartItem({
+					id: `item-${Date.now()}`,
 					productId: body.productId ?? "prod-1",
 					productName: body.productName,
-					quantity: body.quantity,
+					quantity: body.quantity ?? 1,
 				});
+				cartItems.push(item);
 				return HttpResponse.json(item);
 			}),
 		);
@@ -213,11 +238,20 @@ describe("ConnectedCartSample", () => {
 	});
 
 	it("removes item when Remove is clicked", async () => {
-		addToCart({
+		const productD = createMockCartItem({
+			id: "item-d",
 			productId: "prod-d",
 			productName: "Product D",
 			quantity: 1,
 		});
+		let cartItems: (typeof productD)[] = [productD];
+		server.use(
+			http.get("http://test.com/api/cart", () => HttpResponse.json(cartItems)),
+			http.delete("http://test.com/api/cart/remove", () => {
+				cartItems = [];
+				return HttpResponse.json({ success: true });
+			}),
+		);
 		renderWithStore(<ConnectedCartSample />);
 		await screen.findByText("Product D");
 		const removeBtn = screen.getByRole("button", {

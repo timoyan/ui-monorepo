@@ -7,11 +7,12 @@ import {
 } from "./stores/cartStore";
 
 /**
- * MSW handlers for local dev and unit tests.
- * Cart handlers share one in-memory data source (cartStore) so add/update/remove
- * behave like a real backend. Reset cart between tests via resetCartStore().
+ * Dev-only handlers: used by the MSW browser worker in local development.
+ * Cart handlers share one in-memory data source (cartStore).
+ * Not used in unit tests — tests use server.ts with an empty handler list
+ * and mock endpoints per test via server.use().
  */
-export const handlers = [
+export const devHandlers = [
 	http.get("http://test.com/api/cart", () => {
 		return HttpResponse.json(getCart());
 	}),
@@ -71,3 +72,6 @@ export const handlers = [
 		return HttpResponse.json({ success: true });
 	}),
 ];
+
+/** Empty list for unit tests: each test mocks endpoints via server.use(). */
+export const handlers: typeof devHandlers = [];
