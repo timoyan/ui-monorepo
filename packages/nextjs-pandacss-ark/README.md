@@ -33,23 +33,26 @@ Open [http://localhost:3000](http://localhost:3000).
 - `pnpm start` – Start production server
 - `pnpm test` – Run tests in watch mode
 - `pnpm test:run` – Run tests once (CI)
+- `pnpm test:report` – Run tests and write HTML report to `test-result/`
+- `pnpm test:report:view` – Serve `test-result/` on http://localhost:3131 and open in browser (use after `test:report`; required because the report cannot be opened via `file://` due to CORS)
+- `pnpm test:coverage` – Run tests with coverage and write **lcov** report to `test-result/coverage/lcov.info` (and HTML to `test-result/coverage/lcov-report/`)
 
 ## Mock API (MSW)
 
 MSW is enabled in development to mock API requests.
 
-- **Handlers**: `mocks/handlers.ts` – Add or edit mock endpoints
-- **Stores**: `mocks/stores/` – In-memory state for handlers (e.g. `cartStore.ts` for cart add/update/remove). Add one file per domain; reset between tests via `resetCartStore()` etc.
-- **Fixtures**: `mocks/fixtures/` – Shared mock data (e.g. `defaultCartItem`, `createMockCartItem`) for handlers and tests
+- **Handlers**: `mocks/handlers.ts` – Exports `devHandlers` (cart API) for **local dev only** and empty `handlers` for the test server. Add or edit endpoints in `devHandlers` to mock more APIs in dev.
+- **Stores**: `mocks/local-dev-store/` – In-memory state used by `devHandlers` in local dev (e.g. `cartStore.ts` for cart add/update/remove). Not used by unit tests.
+- **Fixtures**: `mocks/fixtures/` – Shared mock data (e.g. `defaultCartItem`, `createMockCartItem`) for dev handlers and tests
 - **Config**: `mocks/config.ts` – `devOptions` (bypass) vs `testOptions` (error)
-- **Browser**: `mocks/browser.ts` – Used in dev (via `useMSWReady` in `_app`)
-- **Node**: `mocks/server.ts` – For unit tests (Vitest/Jest)
+- **Browser**: `mocks/browser.ts` – Uses `devHandlers`; started in dev via `useMSWReady` in `_app`
+- **Node**: `mocks/server.ts` – Uses empty `handlers`; for unit tests (Vitest). Each test mocks endpoints via `server.use()`.
 
 **Behavior**:
 
-- **Local dev**: All APIs bypass (hit real network) by default. Only APIs with handlers in `handlers.ts` are mocked.
-- **CI / Unit tests**: All API requests must be handled by MSW. Unhandled requests fail the test.
+- **Local dev**: The browser worker uses `devHandlers`. All other APIs bypass (hit real network). Only APIs in `devHandlers` are mocked.
+- **Unit tests**: The test server starts with no handlers. Every test that hits an API must call `server.use()` in that test to mock the endpoints it needs. Unhandled requests fail the test.
 
-**Test setup**: Import `test/setup.ts` in your test config (e.g. `setupFiles`) so `server` runs before tests. In tests that hit cart endpoints, call `resetCartStore()` in `beforeEach` so cart state does not leak between tests.
+**Test setup**: Import `test/setup.ts` in your test config (e.g. `setupFiles`) so the MSW server runs before tests. In tests that use RTK Query, call `store.dispatch(apiSlice.util.resetApiState())` in `beforeEach` to clear cache between tests. Mock cart (and other) endpoints in each test with `server.use(http.get(...), http.post(...), ...)`.
 
 **Regenerate service worker**: Run `pnpm msw:init` after upgrading MSW if the worker needs updating. The worker lives in `msw/` and is committed; `msw init` is not run during `pnpm install` to avoid install hangs.

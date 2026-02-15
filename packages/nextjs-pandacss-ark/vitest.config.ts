@@ -13,5 +13,10 @@ export default defineConfig({
 		environment: "happy-dom",
 		globals: true,
 		setupFiles: ["./test/setup.ts"],
+		coverage: {
+			provider: "istanbul",
+			reporter: ["lcov"],
+			reportsDirectory: "test-result/coverage",
+		},
 	},
 });

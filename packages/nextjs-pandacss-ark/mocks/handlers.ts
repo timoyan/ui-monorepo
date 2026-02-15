@@ -4,7 +4,7 @@ import {
 	addToCart,
 	updateQuantity,
 	removeFromCart,
-} from "./stores/cartStore";
+} from "./local-dev-store/cartStore";
 
 /**
  * Dev-only handlers: used by the MSW browser worker in local development.
