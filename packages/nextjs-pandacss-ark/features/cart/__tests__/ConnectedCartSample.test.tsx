@@ -37,7 +37,7 @@ describe("ConnectedCartSample", () => {
 	it("renders empty cart with Add item button", async () => {
 		renderWithStore(<ConnectedCartSample />);
 		await screen.findByRole("heading", { name: /cart/i });
-		const emptyMessage = screen.getByText(/Cart is empty./i);
+		const emptyMessage = await screen.getByText(/Cart is empty/i);
 
 		expect(emptyMessage).toBeInTheDocument();
 		expect(
