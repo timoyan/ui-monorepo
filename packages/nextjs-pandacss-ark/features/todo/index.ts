@@ -1,1 +1,1 @@
-export { TodoSample } from "./TodoSample";
+export { TodoSample } from "./ConnectedTodoSample";

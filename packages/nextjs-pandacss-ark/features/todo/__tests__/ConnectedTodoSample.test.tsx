@@ -5,7 +5,7 @@ import userEvent from "@testing-library/user-event";
 import { Provider } from "react-redux";
 import { store } from "@/store";
 import { apiSlice } from "@/apis/apiSlice";
-import { TodoSample } from "../TodoSample";
+import { TodoSample } from "../ConnectedTodoSample";
 import { server } from "@/mocks/server";
 import { http, HttpResponse } from "msw";
 import { defaultTodo, createMockTodo } from "@/mocks/fixtures";
@@ -18,7 +18,7 @@ beforeEach(() => {
 	store.dispatch(apiSlice.util.resetApiState());
 });
 
-describe("TodoSample", () => {
+describe("ConnectedTodoSample", () => {
 	it("renders initial state with Fetch button and placeholder text", () => {
 		renderWithStore(<TodoSample />);
 		expect(
