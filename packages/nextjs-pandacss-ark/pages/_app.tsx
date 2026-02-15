@@ -1,15 +1,36 @@
 import type { AppProps } from "next/app";
 import { Provider } from "react-redux";
 import { store } from "@/store";
-import { MSWProvider } from "@/providers/MSWProvider";
+import { useMSWReady } from "@/hooks/useMSWReady";
 import "@/global.css";
 
-export default function App({ Component, pageProps }: AppProps) {
+function AppContent({ Component, pageProps }: AppProps) {
 	return (
-		<MSWProvider>
-			<Provider store={store}>
-				<Component {...pageProps} />
-			</Provider>
-		</MSWProvider>
+		<Provider store={store}>
+			<Component {...pageProps} />
+		</Provider>
 	);
+}
+
+export default function App(props: AppProps) {
+	const isMSWReady = useMSWReady();
+
+	if (!isMSWReady) {
+		return (
+			<div
+				style={{
+					display: "flex",
+					alignItems: "center",
+					justifyContent: "center",
+					minHeight: "100vh",
+					fontFamily: "system-ui, sans-serif",
+					color: "#666",
+				}}
+			>
+				Loading…
+			</div>
+		);
+	}
+
+	return <AppContent {...props} />;
 }

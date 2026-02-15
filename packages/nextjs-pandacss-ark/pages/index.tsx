@@ -7,7 +7,7 @@ import {
 	AccordionItemContent,
 	Button,
 } from "@/components";
-import { TodoSample } from "@/features/todo";
+import { ConnectedCartSample } from "@/features/cart";
 
 const containerStyles = css({
 	display: "flex",
@@ -96,7 +96,7 @@ export default function Home() {
 					</div>
 				</section>
 
-				<TodoSample />
+				<ConnectedCartSample />
 
 				<Accordion defaultValue={["item-1"]}>
 					<AccordionItem value="item-1">
