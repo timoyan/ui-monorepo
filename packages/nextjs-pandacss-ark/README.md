@@ -4,9 +4,10 @@ Next.js app with PandaCSS and Ark UI.
 
 ## Tech stack
 
-- **Next.js** – React framework
+- **Next.js** – React framework (Pages Router)
 - **PandaCSS** – Build-time CSS-in-JS with zero runtime
 - **Ark UI** – Headless, accessible UI components
+- **Redux Toolkit (RTK Query)** – State management and data fetching
 
 ## Getting started
 
@@ -17,17 +18,28 @@ pnpm dev
 
 Open [http://localhost:3000](http://localhost:3000).
 
+## Project structure
+
+- **`components/`** – Button, Accordion (PandaCSS + Ark UI)
+- **`features/todo/`** – TodoSample feature (RTK Query + JSONPlaceholder API)
+- **`apis/`** – RTK Query API slice and endpoints
+- **`store/`** – Redux store config
+- **`mocks/`** – MSW handlers, fixtures, browser/server setup
+
 ## Scripts
 
 - `pnpm dev` – Start development server
 - `pnpm build` – Build for production
 - `pnpm start` – Start production server
+- `pnpm test` – Run tests in watch mode
+- `pnpm test:run` – Run tests once (CI)
 
 ## Mock API (MSW)
 
 MSW is enabled in development to mock API requests.
 
 - **Handlers**: `mocks/handlers.ts` – Add or edit mock endpoints
+- **Fixtures**: `mocks/fixtures/` – Shared mock data (`defaultTodo`, `createMockTodo`) for handlers and tests
 - **Config**: `mocks/config.ts` – `devOptions` (bypass) vs `testOptions` (error)
 - **Browser**: `mocks/browser.ts` – Used in dev (via MSWProvider)
 - **Node**: `mocks/server.ts` – For unit tests (Vitest/Jest)
