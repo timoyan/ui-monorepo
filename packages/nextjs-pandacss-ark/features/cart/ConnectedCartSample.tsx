@@ -226,7 +226,7 @@ export function ConnectedCartSample() {
 							fontStyle: "italic",
 						})}
 					>
-						Cart is empty. Click &quot;Add item&quot; to add a product.
+						Cart is empty.
 					</div>
 				) : (
 					items.map((item) => <CartItemRow key={item.id} item={item} />)
