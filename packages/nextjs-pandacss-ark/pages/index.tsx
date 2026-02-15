@@ -1,12 +1,11 @@
 import Head from "next/head";
 import { css } from "@/styled-system/css";
-import { styled } from "@/styled-system/jsx";
 import {
-	AccordionRoot,
+	Accordion,
 	AccordionItem,
 	AccordionItemTrigger,
 	AccordionItemContent,
-} from "@ark-ui/react/accordion";
+} from "@/components";
 
 const containerStyles = css({
 	display: "flex",
@@ -22,39 +21,6 @@ const headingStyles = css({
 	fontWeight: "bold",
 });
 
-const StyledAccordionRoot = styled(AccordionRoot, {
-	base: {
-		w: "full",
-		maxW: "md",
-		"& [data-scope=accordion]": {
-			display: "flex",
-			flexDirection: "column",
-			gap: "1",
-		},
-		"& [data-part=item]": {
-			borderBottomWidth: "1px",
-			borderColor: "gray.200",
-		},
-		"& [data-part=item-trigger]": {
-			w: "full",
-			py: 3,
-			px: 4,
-			textAlign: "left",
-			fontWeight: "medium",
-			_hover: { bg: "gray.50" },
-		},
-		"& [data-part=item-content]": {
-			px: 4,
-			pb: 4,
-			color: "gray.600",
-		},
-		"& [data-part=item-content][data-state=open]": {
-			bg: "gray.600",
-			color: "white",
-		},
-	},
-});
-
 export default function Home() {
 	return (
 		<>
@@ -66,7 +32,7 @@ export default function Home() {
 				<p className={css({ color: "gray.600" })}>
 					Tech stack: Next.js · PandaCSS · Ark UI
 				</p>
-				<StyledAccordionRoot defaultValue={["item-1"]}>
+				<Accordion defaultValue={["item-1"]}>
 					<AccordionItem value="item-1">
 						<AccordionItemTrigger>What is PandaCSS?</AccordionItemTrigger>
 						<AccordionItemContent>
@@ -81,7 +47,7 @@ export default function Home() {
 							PandaCSS using data-scope and data-part attributes.
 						</AccordionItemContent>
 					</AccordionItem>
-				</StyledAccordionRoot>
+				</Accordion>
 			</main>
 		</>
 	);

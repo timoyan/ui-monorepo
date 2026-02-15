@@ -4,7 +4,7 @@
 	"private": true,
 	"scripts": {
 		"prepare": "panda codegen",
-		"dev": "rm -rf .next && next dev",
+		"dev": "rm -rf .next && concurrently \"next dev\" \"panda codegen --watch\"",
 		"build": "next build",
 		"start": "next start"
 	},
@@ -19,6 +19,7 @@
 		"@types/node": "^24.10.1",
 		"@types/react": "^19.0.0",
 		"@types/react-dom": "^19.0.0",
+		"concurrently": "^9.2.1",
 		"postcss": "^8.4.49",
 		"typescript": "^5.9.3"
 	}
