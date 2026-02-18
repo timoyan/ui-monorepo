@@ -3,7 +3,7 @@ import { act } from "react";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { Provider } from "react-redux";
-import { store } from "@/store";
+import { store } from "@/core/store";
 import { apiSlice } from "@/apis/apiSlice";
 import { ConnectedCartSample } from "../ConnectedCartSample";
 import { server } from "@/mocks/server";

@@ -20,11 +20,16 @@ Open [http://localhost:3000](http://localhost:3000).
 
 ## Project structure
 
-- **`components/`** – Button, Accordion (PandaCSS + Ark UI)
-- **`features/cart/`** – Cart feature (RTK Query)
-- **`apis/`** – RTK Query API slice and endpoints
-- **`store/`** – Redux store config
+- **`core/`** – App-level concerns (store, router, error handling)
+- **`pages/`** – Next.js pages (combine modules/features/components)
+- **`modules/`** – Business domain modules (combine multi features)
+- **`features/`** – Independent features (cart, payment, etc.)
+- **`components/`** – Reusable UI components (Button, Accordion)
+- **`apis/`** – RTK Query API slices and endpoints
+- **`hooks/`** – Shared hooks
 - **`mocks/`** – MSW handlers, fixtures, browser/server setup
+
+For detailed architecture documentation, see [ARCHITECTURE.md](./ARCHITECTURE.md).
 
 ## Scripts
 
