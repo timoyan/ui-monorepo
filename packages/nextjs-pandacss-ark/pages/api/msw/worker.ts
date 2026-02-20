@@ -1,6 +1,19 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { readFileSync } from "node:fs";
-import { join } from "node:path";
+import { existsSync, readFileSync } from "node:fs";
+import { join, resolve } from "node:path";
+
+/** Resolve path to mockServiceWorker.js: try __dirname-relative first, then process.cwd() (for Vercel/Docker). */
+function getWorkerPath(): string | null {
+	const candidates = [
+		// 從 pages/api/msw/ 往上升三層到 package 根目錄
+		resolve(__dirname, "..", "..", "..", "msw", "mockServiceWorker.js"),
+		join(process.cwd(), "msw", "mockServiceWorker.js"),
+	];
+	for (const p of candidates) {
+		if (existsSync(p)) return p;
+	}
+	return null;
+}
 
 export default function handler(_req: NextApiRequest, res: NextApiResponse) {
 	if (process.env.NODE_ENV !== "development") {
@@ -8,13 +21,19 @@ export default function handler(_req: NextApiRequest, res: NextApiResponse) {
 		return;
 	}
 
+	const workerPath = getWorkerPath();
+	if (!workerPath) {
+		res.status(404).end();
+		return;
+	}
+
 	try {
-		const path = join(process.cwd(), "msw", "mockServiceWorker.js");
-		const content = readFileSync(path, "utf-8");
+		const content = readFileSync(workerPath, "utf-8");
 		res
 			.status(200)
 			.setHeader("Content-Type", "application/javascript")
 			.setHeader("Service-Worker-Allowed", "/")
+			.setHeader("Cache-Control", "no-store, no-cache, must-revalidate")
 			.send(content);
 	} catch {
 		res.status(404).end();

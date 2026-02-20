@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import { act } from "react";
-import { render, screen } from "@testing-library/react";
+import { render, screen, fireEvent } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { Provider } from "react-redux";
 import { store } from "@/core/store";
@@ -265,5 +265,178 @@ describe("ConnectedCartSample", () => {
 			screen.getByRole("button", { name: /add item/i }),
 		).toBeInTheDocument();
 		expect(screen.queryByText("Product D")).not.toBeInTheDocument();
+	});
+
+	it("handleBlur calls updateQuantity when input value differs from item quantity", async () => {
+		const item = createMockCartItem({
+			id: "item-1",
+			productName: "Product E",
+			quantity: 2,
+		});
+		server.use(
+			http.get("http://test.com/api/cart", () => HttpResponse.json([item])),
+			http.patch(
+				"http://test.com/api/cart/updateQuantity",
+				async ({ request }) => {
+					const body = (await request.json()) as {
+						itemId: string;
+						quantity: number;
+					};
+					return HttpResponse.json({ ...item, quantity: body.quantity });
+				},
+			),
+		);
+		renderWithStore(<ConnectedCartSample />);
+		await screen.findByText("Product E");
+		const qtyInput = screen.getByRole("spinbutton", {
+			name: /quantity for product e/i,
+		});
+		await act(async () => {
+			fireEvent.change(qtyInput, { target: { value: "5" } });
+		});
+		await act(async () => {
+			fireEvent.blur(qtyInput);
+		});
+		await screen.findByDisplayValue("5");
+		expect(qtyInput).toHaveValue(5);
+	});
+
+	it("handleBlur syncs input to item quantity when value unchanged on blur", async () => {
+		const item = createMockCartItem({
+			id: "item-1",
+			productName: "Product F",
+			quantity: 2,
+		});
+		let patchCalls = 0;
+		server.use(
+			http.get("http://test.com/api/cart", () => HttpResponse.json([item])),
+			http.patch("http://test.com/api/cart/updateQuantity", () => {
+				patchCalls += 1;
+				return HttpResponse.json({ ...item, quantity: 2 });
+			}),
+		);
+		renderWithStore(<ConnectedCartSample />);
+		await screen.findByText("Product F");
+		const qtyInput = screen.getByRole("spinbutton", {
+			name: /quantity for product f/i,
+		});
+		expect(qtyInput).toHaveValue(2);
+		await act(async () => {
+			fireEvent.change(qtyInput, { target: { value: "3" } });
+		});
+		await act(async () => {
+			fireEvent.change(qtyInput, { target: { value: "2" } });
+			fireEvent.blur(qtyInput);
+		});
+		expect(patchCalls).toBe(0);
+		expect(qtyInput).toHaveValue(2);
+	});
+
+	it("pressing Enter on quantity input triggers blur and handleBlur", async () => {
+		const item = createMockCartItem({
+			id: "item-1",
+			productName: "Product G",
+			quantity: 1,
+		});
+		server.use(
+			http.get("http://test.com/api/cart", () => HttpResponse.json([item])),
+			http.patch(
+				"http://test.com/api/cart/updateQuantity",
+				async ({ request }) => {
+					const body = (await request.json()) as {
+						itemId: string;
+						quantity: number;
+					};
+					return HttpResponse.json({ ...item, quantity: body.quantity });
+				},
+			),
+		);
+		renderWithStore(<ConnectedCartSample />);
+		await screen.findByText("Product G");
+		const qtyInput = screen.getByRole("spinbutton", {
+			name: /quantity for product g/i,
+		});
+		await act(async () => {
+			fireEvent.change(qtyInput, { target: { value: "4" } });
+		});
+		await act(async () => {
+			fireEvent.keyDown(qtyInput, { key: "Enter" });
+		});
+		await screen.findByDisplayValue("4");
+		expect(qtyInput).toHaveValue(4);
+	});
+
+	it("disables quantity controls while update is in progress", async () => {
+		const item = createMockCartItem({
+			id: "item-1",
+			productName: "Product H",
+			quantity: 2,
+		});
+		server.use(
+			http.get("http://test.com/api/cart", () => HttpResponse.json([item])),
+			http.patch("http://test.com/api/cart/updateQuantity", async () => {
+				await new Promise((resolve) => setTimeout(resolve, 300));
+				return HttpResponse.json({ ...item, quantity: 3 });
+			}),
+		);
+		renderWithStore(<ConnectedCartSample />);
+		await screen.findByText("Product H");
+		const increaseBtn = screen.getByRole("button", {
+			name: /increase quantity/i,
+		});
+		await act(async () => {
+			await userEvent.click(increaseBtn);
+		});
+		const qtyInput = screen.getByRole("spinbutton", {
+			name: /quantity for product h/i,
+		});
+		expect(increaseBtn).toBeDisabled();
+		expect(
+			screen.getByRole("button", { name: /decrease quantity/i }),
+		).toBeDisabled();
+		expect(
+			screen.getByRole("button", { name: /remove product h from cart/i }),
+		).toBeDisabled();
+		expect(qtyInput).toBeDisabled();
+		await screen.findByDisplayValue("3");
+	});
+
+	it("disables quantity controls while remove is in progress", async () => {
+		const item = createMockCartItem({
+			id: "item-1",
+			productName: "Product I",
+			quantity: 1,
+		});
+		let cartList: CartItem[] = [item];
+		server.use(
+			http.get("http://test.com/api/cart", () =>
+				HttpResponse.json([...cartList]),
+			),
+			http.delete("http://test.com/api/cart/remove", async () => {
+				await new Promise((resolve) => setTimeout(resolve, 300));
+				cartList = [];
+				return HttpResponse.json({ success: true });
+			}),
+		);
+		renderWithStore(<ConnectedCartSample />);
+		await screen.findByText("Product I");
+		const removeBtn = screen.getByRole("button", {
+			name: /remove product i from cart/i,
+		});
+		await act(async () => {
+			await userEvent.click(removeBtn);
+		});
+		const qtyInput = screen.getByRole("spinbutton", {
+			name: /quantity for product i/i,
+		});
+		expect(removeBtn).toBeDisabled();
+		expect(
+			screen.getByRole("button", { name: /increase quantity/i }),
+		).toBeDisabled();
+		expect(
+			screen.getByRole("button", { name: /decrease quantity/i }),
+		).toBeDisabled();
+		expect(qtyInput).toBeDisabled();
+		await screen.findByText(/cart is empty/i);
 	});
 });
