@@ -13,7 +13,8 @@
 		"test:report": "vitest run --reporter=default --reporter=html --outputFile=./test-result/test-report.html",
 		"test:report:view": "npx --yes serve test-result -l 3131",
 		"test:coverage": "vitest run --coverage",
-		"lint:test": "! grep -rE 'toMatch(Inline)?Snapshot' --include='*.test.ts' --include='*.test.tsx' --exclude-dir=node_modules . 2>/dev/null"
+		"lint:test": "! grep -rE 'toMatch(Inline)?Snapshot' --include='*.test.ts' --include='*.test.tsx' --exclude-dir=node_modules . 2>/dev/null",
+		"docker:standalone": "docker build -f Dockerfile -t nextjs-pandacss-ark ."
 	},
 	"dependencies": {
 		"@ark-ui/react": "^3.2.0",
