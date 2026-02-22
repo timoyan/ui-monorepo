@@ -1,8 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * 簡單的測試服務器
- * 用於測試 module-library 組件
+ * Simple test server for module-library components.
  */
 
 const http = require("node:http");
@@ -25,49 +24,120 @@ const MIME_TYPES = {
 	".map": "application/json",
 };
 
+// Ensure the resolved path is under rootDir (including rootDir itself).
+function isWithinRoot(resolvedPath, rootDir) {
+	const normalizedRoot = path.resolve(rootDir);
+	const normalizedPath = path.resolve(resolvedPath);
+	return (
+		normalizedPath === normalizedRoot ||
+		normalizedPath.startsWith(normalizedRoot + path.sep)
+	);
+}
+
+// Return a safe path for fs (root + relative) only when path is under rootDir; avoids CodeQL path-injection.
+function pathUnderRoot(resolvedPath, rootDir) {
+	if (!isWithinRoot(resolvedPath, rootDir)) return null;
+	const root = path.resolve(rootDir);
+	const rel = path.relative(root, path.resolve(resolvedPath));
+	// path.relative does not produce ".." when path is under root.
+	if (rel.startsWith("..") || path.isAbsolute(rel)) return null;
+	return path.join(root, rel);
+}
+
 const server = http.createServer((req, res) => {
-	// 解析 URL，移除查詢字符串
+	// Parse URL and strip query string.
 	const urlPath = req.url.split("?")[0];
 
-	// 處理 dist 目錄的請求（CSS、JS 等資源文件）
+	// Serve dist assets (CSS, JS, etc.).
 	if (urlPath.startsWith("/dist/")) {
-		const distPath = path.join(DIST_DIR, urlPath.replace(/^\/dist\//, ""));
-		if (fs.existsSync(distPath)) {
-			const ext = path.extname(distPath);
-			const contentType = MIME_TYPES[ext] || "application/octet-stream";
-			const content = fs.readFileSync(distPath);
-			res.writeHead(200, { "Content-Type": contentType });
-			res.end(content, "utf-8");
+		const relativeDistPath = urlPath.replace(/^\/dist\//, "");
+		const resolvedDistPath = path.resolve(DIST_DIR, relativeDistPath);
+		const safeDistPath = pathUnderRoot(resolvedDistPath, DIST_DIR);
+		if (safeDistPath === null) {
+			res.writeHead(403);
+			res.end("Forbidden");
 			return;
 		}
+		let pathToRead = safeDistPath;
+		if (fs.existsSync(safeDistPath)) {
+			try {
+				const canonical = fs.realpathSync(safeDistPath);
+				const realDistDir = fs.realpathSync(DIST_DIR);
+				if (
+					canonical !== realDistDir &&
+					!canonical.startsWith(realDistDir + path.sep)
+				) {
+					res.writeHead(403);
+					res.end("Forbidden");
+					return;
+				}
+				pathToRead = canonical;
+			} catch {
+				// Keep pathUnderRoot result when realpath fails.
+			}
+		}
+		if (!fs.existsSync(pathToRead)) {
+			res.writeHead(404);
+			res.end("File not found");
+			return;
+		}
+		const ext = path.extname(pathToRead);
+		const contentType = MIME_TYPES[ext] || "application/octet-stream";
+		const content = fs.readFileSync(pathToRead);
+		res.writeHead(200, { "Content-Type": contentType });
+		res.end(content, "utf-8");
+		return;
 	}
 
-	// 處理測試目錄的文件
-	let filePath = path.join(TEST_DIR, urlPath === "/" ? "index.html" : urlPath);
-
-	// 安全檢查：確保文件在測試目錄或 dist 目錄內
-	const allowedDirs = [TEST_DIR, DIST_DIR];
-	const isAllowed = allowedDirs.some((dir) => filePath.startsWith(dir));
-
-	if (!isAllowed && !urlPath.startsWith("/dist/")) {
+	// Serve test dir: treat url as relative (strip leading slashes) then resolve.
+	const requestedPath =
+		urlPath === "/" ? "index.html" : urlPath.replace(/^\/+/, "");
+	const resolvedTestPath = path.resolve(TEST_DIR, requestedPath);
+	const safePath = pathUnderRoot(resolvedTestPath, TEST_DIR);
+	if (safePath === null) {
 		res.writeHead(403);
 		res.end("Forbidden");
 		return;
 	}
-
-	// 如果請求的是目錄，嘗試載入 index.html
-	if (fs.existsSync(filePath) && fs.statSync(filePath).isDirectory()) {
-		filePath = path.join(filePath, "index.html");
+	let pathToRead = safePath;
+	if (fs.existsSync(safePath)) {
+		try {
+			const canonical = fs.realpathSync(safePath);
+			const realTestDir = fs.realpathSync(TEST_DIR);
+			if (
+				canonical !== realTestDir &&
+				!canonical.startsWith(realTestDir + path.sep)
+			) {
+				res.writeHead(403);
+				res.end("Forbidden");
+				return;
+			}
+			pathToRead = canonical;
+		} catch {
+			// Keep pathUnderRoot result when realpath fails.
+		}
 	}
 
-	// 如果文件不存在，返回 404
-	if (!fs.existsSync(filePath)) {
+	// If the request is for a directory, serve index.html inside it.
+	if (fs.existsSync(pathToRead) && fs.statSync(pathToRead).isDirectory()) {
+		const indexResolved = path.resolve(pathToRead, "index.html");
+		const indexSafe = pathUnderRoot(indexResolved, TEST_DIR);
+		if (indexSafe === null) {
+			res.writeHead(403);
+			res.end("Forbidden");
+			return;
+		}
+		pathToRead = indexSafe;
+	}
+
+	// Return 404 if file does not exist.
+	if (!fs.existsSync(pathToRead)) {
 		res.writeHead(404);
-		res.end(`File not found: ${urlPath}`);
+		res.end("File not found");
 		return;
 	}
 
-	fs.readFile(filePath, (err, content) => {
+	fs.readFile(pathToRead, (err, content) => {
 		if (err) {
 			if (err.code === "ENOENT") {
 				res.writeHead(404);
@@ -77,7 +147,7 @@ const server = http.createServer((req, res) => {
 				res.end(`Server error: ${err.code}`);
 			}
 		} else {
-			const ext = path.extname(filePath);
+			const ext = path.extname(pathToRead);
 			const contentType = MIME_TYPES[ext] || "application/octet-stream";
 			res.writeHead(200, { "Content-Type": contentType });
 			res.end(content, "utf-8");
@@ -86,8 +156,8 @@ const server = http.createServer((req, res) => {
 });
 
 server.listen(PORT, () => {
-	console.log("\n🚀 測試服務器已啟動！");
-	console.log("📦 測試 Module Library 組件");
-	console.log(`\n📍 訪問地址: http://localhost:${PORT}`);
-	console.log("\n按 Ctrl+C 停止服務器\n");
+	console.log("\n🚀 Test server running");
+	console.log("📦 Serving module-library components");
+	console.log(`\n📍 http://localhost:${PORT}`);
+	console.log("\nPress Ctrl+C to stop\n");
 });
