@@ -75,14 +75,16 @@ function ToastItem({
 	return (
 		<Toast.Root>
 			<Toast.Title>
-				
+				{/* biome-ignore lint/complexity/noUselessFragments: required for React 19 type compatibility with Ark UI Toast children */}
+				<>
 					{config?.icon != null ? config.icon : null}
 					{title}
-				
+				</>
 			</Toast.Title>
 			{hasDescription ? (
 				<Toast.Description>
-					{description}
+					{/* biome-ignore lint/complexity/noUselessFragments: required for React 19 type compatibility with Ark UI Toast children */}
+					<>{description}</>
 				</Toast.Description>
 			) : null}
 			<Toast.CloseTrigger aria-label="Close toast">
