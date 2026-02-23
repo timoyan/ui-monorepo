@@ -18,6 +18,53 @@ pnpm dev
 
 Open [http://localhost:3000](http://localhost:3000).
 
+### Local development (Windows / macOS, team setup)
+
+- **Default**: `pnpm dev` runs with **HTTP on port 3000**; no admin rights needed on Windows or macOS.
+- **HTTPS (e.g. custom domain on port 443)**: Use mkcert certs and run `pnpm dev:https:custom`; see “Custom domain and MSW” below.
+- **Clean commands**: Scripts use `rimraf` instead of `rm -rf`, so they work in Windows CMD/PowerShell as well.
+- **Custom port**: Create `.env.local` and set `PORT=3001` (must be loaded before start).
+
+### Custom domain (e.g. local.timotest.com) and MSW
+
+If you use a custom hostname with HTTPS (e.g. `https://local.timotest.com`), the browser must **trust the certificate** for that hostname. Otherwise you get:
+
+- **"[MSW] Failed to register the Service Worker: An SSL certificate error occurred when fetching the script."**
+
+Use **mkcert** to issue a trusted cert for your domain and run the dev server with that cert (no auto-generated certs).
+
+1. **Install mkcert** (one-time; supports Windows and macOS):
+   - macOS: `brew install mkcert && mkcert -install`
+   - Windows: `choco install mkcert`, or `scoop install mkcert`, or `winget install mkcert`; then run `mkcert -install`
+   - More options: [mkcert](https://github.com/FiloSottile/mkcert)
+
+2. **Map the domain to localhost** (if not already):
+   - Add a line to hosts: `127.0.0.1 local.timotest.com`  
+   - macOS/Linux: `/etc/hosts`; Windows: `C:\Windows\System32\drivers\etc\hosts`
+
+3. **Generate certs** in this package (e.g. in a `certs/` folder, and add `certs/` to `.gitignore`):
+   ```bash
+   mkdir -p certs
+   mkcert -key-file certs/local.timotest.com-key.pem -cert-file certs/local.timotest.com.pem local.timotest.com
+   ```
+
+4. **Run the dev server with your cert** (port 443 needs admin/sudo on macOS, Administrator on Windows):
+   ```bash
+   pnpm dev:https:custom
+   ```
+   Or manually:
+   ```bash
+   next dev --experimental-https -p 443 \
+     --experimental-https-key ./certs/local.timotest.com-key.pem \
+     --experimental-https-cert ./certs/local.timotest.com.pem
+   ```
+   Then open **https://local.timotest.com** (no port in URL). The browser will trust the site and MSW can register.
+
+To use a different domain or path, set env vars before running:
+
+- `SSL_KEY_FILE` – path to the private key (e.g. `./certs/local.timotest.com-key.pem`)
+- `SSL_CERT_FILE` – path to the certificate (e.g. `./certs/local.timotest.com.pem`)
+
 ## Project structure
 
 - **`core/`** – App-level concerns (store, router, error handling)
@@ -33,7 +80,8 @@ For detailed architecture documentation, see [ARCHITECTURE.md](./ARCHITECTURE.md
 
 ## Scripts
 
-- `pnpm dev` – Start development server (do not use `--turbo`/`--turbopack`; PandaCSS works with the default Webpack dev server.)
+- `pnpm dev` – Start development server (HTTP, port 3000). Do not use `--turbo`/`--turbopack`; PandaCSS works with the default Webpack dev server.
+- `pnpm dev:https:custom` – HTTPS on port 443 with mkcert certs for a custom domain (e.g. https://local.timotest.com). Requires certs in `certs/`; see “Custom domain and MSW” above.
 - `pnpm build` – Run `panda codegen` then build for production
 - `pnpm start` – Start production server
 - `pnpm test` – Run tests in watch mode
