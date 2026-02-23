@@ -2,7 +2,7 @@
 process.env.TZ = "UTC";
 process.env.LANG = process.env.LC_ALL = "en_US.UTF-8";
 
-import "@testing-library/jest-dom/vitest";
+import "@testing-library/jest-dom";
 import { testOptions } from "../mocks/config";
 // Use relative paths instead of @/* alias: Vitest loads setup outside the Next.js context,
 // so tsconfig path mappings may not resolve when this file is imported by the test runner.

@@ -55,6 +55,7 @@
 	"scripts": {
 		"build": "webpack --mode production && tsc -p tsconfig.build.json",
 		"test": "vitest",
+		"test:run": "vitest run",
 		"test:watch": "vitest --watch",
 		"test:ui": "vitest --ui",
 		"storybook": "storybook dev -p 6006",

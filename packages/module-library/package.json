@@ -8,8 +8,9 @@
 		"build:dev": "stencil build --dev && node scripts/fix-react-ssr.js",
 		"build:watch": "stencil build --watch",
 		"build:prod": "stencil build --prod && node scripts/fix-react-ssr.js",
-		"test": "stencil test",
-		"test:watch": "stencil test --watch",
+		"test": "vitest run",
+		"test:run": "vitest run",
+		"test:watch": "vitest",
 		"test:serve": "node test-server.js",
 		"test:serve:verify": "node scripts/verify-test-server.js",
 		"generate": "stencil generate",
@@ -30,8 +31,9 @@
 		"@stencil/core": "^4.0.0",
 		"@stencil/react-output-target": "^0.5.0",
 		"@types/node": "^20.0.0",
-		"@types/jest": "^29.5.0",
-		"typescript": "^5.9.3"
+		"typescript": "^5.9.3",
+		"unplugin-stencil": "^0.4.1",
+		"vitest": "^3.2.4"
 	},
 	"main": "./dist/index.cjs.js",
 	"module": "./dist/index.js",
