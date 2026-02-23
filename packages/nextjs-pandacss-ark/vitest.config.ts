@@ -24,6 +24,7 @@ export default defineConfig({
 			"**/*.example.{ts,tsx}",
 			"**/mocks/**",
 			"**/pages/**",
+			"**/scripts/**",
 		],
 		coverage: {
 			provider: "istanbul",
@@ -40,6 +41,7 @@ export default defineConfig({
 				"**/*.example.{ts,tsx}",
 				"**/mocks/**",
 				"**/pages/**",
+				"**/scripts/**",
 			],
 		},
 	},
