@@ -1,6 +1,8 @@
 import Head from "next/head";
 import { ModuleContainer } from "@/components/layout/module-container";
+import { cartApi } from "@/apis/cart";
 import { useModuleAccordion } from "@/core/hooks";
+import { NextReduxWrapper } from "@/core/store";
 import {
 	ModuleA,
 	ModuleBFullWidthDisabled,
@@ -81,3 +83,10 @@ export default function Home() {
 		</>
 	);
 }
+
+export const getServerSideProps = NextReduxWrapper.getServerSideProps(
+	(store) => async () => {
+		await store.dispatch(cartApi.endpoints.getCart.initiate());
+		return { props: {} };
+	},
+);
