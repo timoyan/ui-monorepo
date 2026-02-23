@@ -1,15 +1,30 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { HttpResponse, http } from "msw";
 import { act } from "react";
 import { Provider } from "react-redux";
-import { beforeEach, describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { apiSlice } from "@/apis/apiSlice";
 import type { CartItem } from "@/apis/cart";
 import { store } from "@/core/store";
+import { useToast } from "@/core/toast";
 import { createMockCartItem } from "@/mocks/fixtures";
 import { server } from "@/mocks/server";
 import { ConnectedCartSample } from "../ConnectedCartSample";
+
+const mockToast = {
+	create: vi.fn(),
+	success: vi.fn(),
+	error: vi.fn(),
+	info: vi.fn(),
+	warning: vi.fn(),
+	dismiss: vi.fn(),
+};
+
+vi.mock("@/core/toast", async (importOriginal) => {
+	const actual = await importOriginal<typeof import("@/core/toast")>();
+	return { ...actual, useToast: vi.fn() };
+});
 
 function renderWithStore(ui: React.ReactElement) {
 	return render(<Provider store={store}>{ui}</Provider>);
@@ -17,6 +32,12 @@ function renderWithStore(ui: React.ReactElement) {
 
 beforeEach(() => {
 	store.dispatch(apiSlice.util.resetApiState());
+	vi.mocked(useToast).mockReturnValue({
+		toast: mockToast,
+		registerAndToast: vi.fn(),
+	});
+	mockToast.success.mockClear();
+	mockToast.error.mockClear();
 });
 
 describe("ConnectedCartSample", () => {
@@ -65,6 +86,27 @@ describe("ConnectedCartSample", () => {
 		renderWithStore(<ConnectedCartSample />);
 		await screen.findByText(/failed to load cart/i);
 		expect(screen.getByRole("heading", { name: /cart/i })).toBeInTheDocument();
+	});
+
+	it("calls toast.error when add to cart fails", async () => {
+		server.use(
+			http.get("http://test.com/api/cart", () => HttpResponse.json([])),
+			http.post("http://test.com/api/cart/add", () =>
+				HttpResponse.json({ error: "Server error" }, { status: 500 }),
+			),
+		);
+		renderWithStore(<ConnectedCartSample />);
+		await screen.findByText(/cart is empty/i);
+		const addButton = screen.getByRole("button", { name: /add item/i });
+		await act(async () => {
+			await userEvent.click(addButton);
+		});
+		await waitFor(() => {
+			expect(mockToast.error).toHaveBeenCalledWith({
+				title: "Failed to add",
+				description: "Could not add item to cart.",
+			});
+		});
 	});
 
 	it("adds item when Add item is clicked", async () => {

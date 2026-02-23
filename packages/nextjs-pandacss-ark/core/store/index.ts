@@ -1,12 +1,13 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { apiSlice } from "@/apis/apiSlice";
+import { toastMiddleware } from "./toastMiddleware";
 
 export const store = configureStore({
 	reducer: {
 		[apiSlice.reducerPath]: apiSlice.reducer,
 	},
 	middleware: (getDefaultMiddleware) =>
-		getDefaultMiddleware().concat(apiSlice.middleware),
+		getDefaultMiddleware().concat(apiSlice.middleware, toastMiddleware),
 });
 
 export type RootState = ReturnType<typeof store.getState>;

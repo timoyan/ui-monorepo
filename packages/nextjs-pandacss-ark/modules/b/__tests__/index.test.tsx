@@ -1,12 +1,41 @@
 import { render, screen } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import userEvent from "@testing-library/user-event";
+import { act } from "react";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
 	ModuleB,
 	ModuleBFullWidthDisabled,
 	ModuleBVariantSize,
 } from "@/modules/b";
+import { useToast } from "@/core/toast";
+
+const mockToast = {
+	create: vi.fn(),
+	success: vi.fn(),
+	error: vi.fn(),
+	info: vi.fn(),
+	warning: vi.fn(),
+	dismiss: vi.fn(),
+};
+
+vi.mock("@/core/toast", async (importOriginal) => {
+	const actual = await importOriginal<typeof import("@/core/toast")>();
+	return { ...actual, useToast: vi.fn() };
+});
 
 describe("ModuleB", () => {
+	beforeEach(() => {
+		vi.mocked(useToast).mockImplementation(() => ({
+			toast: mockToast,
+			registerAndToast: vi.fn(),
+		}));
+	});
+	afterEach(() => {
+		mockToast.success.mockClear();
+		mockToast.error.mockClear();
+		mockToast.info.mockClear();
+		mockToast.warning.mockClear();
+	});
 	it("renders ModuleBVariantSize and ModuleBFullWidthDisabled", () => {
 		render(<ModuleB />);
 		expect(
@@ -15,6 +44,54 @@ describe("ModuleB", () => {
 		expect(
 			screen.getByRole("button", { name: /full width primary/i }),
 		).toBeInTheDocument();
+	});
+
+	it("calls toast.success when Success (toast examples) is clicked", async () => {
+		render(<ModuleB />);
+		const successBtn = screen.getByRole("button", { name: /^Success$/ });
+		await act(async () => {
+			await userEvent.click(successBtn);
+		});
+		expect(mockToast.success).toHaveBeenCalledWith({
+			title: "Success",
+			description: "Operation completed successfully.",
+		});
+	});
+
+	it("calls toast.error when Error (toast examples) is clicked", async () => {
+		render(<ModuleB />);
+		const errorBtn = screen.getByRole("button", { name: /^Error$/ });
+		await act(async () => {
+			await userEvent.click(errorBtn);
+		});
+		expect(mockToast.error).toHaveBeenCalledWith({
+			title: "Error",
+			description: "Something went wrong. Please try again.",
+		});
+	});
+
+	it("calls toast.warning when Warning (toast examples) is clicked", async () => {
+		render(<ModuleB />);
+		const warningBtn = screen.getByRole("button", { name: /^Warning$/ });
+		await act(async () => {
+			await userEvent.click(warningBtn);
+		});
+		expect(mockToast.warning).toHaveBeenCalledWith({
+			title: "Warning",
+			description: "Please check your input.",
+		});
+	});
+
+	it("calls toast.info when Info (toast examples) is clicked", async () => {
+		render(<ModuleB />);
+		const infoBtn = screen.getByRole("button", { name: /^Info$/ });
+		await act(async () => {
+			await userEvent.click(infoBtn);
+		});
+		expect(mockToast.info).toHaveBeenCalledWith({
+			title: "Info",
+			description: "Here is some information.",
+		});
 	});
 });
 
