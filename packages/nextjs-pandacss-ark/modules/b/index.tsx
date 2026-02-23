@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/core/toast";
 import { css } from "@/styled-system/css";
 
 const rowStyles = css({
@@ -8,15 +9,90 @@ const rowStyles = css({
 	justifyContent: "center",
 });
 
+const sectionTitleStyles = css({
+	fontSize: "md",
+	fontWeight: "semibold",
+	marginBottom: "0.5rem",
+	width: "100%",
+});
+
 /**
  * Module B: business module entry. Aggregate features and coordinate interactions here.
  */
 export function ModuleB() {
+	const { toast } = useToast();
 	return (
 		<>
 			<ModuleBVariantSize />
 			<ModuleBFullWidthDisabled />
+			<ModuleBToastExamples toast={toast} />
 		</>
+	);
+}
+
+/**
+ * Toast API examples: trigger different toast types from button clicks.
+ * Use plain strings for title/description to avoid runtime issues with zag-js state.
+ */
+function ModuleBToastExamples({
+	toast,
+}: {
+	toast: ReturnType<typeof useToast>["toast"];
+}) {
+	return (
+		<div>
+			<p className={sectionTitleStyles}>Toast examples</p>
+			<div className={rowStyles}>
+				<Button
+					variant="primary"
+					size="sm"
+					onClick={() =>
+						toast.success({
+							title: "Success",
+							description: "Operation completed successfully.",
+						})
+					}
+				>
+					Success
+				</Button>
+				<Button
+					variant="danger"
+					size="sm"
+					onClick={() =>
+						toast.error({
+							title: "Error",
+							description: "Something went wrong. Please try again.",
+						})
+					}
+				>
+					Error
+				</Button>
+				<Button
+					variant="secondary"
+					size="sm"
+					onClick={() =>
+						toast.warning({
+							title: "Warning",
+							description: "Please check your input.",
+						})
+					}
+				>
+					Warning
+				</Button>
+				<Button
+					variant="ghost"
+					size="sm"
+					onClick={() =>
+						toast.info({
+							title: "Info",
+							description: "Here is some information.",
+						})
+					}
+				>
+					Info
+				</Button>
+			</div>
+		</div>
 	);
 }
 

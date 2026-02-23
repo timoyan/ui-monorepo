@@ -3,11 +3,13 @@ import type { AppProps } from "next/app";
 import { Provider } from "react-redux";
 import { store } from "@/core/store";
 import { useMSWReady } from "@/hooks/useMSWReady";
+import { AppToaster } from "@/components/ui/toast";
 
 function AppContent({ Component, pageProps }: AppProps) {
 	return (
 		<Provider store={store}>
 			<Component {...pageProps} />
+			<AppToaster />
 		</Provider>
 	);
 }

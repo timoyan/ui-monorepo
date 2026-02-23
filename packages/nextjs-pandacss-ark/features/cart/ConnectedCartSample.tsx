@@ -7,6 +7,7 @@ import {
 	useUpdateQuantityMutation,
 } from "@/apis/cart";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/core/toast";
 import { css } from "@/styled-system/css";
 
 const sectionStyles = css({
@@ -146,6 +147,7 @@ function CartItemRow({ item }: { item: CartItem }) {
 }
 
 export function ConnectedCartSample() {
+	const { toast } = useToast();
 	const { data: items = [], isLoading, error } = useGetCartQuery();
 	const [addToCart, { isLoading: isAdding }] = useAddToCartMutation();
 
@@ -207,6 +209,19 @@ export function ConnectedCartSample() {
 							productName: "Sample Product",
 							quantity: 1,
 						})
+							.unwrap()
+							.then(() => {
+								toast.success({
+									title: "Added to cart",
+									description: "Sample Product has been added.",
+								});
+							})
+							.catch(() => {
+								toast.error({
+									title: "Failed to add",
+									description: "Could not add item to cart.",
+								});
+							})
 					}
 				>
 					{isAdding ? "Adding…" : "Add item"}
