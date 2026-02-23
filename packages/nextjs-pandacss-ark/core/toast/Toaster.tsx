@@ -75,8 +75,10 @@ function ToastItem({
 	return (
 		<Toast.Root>
 			<Toast.Title>
-				{config?.icon != null ? config.icon : null}
-				{title}
+				
+					{config?.icon != null ? config.icon : null}
+					{title}
+				
 			</Toast.Title>
 			{hasDescription ? (
 				<Toast.Description>
