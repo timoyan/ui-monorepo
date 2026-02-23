@@ -2,3 +2,8 @@
 node_modules
 styled-system
 test-result/
+
+# mkcert certs for custom domain (e.g. local.timotest.com)
+certs/
+# Unused: Next.js auto-generated certs (we only use certs/ with mkcert)
+certificates/

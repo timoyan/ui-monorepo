@@ -1,0 +1,12 @@
+---
+description: All code comments and docstrings must be written in English
+alwaysApply: true
+---
+
+# Comments in English
+
+- **Code comments**: Write all inline comments, block comments, and JSDoc/TSDoc in **English**.
+- **Docstrings**: Use English for function/class/module documentation.
+- **TODO / FIXME**: Prefer English (e.g. `// TODO: refactor validation` instead of non-English text).
+
+This keeps the codebase consistent for contributors across locales and matches common open-source practice.

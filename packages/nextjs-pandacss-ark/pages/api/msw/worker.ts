@@ -5,7 +5,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 /** Resolve path to mockServiceWorker.js: try __dirname-relative first, then process.cwd() (for Vercel/Docker). */
 function getWorkerPath(): string | null {
 	const candidates = [
-		// 從 pages/api/msw/ 往上升三層到 package 根目錄
+		// From pages/api/msw/ go up three levels to package root
 		resolve(__dirname, "..", "..", "..", "msw", "mockServiceWorker.js"),
 		join(process.cwd(), "msw", "mockServiceWorker.js"),
 	];

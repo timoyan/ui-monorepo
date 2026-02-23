@@ -1,3 +1,4 @@
+import { getCartApiOrigin } from "@/apis/utils/getBaseUrlForEndpoint";
 import { HttpResponse, http } from "msw";
 import {
 	addToCart,
@@ -6,6 +7,8 @@ import {
 	updateQuantity,
 } from "./local-dev-store/cartStore";
 
+const cartBase = `${getCartApiOrigin()}/api`;
+
 /**
  * Dev-only handlers: used by the MSW browser worker in local development.
  * Cart handlers share one in-memory data source (cartStore).
@@ -13,11 +16,11 @@ import {
  * and mock endpoints per test via server.use().
  */
 export const devHandlers = [
-	http.get("http://test.com/api/cart", () => {
+	http.get(`${cartBase}/cart`, () => {
 		return HttpResponse.json(getCart());
 	}),
 
-	http.post("http://test.com/api/cart/add", async ({ request }) => {
+	http.post(`${cartBase}/cart/add`, async ({ request }) => {
 		const body = (await request.json()) as {
 			productId?: string;
 			productName?: string;
@@ -31,7 +34,7 @@ export const devHandlers = [
 		return HttpResponse.json(item);
 	}),
 
-	http.patch("http://test.com/api/cart/updateQuantity", async ({ request }) => {
+	http.patch(`${cartBase}/cart/updateQuantity`, async ({ request }) => {
 		const body = (await request.json()) as {
 			itemId?: string;
 			quantity?: number;
@@ -51,7 +54,7 @@ export const devHandlers = [
 		return HttpResponse.json(updated);
 	}),
 
-	http.delete("http://test.com/api/cart/remove", async ({ request }) => {
+	http.delete(`${cartBase}/cart/remove`, async ({ request }) => {
 		let itemId: string | undefined;
 		try {
 			const body = (await request.json()) as { itemId?: string };
