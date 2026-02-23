@@ -21,6 +21,7 @@ This file is the **canonical project rules** for AI coding agents. It is read by
 ## Testing (nextjs-pandacss-ark)
 
 - In `packages/nextjs-pandacss-ark/`: **Do not use snapshot tests** (`toMatchSnapshot`, `toMatchInlineSnapshot`). Prefer explicit assertions (e.g. `expect(...).toBe()`, DOM/state queries) so tests stay stable and intent is clear.
+- **Unit testing guide**: When writing or editing tests in that package, follow `packages/nextjs-pandacss-ark/UNIT_TESTING.md` (Redux isolation, MSW, createReduxRender, no global store).
 
 ---
 
