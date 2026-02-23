@@ -1,0 +1,9 @@
+---
+description: Follow project-wide rules from AGENTS.md (single source of truth for all editors)
+alwaysApply: true
+---
+
+# Follow AGENTS.md
+
+- Read and follow **AGENTS.md** at the project root. It is the canonical rules file for this repo (shared across Cursor, Gemini, Antigravity, etc.).
+- If there are AGENTS.md files in sub-folders, follow those too when working in that part of the codebase.
