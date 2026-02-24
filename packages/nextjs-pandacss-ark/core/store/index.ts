@@ -1,11 +1,14 @@
 import type { AnyAction } from "@reduxjs/toolkit";
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import { createWrapper, HYDRATE } from "next-redux-wrapper";
+import { useDispatch } from "react-redux";
 import { apiSlice } from "@/apis/apiSlice";
+import { flowSlice } from "@/core/flow/flowSlice";
 import { toastMiddleware } from "./toastMiddleware";
 
 const combinedReducer = combineReducers({
 	[apiSlice.reducerPath]: apiSlice.reducer,
+	[flowSlice.name]: flowSlice.reducer,
 });
 
 const rootReducer = (
@@ -32,6 +35,12 @@ export const NextReduxWrapper = createWrapper(makeStore);
 export type AppStore = ReturnType<typeof makeStore>;
 export type RootState = ReturnType<AppStore["getState"]>;
 export type AppDispatch = AppStore["dispatch"];
+
+/**
+ * Typed dispatch hook. Use this instead of useDispatch<AppDispatch>() so callers
+ * don't need to specify the generic.
+ */
+export const useAppDispatch = useDispatch.withTypes<AppDispatch>();
 
 /** Recursive partial: every key and nested key is optional. Use for preloadedState so only needed branches are passed. */
 export type DeepPartial<T> = {

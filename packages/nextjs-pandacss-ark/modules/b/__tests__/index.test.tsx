@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { act } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -8,6 +8,7 @@ import {
 	ModuleBVariantSize,
 } from "@/modules/b";
 import { useToast } from "@/core/toast";
+import { createReduxRender } from "@/test/renderWithRedux";
 
 const mockToast = {
 	create: vi.fn(),
@@ -23,6 +24,8 @@ vi.mock("@/core/toast", async (importOriginal) => {
 	return { ...actual, useToast: vi.fn() };
 });
 
+const { store, renderWithStore } = createReduxRender();
+
 describe("ModuleB", () => {
 	beforeEach(() => {
 		vi.mocked(useToast).mockImplementation(() => ({
@@ -37,7 +40,7 @@ describe("ModuleB", () => {
 		mockToast.warning.mockClear();
 	});
 	it("renders ModuleBVariantSize and ModuleBFullWidthDisabled", () => {
-		render(<ModuleB />);
+		renderWithStore(<ModuleB />);
 		expect(
 			screen.getByRole("button", { name: /primary sm/i }),
 		).toBeInTheDocument();
@@ -47,7 +50,7 @@ describe("ModuleB", () => {
 	});
 
 	it("calls toast.success when Success (toast examples) is clicked", async () => {
-		render(<ModuleB />);
+		renderWithStore(<ModuleB />);
 		const successBtn = screen.getByRole("button", { name: /^Success$/ });
 		await act(async () => {
 			await userEvent.click(successBtn);
@@ -59,7 +62,7 @@ describe("ModuleB", () => {
 	});
 
 	it("calls toast.error when Error (toast examples) is clicked", async () => {
-		render(<ModuleB />);
+		renderWithStore(<ModuleB />);
 		const errorBtn = screen.getByRole("button", { name: /^Error$/ });
 		await act(async () => {
 			await userEvent.click(errorBtn);
@@ -71,7 +74,7 @@ describe("ModuleB", () => {
 	});
 
 	it("calls toast.warning when Warning (toast examples) is clicked", async () => {
-		render(<ModuleB />);
+		renderWithStore(<ModuleB />);
 		const warningBtn = screen.getByRole("button", { name: /^Warning$/ });
 		await act(async () => {
 			await userEvent.click(warningBtn);
@@ -83,7 +86,7 @@ describe("ModuleB", () => {
 	});
 
 	it("calls toast.info when Info (toast examples) is clicked", async () => {
-		render(<ModuleB />);
+		renderWithStore(<ModuleB />);
 		const infoBtn = screen.getByRole("button", { name: /^Info$/ });
 		await act(async () => {
 			await userEvent.click(infoBtn);
@@ -97,7 +100,7 @@ describe("ModuleB", () => {
 
 describe("ModuleBVariantSize", () => {
 	it("renders primary size buttons (SM, MD, LG)", () => {
-		render(<ModuleBVariantSize />);
+		renderWithStore(<ModuleBVariantSize />);
 		expect(
 			screen.getByRole("button", { name: /primary sm/i }),
 		).toBeInTheDocument();
@@ -110,25 +113,67 @@ describe("ModuleBVariantSize", () => {
 	});
 
 	it("renders secondary, danger, and ghost buttons", () => {
-		render(<ModuleBVariantSize />);
+		renderWithStore(<ModuleBVariantSize />);
 		expect(
 			screen.getByRole("button", { name: /secondary/i }),
 		).toBeInTheDocument();
 		expect(screen.getByRole("button", { name: /danger/i })).toBeInTheDocument();
 		expect(screen.getByRole("button", { name: /ghost/i })).toBeInTheDocument();
 	});
+
+	it("dispatches setModuleState for B1 when flow state buttons are clicked", async () => {
+		renderWithStore(<ModuleBVariantSize />);
+		await act(async () => {
+			await userEvent.click(screen.getByRole("button", { name: /set init/i }));
+		});
+		expect(store.getState().flow.modulesState.B1).toMatchObject({
+			name: "B1",
+			state: "INIT",
+			message: "Module B1 (variant/size) reset",
+		});
+		await act(async () => {
+			await userEvent.click(
+				screen.getByRole("button", { name: /set processing/i }),
+			);
+		});
+		expect(store.getState().flow.modulesState.B1).toMatchObject({
+			name: "B1",
+			state: "PROCESSING",
+			message: "Processing from B1…",
+		});
+		await act(async () => {
+			await userEvent.click(
+				screen.getByRole("button", { name: /set completed/i }),
+			);
+		});
+		expect(store.getState().flow.modulesState.B1).toMatchObject({
+			name: "B1",
+			state: "COMPLETED",
+			message: "Module B1 completed",
+		});
+		await act(async () => {
+			await userEvent.click(
+				screen.getByRole("button", { name: /set failed/i }),
+			);
+		});
+		expect(store.getState().flow.modulesState.B1).toMatchObject({
+			name: "B1",
+			state: "FAILED",
+			message: "Error from Module B1",
+		});
+	});
 });
 
 describe("ModuleBFullWidthDisabled", () => {
 	it("renders Full Width Primary button", () => {
-		render(<ModuleBFullWidthDisabled />);
+		renderWithStore(<ModuleBFullWidthDisabled />);
 		expect(
 			screen.getByRole("button", { name: /full width primary/i }),
 		).toBeInTheDocument();
 	});
 
 	it("renders disabled Primary and Danger buttons", () => {
-		render(<ModuleBFullWidthDisabled />);
+		renderWithStore(<ModuleBFullWidthDisabled />);
 		const disabledPrimary = screen.getByRole("button", {
 			name: /disabled primary/i,
 		});
@@ -137,5 +182,47 @@ describe("ModuleBFullWidthDisabled", () => {
 		});
 		expect(disabledPrimary).toBeDisabled();
 		expect(disabledDanger).toBeDisabled();
+	});
+
+	it("dispatches setModuleState for B2 when flow state buttons are clicked", async () => {
+		renderWithStore(<ModuleBFullWidthDisabled />);
+		await act(async () => {
+			await userEvent.click(screen.getByRole("button", { name: /set init/i }));
+		});
+		expect(store.getState().flow.modulesState.B2).toMatchObject({
+			name: "B2",
+			state: "INIT",
+			message: "Module B2 (fullWidth/disabled) reset",
+		});
+		await act(async () => {
+			await userEvent.click(
+				screen.getByRole("button", { name: /set processing/i }),
+			);
+		});
+		expect(store.getState().flow.modulesState.B2).toMatchObject({
+			name: "B2",
+			state: "PROCESSING",
+			message: "Loading from B2…",
+		});
+		await act(async () => {
+			await userEvent.click(
+				screen.getByRole("button", { name: /set completed/i }),
+			);
+		});
+		expect(store.getState().flow.modulesState.B2).toMatchObject({
+			name: "B2",
+			state: "COMPLETED",
+			message: "Module B2 completed",
+		});
+		await act(async () => {
+			await userEvent.click(
+				screen.getByRole("button", { name: /set failed/i }),
+			);
+		});
+		expect(store.getState().flow.modulesState.B2).toMatchObject({
+			name: "B2",
+			state: "FAILED",
+			message: "Error from Module B2",
+		});
 	});
 });

@@ -4,27 +4,59 @@ import type { ReactElement } from "react";
 import type { AppStore, DeepPartial, RootState } from "@/core/store";
 import { createTestStore } from "@/core/store";
 
+export interface RenderWithStoreOptions {
+	/** Deep partial initial state for this render (e.g. prefilled cart from API slice). */
+	preloadedState?: DeepPartial<RootState>;
+}
+
+export type RenderResultWithStore = RenderResult & { store: AppStore };
+
+/**
+ * Renders UI with a Redux Provider. Creates a new store per call (optionally with preloadedState).
+ * Use when you need a Redux-backed render and/or want to pass preloadedState per test.
+ *
+ * @param ui - React element to render
+ * @param options.preloadedState - Optional partial state to seed the store for this render
+ * @returns RTL render result plus `store` (the store used for this render)
+ */
+export function renderWithStore(
+	ui: ReactElement,
+	options?: RenderWithStoreOptions,
+): RenderResultWithStore {
+	const store = createTestStore(options?.preloadedState);
+	const result = render(<Provider store={store}>{ui}</Provider>);
+	return { ...result, store };
+}
+
 export interface CreateReduxRenderOptions {
-	/** Deep partial initial state (only the branches you need, e.g. one API query). */
+	/** Deep partial initial state for the shared store (used when renderWithStore is called without options). */
 	preloadedState?: DeepPartial<RootState>;
 }
 
 /**
- * Creates a Redux store and a render function that wraps UI with the store's Provider.
- * Use in tests that need a Redux-backed render. Reset API state in beforeEach if needed:
- * `beforeEach(() => store.dispatch(apiSlice.util.resetApiState()))`.
+ * Creates a shared Redux store and a render function that uses it.
+ * Use when many tests in the same file share one store and you don't need different preloadedState per test.
+ * For per-call preloadedState, use the standalone `renderWithStore(ui, { preloadedState })` instead.
  *
- * @param options.preloadedState - Optional partial state to seed the store (e.g. prefilled cart from API slice).
+ * @param options.preloadedState - Optional partial state to seed the shared store
  */
 export function createReduxRender(options?: CreateReduxRenderOptions): {
 	store: AppStore;
-	renderWithStore: (ui: ReactElement) => RenderResult;
+	renderWithStore: (
+		ui: ReactElement,
+		callOptions?: RenderWithStoreOptions,
+	) => RenderResultWithStore;
 } {
 	const store = createTestStore(options?.preloadedState);
 	return {
 		store,
-		renderWithStore(ui: ReactElement) {
-			return render(<Provider store={store}>{ui}</Provider>);
+		renderWithStore(ui: ReactElement, callOptions?: RenderWithStoreOptions) {
+			const storeToUse =
+				callOptions?.preloadedState !== undefined
+					? createTestStore(callOptions.preloadedState)
+					: store;
+			const result = render(<Provider store={storeToUse}>{ui}</Provider>);
+			return { ...result, store: storeToUse };
 		},
 	};
 }

@@ -4,6 +4,7 @@ import { act } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { DynamicToastDescription, ModuleA } from "@/modules/a";
 import { useToast } from "@/core/toast";
+import { createReduxRender } from "@/test/renderWithRedux";
 
 const mockToast = {
 	create: vi.fn(),
@@ -22,6 +23,8 @@ vi.mock("@/core/toast", async (importOriginal) => {
 	};
 });
 
+const { store, renderWithStore } = createReduxRender();
+
 describe("ModuleA", () => {
 	afterEach(() => {
 		mockToast.success.mockClear();
@@ -35,7 +38,7 @@ describe("ModuleA", () => {
 		});
 	});
 	it("renders accordion triggers for PandaCSS and Ark UI", () => {
-		render(<ModuleA />);
+		renderWithStore(<ModuleA />);
 		expect(
 			screen.getByRole("button", { name: /what is pandacss\?/i }),
 		).toBeInTheDocument();
@@ -45,14 +48,14 @@ describe("ModuleA", () => {
 	});
 
 	it("renders PandaCSS content when first item is expanded by default", () => {
-		render(<ModuleA />);
+		renderWithStore(<ModuleA />);
 		expect(
 			screen.getByText(/PandaCSS is a build-time CSS-in-JS framework/i),
 		).toBeInTheDocument();
 	});
 
 	it("renders Ark UI content when second trigger is clicked", async () => {
-		render(<ModuleA />);
+		renderWithStore(<ModuleA />);
 		const arkTrigger = screen.getByRole("button", {
 			name: /what is ark ui\?/i,
 		});
@@ -64,10 +67,10 @@ describe("ModuleA", () => {
 		).toBeInTheDocument();
 	});
 
-	it("renders two accordion triggers and five toast demo buttons", () => {
-		render(<ModuleA />);
+	it("renders two accordion triggers, five toast demo buttons, and four flow state buttons", () => {
+		renderWithStore(<ModuleA />);
 		const buttons = screen.getAllByRole("button");
-		expect(buttons).toHaveLength(7);
+		expect(buttons).toHaveLength(11);
 		expect(
 			screen.getByRole("button", { name: /success toast/i }),
 		).toBeInTheDocument();
@@ -85,10 +88,22 @@ describe("ModuleA", () => {
 				name: /toast \(one-time dynamic \+ react component\)/i,
 			}),
 		).toBeInTheDocument();
+		expect(
+			screen.getByRole("button", { name: /set init/i }),
+		).toBeInTheDocument();
+		expect(
+			screen.getByRole("button", { name: /set processing/i }),
+		).toBeInTheDocument();
+		expect(
+			screen.getByRole("button", { name: /set completed/i }),
+		).toBeInTheDocument();
+		expect(
+			screen.getByRole("button", { name: /set failed/i }),
+		).toBeInTheDocument();
 	});
 
 	it("calls toast.success when Success toast is clicked", async () => {
-		render(<ModuleA />);
+		renderWithStore(<ModuleA />);
 		await act(async () => {
 			await userEvent.click(
 				screen.getByRole("button", { name: /success toast/i }),
@@ -101,7 +116,7 @@ describe("ModuleA", () => {
 	});
 
 	it("calls toast.info when Info toast is clicked", async () => {
-		render(<ModuleA />);
+		renderWithStore(<ModuleA />);
 		await act(async () => {
 			await userEvent.click(
 				screen.getByRole("button", { name: /info toast/i }),
@@ -114,7 +129,7 @@ describe("ModuleA", () => {
 	});
 
 	it("calls toast.success with registry contentKey when Toast (registry) is clicked", async () => {
-		render(<ModuleA />);
+		renderWithStore(<ModuleA />);
 		await act(async () => {
 			await userEvent.click(
 				screen.getByRole("button", { name: /toast \(registry\)/i }),
@@ -130,7 +145,7 @@ describe("ModuleA", () => {
 	});
 
 	it("calls toast.success with success-html contentKey when Toast (HTML via registry) is clicked", async () => {
-		render(<ModuleA />);
+		renderWithStore(<ModuleA />);
 		await act(async () => {
 			await userEvent.click(
 				screen.getByRole("button", { name: /toast \(html via registry\)/i }),
@@ -183,7 +198,7 @@ describe("ModuleA", () => {
 			toast: mockToast,
 			registerAndToast: mockRegisterAndToast,
 		});
-		render(<ModuleA />);
+		renderWithStore(<ModuleA />);
 		await act(async () => {
 			await userEvent.click(
 				screen.getByRole("button", {
@@ -199,13 +214,67 @@ describe("ModuleA", () => {
 		);
 	});
 
+	it("dispatches setModuleState with INIT when Set INIT is clicked", async () => {
+		renderWithStore(<ModuleA />);
+		await act(async () => {
+			await userEvent.click(screen.getByRole("button", { name: /set init/i }));
+		});
+		expect(store.getState().flow.modulesState.A).toMatchObject({
+			name: "A",
+			state: "INIT",
+			message: "Module A reset",
+		});
+	});
+
+	it("dispatches setModuleState with PROCESSING when Set PROCESSING is clicked", async () => {
+		renderWithStore(<ModuleA />);
+		await act(async () => {
+			await userEvent.click(
+				screen.getByRole("button", { name: /set processing/i }),
+			);
+		});
+		expect(store.getState().flow.modulesState.A).toMatchObject({
+			name: "A",
+			state: "PROCESSING",
+			message: "Loading…",
+		});
+	});
+
+	it("dispatches setModuleState with COMPLETED when Set COMPLETED is clicked", async () => {
+		renderWithStore(<ModuleA />);
+		await act(async () => {
+			await userEvent.click(
+				screen.getByRole("button", { name: /set completed/i }),
+			);
+		});
+		expect(store.getState().flow.modulesState.A).toMatchObject({
+			name: "A",
+			state: "COMPLETED",
+			message: "Done",
+		});
+	});
+
+	it("dispatches setModuleState with FAILED when Set FAILED is clicked", async () => {
+		renderWithStore(<ModuleA />);
+		await act(async () => {
+			await userEvent.click(
+				screen.getByRole("button", { name: /set failed/i }),
+			);
+		});
+		expect(store.getState().flow.modulesState.A).toMatchObject({
+			name: "A",
+			state: "FAILED",
+			message: "Error from Module A",
+		});
+	});
+
 	it("calling onTriggerAnother from dynamic toast content triggers registerAndToast for Second toast (showSecondToast)", async () => {
 		const mockRegisterAndToast = vi.fn();
 		vi.mocked(useToast).mockReturnValue({
 			toast: mockToast,
 			registerAndToast: mockRegisterAndToast,
 		});
-		render(<ModuleA />);
+		renderWithStore(<ModuleA />);
 		await act(async () => {
 			await userEvent.click(
 				screen.getByRole("button", {

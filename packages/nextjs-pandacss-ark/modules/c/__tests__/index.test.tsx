@@ -69,4 +69,70 @@ describe("ModuleC", () => {
 			description: "Toast can be triggered from any module.",
 		});
 	});
+
+	it("updates flow state to INIT when Set INIT is clicked", async () => {
+		server.use(
+			http.get("http://test.com/api/cart", () => HttpResponse.json([])),
+		);
+		renderWithStore(<ModuleC />);
+		await act(async () => {
+			await userEvent.click(screen.getByRole("button", { name: /set init/i }));
+		});
+		expect(store.getState().flow.modulesState.C).toMatchObject({
+			name: "C",
+			state: "INIT",
+			message: "Module C (cart) reset",
+		});
+	});
+
+	it("updates flow state to PROCESSING when Set PROCESSING is clicked", async () => {
+		server.use(
+			http.get("http://test.com/api/cart", () => HttpResponse.json([])),
+		);
+		renderWithStore(<ModuleC />);
+		await act(async () => {
+			await userEvent.click(
+				screen.getByRole("button", { name: /set processing/i }),
+			);
+		});
+		expect(store.getState().flow.modulesState.C).toMatchObject({
+			name: "C",
+			state: "PROCESSING",
+			message: "Loading cart…",
+		});
+	});
+
+	it("updates flow state to COMPLETED when Set COMPLETED is clicked", async () => {
+		server.use(
+			http.get("http://test.com/api/cart", () => HttpResponse.json([])),
+		);
+		renderWithStore(<ModuleC />);
+		await act(async () => {
+			await userEvent.click(
+				screen.getByRole("button", { name: /set completed/i }),
+			);
+		});
+		expect(store.getState().flow.modulesState.C).toMatchObject({
+			name: "C",
+			state: "COMPLETED",
+			message: "Cart ready",
+		});
+	});
+
+	it("updates flow state to FAILED when Set FAILED is clicked", async () => {
+		server.use(
+			http.get("http://test.com/api/cart", () => HttpResponse.json([])),
+		);
+		renderWithStore(<ModuleC />);
+		await act(async () => {
+			await userEvent.click(
+				screen.getByRole("button", { name: /set failed/i }),
+			);
+		});
+		expect(store.getState().flow.modulesState.C).toMatchObject({
+			name: "C",
+			state: "FAILED",
+			message: "Error from Module C",
+		});
+	});
 });
