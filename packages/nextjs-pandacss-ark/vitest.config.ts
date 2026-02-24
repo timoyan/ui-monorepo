@@ -28,7 +28,7 @@ export default defineConfig({
 		],
 		coverage: {
 			provider: "istanbul",
-			reporter: ["lcov"],
+			reporter: ["text-summary", "lcov"],
 			reportsDirectory: "test-result/coverage",
 			exclude: [
 				"**/node_modules/**",

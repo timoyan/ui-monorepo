@@ -5,6 +5,7 @@ import {
 	AccordionItemTrigger,
 } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
+import { useFlow } from "@/core/flow/useFlow";
 import { registerToastContent, useToast } from "@/core/toast";
 import { css } from "@/styled-system/css";
 
@@ -73,8 +74,17 @@ export function DynamicToastDescription({
 /**
  * Module A: business module entry. Aggregate features and coordinate interactions here.
  */
+const flowStateRowStyles = css({
+	display: "flex",
+	gap: "0.5rem",
+	flexWrap: "wrap",
+	marginTop: "1rem",
+	alignItems: "center",
+});
+
 export function ModuleA() {
 	const { toast, registerAndToast } = useToast();
+	const { setModuleState } = useFlow();
 
 	const showSecondToast = () => {
 		registerAndToast(
@@ -189,6 +199,63 @@ export function ModuleA() {
 				</Button>
 				<Button variant="secondary" size="sm" onClick={showDynamicToast}>
 					Toast (one-time dynamic + React component)
+				</Button>
+			</div>
+			<div className={flowStateRowStyles}>
+				<span className={css({ fontSize: "sm", color: "gray.600" })}>
+					Flow state (module A):
+				</span>
+				<Button
+					variant="secondary"
+					size="sm"
+					onClick={() =>
+						setModuleState({
+							name: "A",
+							state: "INIT",
+							message: "Module A reset",
+						})
+					}
+				>
+					Set INIT
+				</Button>
+				<Button
+					variant="secondary"
+					size="sm"
+					onClick={() =>
+						setModuleState({
+							name: "A",
+							state: "PROCESSING",
+							message: "Loading…",
+						})
+					}
+				>
+					Set PROCESSING
+				</Button>
+				<Button
+					variant="secondary"
+					size="sm"
+					onClick={() =>
+						setModuleState({
+							name: "A",
+							state: "COMPLETED",
+							message: "Done",
+						})
+					}
+				>
+					Set COMPLETED
+				</Button>
+				<Button
+					variant="danger"
+					size="sm"
+					onClick={() =>
+						setModuleState({
+							name: "A",
+							state: "FAILED",
+							message: "Error from Module A",
+						})
+					}
+				>
+					Set FAILED
 				</Button>
 			</div>
 		</div>

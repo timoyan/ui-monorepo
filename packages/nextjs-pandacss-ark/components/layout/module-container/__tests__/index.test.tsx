@@ -66,6 +66,26 @@ describe("ModuleContainer", () => {
 				document.querySelector("[data-module='my-module']"),
 			).toBeInTheDocument();
 		});
+
+		it("applies bordered styles when bordered is true and collapsible is false", () => {
+			const { container: noBorderContainer } = render(
+				<ModuleContainer bordered={false}>
+					<div>Body</div>
+				</ModuleContainer>,
+			);
+			const { container: withBorderContainer } = render(
+				<ModuleContainer bordered collapsible={false}>
+					<div>Body</div>
+				</ModuleContainer>,
+			);
+			const sectionNoBorder = noBorderContainer.querySelector("section");
+			const sectionWithBorder = withBorderContainer.querySelector("section");
+			expect(sectionWithBorder?.className).toBeDefined();
+			expect(sectionWithBorder?.className).not.toBe(sectionNoBorder?.className);
+			expect(
+				sectionWithBorder?.className.split(/\s+/).length,
+			).toBeGreaterThanOrEqual(sectionNoBorder?.className.split(/\s+/).length);
+		});
 	});
 
 	describe("collapsible mode", () => {
