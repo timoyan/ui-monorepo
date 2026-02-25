@@ -1,5 +1,13 @@
 #!/usr/bin/env sh
 set -e
 
+# Run lint:test only for workspace packages that define it
+for dir in packages/*/; do
+	if [ -f "${dir}package.json" ] && grep -q '"lint:test"' "${dir}package.json" 2>/dev/null; then
+		pkg=$(basename "$dir")
+		pnpm --filter "$pkg" run lint:test
+	fi
+done
+
 pnpm lint-staged
 

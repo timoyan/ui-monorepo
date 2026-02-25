@@ -38,16 +38,6 @@ beforeEach(() => {
 });
 
 describe("ConnectedCartSample", () => {
-	// 僅用於驗證 lint:test 會擋 snapshot，驗證完請刪除此 test
-	it("snapshot placeholder (remove after verifying lint:test)", async () => {
-		server.use(
-			http.get("http://test.com/api/cart", () => HttpResponse.json([])),
-		);
-		const { container } = renderWithStore(<ConnectedCartSample />);
-		await screen.findByText(/Cart is empty/i);
-		expect(container.firstChild).toMatchSnapshot();
-	});
-
 	it("renders loading state while fetching cart", async () => {
 		server.use(
 			http.get("http://test.com/api/cart", async () => {
