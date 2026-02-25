@@ -15,9 +15,7 @@
 			"!.cache",
 			"!coverage",
 			"!out",
-			"!**/*.tsbuildinfo",
-			"!playwright-report",
-			"!.playwright"
+			"!**/*.tsbuildinfo"
 		]
 	},
 	"overrides": [

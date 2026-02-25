@@ -6,16 +6,12 @@ package-lock.json
 build/
 dist/
 .next/
-.stencil/
-storybook-static/
-packages/*/storybook-static/
 
 # Logs
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
-debug-storybook.log
 
 # Editor/OS
 .DS_Store
@@ -31,13 +27,9 @@ debug-storybook.log
 
 # testing
 /coverage
-/test-results/
-/playwright-report/
-/playwright/.cache/
 
 # production
 /build
-/storybook-static
 
 # misc
 .DS_Store
@@ -64,7 +56,3 @@ tsconfig.tsbuildinfo
 # Generated type declarations
 build-types/
 packages/*/build-types/
-
-# Playwright
-/blob-report/
-/playwright/.auth/

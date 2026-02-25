@@ -37,8 +37,7 @@ The Google Chrome DevTools MCP server allows AI assistants to interact with brow
 
 3. **Usage**:
    - The MCP server enables browser automation through Cursor
-   - Use it for E2E testing, debugging, and browser interactions
-   - Works alongside Playwright for comprehensive testing
+   - Use it for debugging and browser interactions
    - Access browser tools via AI assistant commands
 
 ### Reference

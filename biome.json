@@ -18,25 +18,16 @@
 			"!packages/*/build-types",
 			"!packages/*/.next",
 			"!packages/*/dist",
-			"!packages/module-library/loader",
-			"!packages/module-library/react",
-			"!packages/module-library/src/components.d.ts",
-			"!packages/module-library/test",
 			"!**/mockServiceWorker.js",
 			"!**/styled-system",
 			"!**/test-result",
 			"!**/test-results",
 			"!**/next-env.d.ts",
-			"!**/.stencil",
-			"!**/.storybook",
 			"!**/coverage",
 			"!**/out",
 			"!**/*.tsbuildinfo",
 			"!.turbo",
-			"!.cache",
-			"!playwright-report",
-			"!test-results",
-			"!.playwright"
+			"!.cache"
 		]
 	}
 }

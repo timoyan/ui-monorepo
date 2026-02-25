@@ -20,7 +20,7 @@ So: **modules call setModuleState(payload) → Redux flow slice updates modulesS
 - **Cookie confirm** — `cookieConfirmResult` is `{ isAccept: true | false | null }`. `isAccept === null` means the user has not chosen yet (show dialog). Both **setCookieConfirm(true)** (accept) and **setCookieConfirm(false)** (decline) close the dialog; the value is persisted in **sessionStorage** so the dialog does not reappear on refresh. On client mount, `useFlow` syncs from sessionStorage into Redux.
 - **Currency switch** — **currencySwitchDialogOpen** is a boolean controlled by user operations. Call **setCurrencySwitchDialogOpen(true)** to open (e.g. from a header “Currency” button) and **setCurrencySwitchDialogOpen(false)** to close. Whether to show the dialog is derived from current user operation state (e.g. after user triggers a currency change).
 
-See `CookieConfirmDialog` and `CurrencySwitchDialog` in `components/dialogs/` for usage.
+See `CookieConfirmDialog` and `CurrencySwitchDialog` in `features/dialogs/` for usage.
 
 ## Active module
 

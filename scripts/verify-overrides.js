@@ -180,6 +180,18 @@ for (const pkg of packagesToCheck) {
 					);
 				}
 			}
+			// For caret ranges like ^7.0.0 (>=7.0.0 <8.0.0)
+			if (expectedVersion.startsWith("^")) {
+				const rest = expectedVersion.slice(1).trim();
+				const parts = rest.split(".");
+				const minVersion = rest;
+				const major = Number.parseInt(parts[0], 10) || 0;
+				const maxVersion = `${major + 1}.0.0`;
+				return (
+					compareVersions(version, minVersion) >= 0 &&
+					compareVersions(version, maxVersion) < 0
+				);
+			}
 			// For exact versions or other patterns, do simple string matching
 			return version.includes(expectedVersion.replace(/[^0-9.]/g, ""));
 		});

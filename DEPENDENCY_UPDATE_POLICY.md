@@ -50,7 +50,7 @@ This project uses **pnpm**; the lockfile is `pnpm-lock.yaml`.
 |------|--------------------|
 | **Add / remove dependency** | Run `pnpm install`, then commit updated `package.json` and `pnpm-lock.yaml`. |
 | **Weekly / bi-weekly** | Run `pnpm outdated`, then `pnpm up -i` to upgrade chosen packages; run tests and commit. |
-| **Monthly / quarterly** | Broader upgrade (e.g. React, Next, build tools) with `pnpm up -i` or `pnpm update`; run full test and E2E, then commit. |
+| **Monthly / quarterly** | Broader upgrade (e.g. React, Next, build tools) with `pnpm up -i` or `pnpm update`; run full test suite, then commit. |
 | **Security advisory** | Run `pnpm audit`, apply recommended fixes; or `pnpm add <pkg>@<patch-version>` for a single package, then commit lockfile. |
 
 ### Short workflow
@@ -82,4 +82,3 @@ To require a specific Node version for a package (e.g. Node 22 only), add to tha
 ## 5. Related docs
 
 - [PNPM_OVERRIDES_GUIDE.md](./PNPM_OVERRIDES_GUIDE.md) — pnpm overrides usage
-- [VERSION_DOCUMENTATION.md](./VERSION_DOCUMENTATION.md) — React and other version requirements and documentation

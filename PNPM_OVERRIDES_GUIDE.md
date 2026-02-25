@@ -171,7 +171,7 @@ If duplicates exist, it will show them and you may need to run `pnpm install` ag
    - `">=1.2.3 <1.3.0"` allows patch updates only
 
 4. **Document why overrides are needed**
-   - Add comments in `package.json` or document in `SECURITY.md`
+   - Add comments in `package.json` or document in the repo README
    - Reference security advisories or compatibility issues
 
 5. **Regularly audit overrides**
@@ -227,6 +227,5 @@ Or use the clean-install script:
 ## Related Documentation
 
 - [pnpm Overrides Documentation](https://pnpm.io/package_json#pnpmoverrides)
-- [SECURITY.md](./SECURITY.md) - Security advisories and override examples
 - [README.md](./README.md) - General project documentation
 
