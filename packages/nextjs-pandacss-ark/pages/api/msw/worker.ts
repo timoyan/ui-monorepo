@@ -16,7 +16,10 @@ function getWorkerPath(): string | null {
 }
 
 export default function handler(_req: NextApiRequest, res: NextApiResponse) {
-	if (process.env.NODE_ENV !== "development") {
+	const isDev = process.env.NODE_ENV === "development";
+	const isMswEnabled = process.env.NEXT_PUBLIC_ENABLE_MSW === "1";
+
+	if (!isDev && !isMswEnabled) {
 		res.status(404).end();
 		return;
 	}

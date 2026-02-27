@@ -2,21 +2,21 @@ import { useEffect, useState } from "react";
 import { devOptions } from "@/mocks/config";
 
 /**
- * Starts the MSW worker in development and returns whether it is ready.
- * In dev, wait for this before rendering so the first API requests are mocked.
- * Initial state is false in dev (server and client) to avoid hydration mismatch;
- * production (and server) use true so the app renders immediately.
+ * Starts the MSW worker when enabled and returns whether it is ready.
+ * In environments where MSW is enabled (development or when NEXT_PUBLIC_ENABLE_MSW=1),
+ * wait for this before rendering so the first API requests are mocked.
+ * Initial state is false when MSW is enabled to avoid hydration mismatch;
+ * other environments use true so the app renders immediately.
  */
 export function useMSWReady(): boolean {
-	const [ready, setReady] = useState(
-		() => process.env.NODE_ENV !== "development",
-	);
+	const isMswEnabled =
+		process.env.NODE_ENV === "development" ||
+		process.env.NEXT_PUBLIC_ENABLE_MSW === "1";
+
+	const [ready, setReady] = useState(() => !isMswEnabled);
 
 	useEffect(() => {
-		if (
-			process.env.NODE_ENV !== "development" ||
-			typeof window === "undefined"
-		) {
+		if (!isMswEnabled || typeof window === "undefined") {
 			return;
 		}
 		import("@/mocks/browser")
@@ -36,7 +36,7 @@ export function useMSWReady(): boolean {
 				// until the worker is successfully started
 				console.error("Failed to start MSW worker:", error);
 			});
-	}, []);
+	}, [isMswEnabled]);
 
 	return ready;
 }
