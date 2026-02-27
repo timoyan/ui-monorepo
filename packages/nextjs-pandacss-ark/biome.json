@@ -20,7 +20,10 @@
 	},
 	"overrides": [
 		{
-			"includes": ["components/features/**"],
+			"includes": [
+				"components/features/**",
+				"!components/features/**/__tests__/**"
+			],
 			"linter": {
 				"rules": {
 					"style": {
@@ -31,6 +34,43 @@
 									{
 										"group": ["@/components/features/*"],
 										"message": "Features cannot import each other. Please compose features through upper layers (e.g., modules, pages)."
+									},
+									{
+										"group": [
+											"react-redux",
+											"@reduxjs/toolkit",
+											"@/core/store",
+											"@/apis/*"
+										],
+										"message": "components/features must not use Redux or RTK Query directly. Use wrapped hooks (e.g. useCart, useFlow) or props instead."
+									}
+								]
+							}
+						}
+					}
+				}
+			}
+		},
+		{
+			"includes": [
+				"components/composed/**",
+				"!components/composed/**/__tests__/**"
+			],
+			"linter": {
+				"rules": {
+					"style": {
+						"noRestrictedImports": {
+							"level": "error",
+							"options": {
+								"patterns": [
+									{
+										"group": [
+											"@/components/composed/*",
+											"@/components/layout/*",
+											"@/components/features/*",
+											"@/modules/*"
+										],
+										"message": "components/composed may only compose atomics (plus external libs). Do not depend on layout, features, or modules directly."
 									}
 								]
 							}

@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import type { CartItem } from "@/apis/cart";
 import { Button } from "@/components/atomics/button";
 import { css } from "@/styled-system/css";
 
@@ -48,8 +47,15 @@ const quantityInputStyles = css({
 	borderColor: "gray.300",
 });
 
+export interface CartItemViewModel {
+	id: string;
+	productId: string;
+	productName: string;
+	quantity: number;
+}
+
 export interface CartSampleProps {
-	items: CartItem[];
+	items: CartItemViewModel[];
 	isLoading: boolean;
 	error: boolean;
 	onAddItem: () => void;
@@ -66,7 +72,7 @@ function CartItemRow({
 	onRemove,
 	busy,
 }: {
-	item: CartItem;
+	item: CartItemViewModel;
 	onUpdateQuantity: (itemId: string, quantity: number) => void;
 	onRemove: (itemId: string) => void;
 	busy: boolean;

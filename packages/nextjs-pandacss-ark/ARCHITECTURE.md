@@ -58,7 +58,7 @@ nextjs-pandacss-ark/
     └── server.ts
 ```
 
-## Layer Responsibilities
+## Layer Responsibilities & Trade-offs
 
 ### Core (App-level)
 
@@ -159,7 +159,9 @@ export function ShippingAddressModule() {
 
 **Purpose**: Independent business features that can be used by multiple modules, or as sub-features within a module
 
-**Rule — no direct Redux in `components/features/`**: Code in the `components/features/` folder must **not** use Redux directly (no `useSelector`, `useDispatch`, or RTK Query hooks like `useGetCartQuery`). Use **wrapped APIs** provided by core or other layers instead (e.g. `useFlow`, `useCart`). This keeps features decoupled from the store and testable with plain props/mocks.
+**Rule — no direct Redux in `components/features/`**: Code in the `components/features/` folder must **not** use Redux directly (no `useSelector`, `useDispatch`, or RTK Query hooks like `useGetCartQuery`). Use **wrapped APIs** provided by core or other layers instead (e.g. `useFlow`, `useCart`). This keeps features decoupled from the store and testable with plain props/mocks. This rule is also enforced by Biome (see "Linting & Constraints").
+
+**Rule — avoid API types in components**: UI components (`components/**`, especially `components/features/**`) should not import API-layer types (e.g. from `@/apis/*`). Prefer defining view-model interfaces in the UI layer and mapping from API types in upper layers (modules, hooks). The only exception is when a component is the direct caller of an RTK Query hook and needs that type for the hook itself; in that case the component should usually live outside `components/features/` (e.g. in a module or page).
 
 **Responsibilities**:
 - Implement a single business feature
@@ -262,6 +264,8 @@ Tests are placed next to the feature/component they cover（例如同層的 `__t
 - **Components**: Use UI component names (e.g., `button`, `accordion`, `input`, `autocomplete`)
 - **Test files**: `*.test.tsx` or `*.test.ts`
 
+**Trade-off**: This separation improves reusability and testability, but adds some structural overhead for very small features. For quick prototypes or small one-off pages, it is acceptable to start with a simpler structure and extract modules/features once the use case stabilizes.
+
 ## Modules vs Features Decision Guide
 
 **When to create a Module?**
@@ -275,6 +279,20 @@ Tests are placed next to the feature/component they cover（例如同層的 `__t
 **When to create a Module-specific Feature (in `modules/{module-name}/features/` directory)?**
 - When the feature is only used within a specific module, and that module needs to combine multiple related features
 - Example: `saved-addresses-list` is only used within the `shipping-address` module
+
+## Linting & Constraints (Biome)
+
+To keep the layering rules enforceable (not only by documentation), we use Biome overrides in this package:
+
+- **components/features/**
+  - **Cannot import other features**: imports from `@/components/features/*` are forbidden. Features must be composed through upper layers (e.g. modules, pages).
+  - **Cannot use Redux / RTK Query directly**: imports from `react-redux`, `@reduxjs/toolkit`, `@/core/store`, and `@/apis/*` are forbidden. Use wrapped hooks (e.g. `useCart`, `useFlow`) or props instead.
+- **components/composed/**
+  - **Can only compose atomics (plus external libs)**: imports from `@/components/composed/*`, `@/components/layout/*`, `@/components/features/*`, and `@/modules/*` are forbidden. Composed components should stay as pure UI compositions built on top of atomics.
+- **modules/**
+  - **Modules cannot import each other**: imports from `@/modules/*` inside `modules/**` are forbidden (except tests). Cross-module composition should happen in pages or higher-level orchestrators.
+
+These constraints mirror the architecture decisions in this document so that violations are caught automatically during development and CI.
 
 ## Import Paths
 
