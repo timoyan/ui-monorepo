@@ -1,8 +1,19 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
-import { createMockCartItem } from "@/mocks/fixtures";
-import { CartSample } from "../CartSample";
+import { CartSample, type CartItemViewModel } from "../CartSample";
+
+function createMockCartItem(
+	overrides?: Partial<CartItemViewModel>,
+): CartItemViewModel {
+	return {
+		id: "cart-1",
+		productId: "prod-1",
+		productName: "Sample Product",
+		quantity: 1,
+		...overrides,
+	};
+}
 
 describe("CartSample", () => {
 	it("renders loading state", () => {

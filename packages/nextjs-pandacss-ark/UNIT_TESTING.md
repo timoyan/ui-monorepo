@@ -68,6 +68,16 @@ Do **not** share one global store across all tests. Each test file that needs Re
 
 ---
 
+## Test data and API mocks: scope-local only
+
+Each scope (feature, module, component) must use **only its own test data and mock API**. Do not create or import shared/generic fixtures modules.
+
+- **Scope-local fixtures**: Define mock data (e.g. `createMockCartItem`) inside the test file or in a `__tests__/fixtures.ts` next to the test. Do not import from cross-scope shared fixture modules.
+- **Scope-local mock handlers**: Each test mocks only the endpoints it needs with `server.use(...)`. Define handlers inline in the test or in a helper within the same `__tests__` folder.
+- **Rationale**: Keeps tests self-contained, avoids coupling between scopes, and makes it clear what data each test depends on.
+
+---
+
 ## Mocking APIs (MSW)
 
 The test MSW server starts with **no handlers**. Any test that triggers an API call must mock the endpoints it needs.
@@ -75,11 +85,16 @@ The test MSW server starts with **no handlers**. Any test that triggers an API c
 - Use `server.use(...)` inside the test (or in a `beforeEach` for that describe block).
 - Unmocked requests cause the test to fail (config: `onUnhandledRequest: "error"`).
 
-Example:
+Example (with scope-local fixtures):
 
 ```ts
 import { HttpResponse, http } from "msw";
 import { server } from "@/mocks/server";
+
+// Define fixtures locally in this test file or __tests__/fixtures.ts
+function createMockCartItem(overrides?: Partial<CartItem>): CartItem {
+  return { id: "cart-1", productId: "prod-1", productName: "Sample", quantity: 1, ...overrides };
+}
 
 it("shows empty cart when API returns []", async () => {
   server.use(
@@ -152,6 +167,7 @@ beforeEach(() => {
 |----------------------|--------------------------------------------------------------------------|
 | Redux                | Use `createReduxRender()` per file/group; never a global shared store.  |
 | Reset between tests  | `beforeEach` → `store.dispatch(apiSlice.util.resetApiState())`.          |
+| Test data & mocks    | Scope-local only. Define fixtures and handlers in the test file or `__tests__/`; do not use shared cross-scope fixture modules. |
 | API                  | Mock only what the test needs with `server.use(...)`.                   |
 | Assertions           | Explicit `expect(...)`; no snapshots.                                    |
 | Other deps (toast…) | `vi.mock` + `beforeEach` for stable, isolated mocks.                     |

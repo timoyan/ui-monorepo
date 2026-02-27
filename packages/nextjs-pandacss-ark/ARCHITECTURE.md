@@ -251,6 +251,8 @@ Does state need to be used across modules/features or core?
 
 Tests are placed next to the feature/component they cover（例如同層的 `__tests__` 資料夾，或 `*.test.tsx` / `*.test.ts` 檔案）。
 
+**Scope-local test data and mocks**: Each scope (feature, module, component) must use only its own test data and mock API. Define fixtures and handlers in the test file or within the same `__tests__` folder. Do not create or import shared/generic fixture modules that are reused across scopes.
+
 更完整的測試規範（技術棧、Redux 測試策略、MSW 使用方式、禁止 snapshot 的規則等），請參考：
 
 - [`UNIT_TESTING.md`](./UNIT_TESTING.md)

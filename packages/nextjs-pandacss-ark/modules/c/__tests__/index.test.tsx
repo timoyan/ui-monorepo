@@ -6,7 +6,6 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { apiSlice } from "@/apis/apiSlice";
 import type { CartItem } from "@/apis/cart";
 import { useToast } from "@/core/toast";
-import { createMockCartItem } from "@/mocks/fixtures";
 import { server } from "@/mocks/server";
 import { ModuleC } from "@/modules/c";
 import { createReduxRender } from "@/test/renderWithRedux";
@@ -19,6 +18,16 @@ const mockToast = {
 	warning: vi.fn(),
 	dismiss: vi.fn(),
 };
+
+function createMockCartItem(overrides?: Partial<CartItem>): CartItem {
+	return {
+		id: "cart-1",
+		productId: "prod-1",
+		productName: "Sample Product",
+		quantity: 1,
+		...overrides,
+	};
+}
 
 vi.mock("@/core/toast", async (importOriginal) => {
 	const actual = await importOriginal<typeof import("@/core/toast")>();

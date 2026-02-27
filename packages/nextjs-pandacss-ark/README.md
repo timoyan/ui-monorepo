@@ -102,7 +102,6 @@ MSW is enabled in development to mock API requests.
 
 - **Handlers**: `mocks/handlers.ts` – Exports `devHandlers` (cart API) for **local dev only** and empty `handlers` for the test server. Add or edit endpoints in `devHandlers` to mock more APIs in dev.
 - **Stores**: `mocks/local-dev-store/` – In-memory state used by `devHandlers` in local dev (e.g. `cartStore.ts` for cart add/update/remove). Not used by unit tests.
-- **Fixtures**: `mocks/fixtures/` – Shared mock data (e.g. `defaultCartItem`, `createMockCartItem`) for dev handlers and tests
 - **Config**: `mocks/config.ts` – `devOptions` (bypass) vs `testOptions` (error)
 - **Browser**: `mocks/browser.ts` – Uses `devHandlers`; started in dev via `useMSWReady` in `_app`
 - **Node**: `mocks/server.ts` – Uses empty `handlers`; for unit tests (Vitest). Each test mocks endpoints via `server.use()`.
