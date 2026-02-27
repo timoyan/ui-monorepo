@@ -20,7 +20,7 @@
 	},
 	"overrides": [
 		{
-			"includes": ["features/**"],
+			"includes": ["components/features/**"],
 			"linter": {
 				"rules": {
 					"style": {
@@ -29,7 +29,7 @@
 							"options": {
 								"patterns": [
 									{
-										"group": ["@/features/*"],
+										"group": ["@/components/features/*"],
 										"message": "Features cannot import each other. Please compose features through upper layers (e.g., modules, pages)."
 									}
 								]

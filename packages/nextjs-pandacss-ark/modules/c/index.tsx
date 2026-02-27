@@ -1,8 +1,23 @@
-import { Button } from "@/components/ui/button";
+import { useCallback, useState } from "react";
+import {
+	useAddToCartMutation,
+	useGetCartQuery,
+	useRemoveFromCartMutation,
+	useUpdateQuantityMutation,
+} from "@/apis/cart";
+import { Button } from "@/components/atomics/button";
+import { AutocompleteInput } from "@/components/composed/autocomplete";
+import type { AutocompleteOption } from "@/components/composed/autocomplete";
 import { useFlow } from "@/core/flow/useFlow";
 import { useToast } from "@/core/toast";
-import { ConnectedCartSample } from "@/features/cart";
+import { CartSample } from "@/components/features/cart";
 import { css } from "@/styled-system/css";
+
+const productOptions: AutocompleteOption[] = [
+	{ label: "Sample Product", value: "prod-sample" },
+	{ label: "Widget Pro", value: "prod-widget" },
+	{ label: "Gadget Plus", value: "prod-gadget" },
+];
 
 const toastSectionStyles = css({
 	display: "flex",
@@ -21,12 +36,110 @@ const flowStateRowStyles = css({
 
 /**
  * Module C: business module entry. Aggregate features and coordinate interactions here.
+ * Redux/RTK Query/useToast are used here and passed to CartSample via props.
  */
 export function ModuleC() {
 	const { toast } = useToast();
 	const { setModuleState } = useFlow();
+	const { data: items = [], isLoading, error } = useGetCartQuery();
+	const [addToCart, { isLoading: isAdding }] = useAddToCartMutation();
+	const [updateQuantity] = useUpdateQuantityMutation();
+	const [removeFromCart] = useRemoveFromCartMutation();
+	const [busyItemIds, setBusyItemIds] = useState<Set<string>>(new Set());
+	const [selectedProduct, setSelectedProduct] = useState<string>("");
+
+	const handleAddItem = useCallback(() => {
+		addToCart({
+			productId: "prod-sample",
+			productName: "Sample Product",
+			quantity: 1,
+		})
+			.unwrap()
+			.then(() => {
+				toast.success({
+					title: "Added to cart",
+					description: "Sample Product has been added.",
+				});
+			})
+			.catch(() => {
+				toast.error({
+					title: "Failed to add",
+					description: "Could not add item to cart.",
+				});
+			});
+	}, [addToCart, toast]);
+
+	const handleUpdateQuantity = useCallback(
+		(itemId: string, quantity: number) => {
+			setBusyItemIds((prev) => new Set(prev).add(itemId));
+			updateQuantity({ itemId, quantity })
+				.unwrap()
+				.finally(() => {
+					setBusyItemIds((prev) => {
+						const next = new Set(prev);
+						next.delete(itemId);
+						return next;
+					});
+				});
+		},
+		[updateQuantity],
+	);
+
+	const handleRemove = useCallback(
+		(itemId: string) => {
+			setBusyItemIds((prev) => new Set(prev).add(itemId));
+			removeFromCart({ itemId })
+				.unwrap()
+				.finally(() => {
+					setBusyItemIds((prev) => {
+						const next = new Set(prev);
+						next.delete(itemId);
+						return next;
+					});
+				});
+		},
+		[removeFromCart],
+	);
+
 	return (
 		<div>
+			<div className={css({ marginBottom: "1.5rem" })}>
+				<p
+					className={css({
+						fontSize: "md",
+						fontWeight: "semibold",
+						marginBottom: "0.5rem",
+					})}
+				>
+					Autocomplete example
+				</p>
+				<AutocompleteInput
+					options={productOptions}
+					placeholder="Search product..."
+					value={selectedProduct}
+					onValueChange={({ value, item }) => {
+						setSelectedProduct(value);
+						toast.success({
+							title: "Selected",
+							description: `You selected: ${item.label}`,
+						});
+					}}
+					id="module-c-product-autocomplete"
+				/>
+				{selectedProduct && (
+					<p
+						className={css({
+							fontSize: "sm",
+							color: "gray.600",
+							marginTop: "0.25rem",
+						})}
+					>
+						Current:{" "}
+						{productOptions.find((o) => o.value === selectedProduct)?.label ??
+							selectedProduct}
+					</p>
+				)}
+			</div>
 			<div className={toastSectionStyles}>
 				<p className={css({ fontSize: "md", fontWeight: "semibold" })}>
 					Toast from module (add to cart also shows toast)
@@ -101,7 +214,16 @@ export function ModuleC() {
 					Set FAILED
 				</Button>
 			</div>
-			<ConnectedCartSample />
+			<CartSample
+				items={items}
+				isLoading={isLoading}
+				error={!!error}
+				onAddItem={handleAddItem}
+				isAdding={isAdding}
+				onUpdateQuantity={handleUpdateQuantity}
+				onRemove={handleRemove}
+				busyItemIds={busyItemIds}
+			/>
 		</div>
 	);
 }

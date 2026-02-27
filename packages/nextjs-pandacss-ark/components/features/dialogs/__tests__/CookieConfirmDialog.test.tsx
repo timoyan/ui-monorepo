@@ -1,7 +1,7 @@
 import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it } from "vitest";
-import { CookieConfirmDialog } from "@/features/dialogs/CookieConfirmDialog";
+import { CookieConfirmDialog } from "@/components/features/dialogs/CookieConfirmDialog";
 import { renderWithStore } from "@/test/renderWithRedux";
 
 describe("CookieConfirmDialog", () => {

@@ -1,13 +1,6 @@
 import { useEffect, useState } from "react";
 import type { CartItem } from "@/apis/cart";
-import {
-	useAddToCartMutation,
-	useGetCartQuery,
-	useRemoveFromCartMutation,
-	useUpdateQuantityMutation,
-} from "@/apis/cart";
-import { Button } from "@/components/ui/button";
-import { useToast } from "@/core/toast";
+import { Button } from "@/components/atomics/button";
 import { css } from "@/styled-system/css";
 
 const sectionStyles = css({
@@ -55,29 +48,45 @@ const quantityInputStyles = css({
 	borderColor: "gray.300",
 });
 
-function CartItemRow({ item }: { item: CartItem }) {
-	const [updateQuantity, { isLoading: isUpdating }] =
-		useUpdateQuantityMutation();
-	const [removeFromCart, { isLoading: isRemoving }] =
-		useRemoveFromCartMutation();
+export interface CartSampleProps {
+	items: CartItem[];
+	isLoading: boolean;
+	error: boolean;
+	onAddItem: () => void;
+	isAdding: boolean;
+	onUpdateQuantity: (itemId: string, quantity: number) => void;
+	onRemove: (itemId: string) => void;
+	/** Item IDs currently being updated or removed (buttons disabled). */
+	busyItemIds?: Set<string>;
+}
+
+function CartItemRow({
+	item,
+	onUpdateQuantity,
+	onRemove,
+	busy,
+}: {
+	item: CartItem;
+	onUpdateQuantity: (itemId: string, quantity: number) => void;
+	onRemove: (itemId: string) => void;
+	busy: boolean;
+}) {
 	const [inputQty, setInputQty] = useState(item.quantity);
 
 	useEffect(() => {
 		setInputQty(item.quantity);
 	}, [item.quantity]);
 
-	const busy = isUpdating || isRemoving;
-
 	const handleQuantityChange = (newQuantity: number) => {
 		const qty = Math.max(1, Math.floor(newQuantity));
-		updateQuantity({ itemId: item.id, quantity: qty });
+		onUpdateQuantity(item.id, qty);
 		setInputQty(qty);
 	};
 
 	const handleBlur = () => {
 		const qty = Math.max(1, Math.floor(inputQty));
 		if (qty !== item.quantity) {
-			updateQuantity({ itemId: item.id, quantity: qty });
+			onUpdateQuantity(item.id, qty);
 		} else {
 			setInputQty(item.quantity);
 		}
@@ -136,7 +145,7 @@ function CartItemRow({ item }: { item: CartItem }) {
 					variant="danger"
 					size="sm"
 					disabled={busy}
-					onClick={() => removeFromCart({ itemId: item.id })}
+					onClick={() => onRemove(item.id)}
 					aria-label={`Remove ${item.productName} from cart`}
 				>
 					Remove
@@ -146,11 +155,20 @@ function CartItemRow({ item }: { item: CartItem }) {
 	);
 }
 
-export function ConnectedCartSample() {
-	const { toast } = useToast();
-	const { data: items = [], isLoading, error } = useGetCartQuery();
-	const [addToCart, { isLoading: isAdding }] = useAddToCartMutation();
-
+/**
+ * Presentational cart sample. No Redux; all data and handlers are passed from the parent.
+ * Parent (e.g. ModuleC) should use RTK Query / useToast and pass props.
+ */
+export function CartSample({
+	items,
+	isLoading,
+	error,
+	onAddItem,
+	isAdding,
+	onUpdateQuantity,
+	onRemove,
+	busyItemIds = new Set(),
+}: CartSampleProps) {
 	if (isLoading) {
 		return (
 			<section className={sectionStyles}>
@@ -203,26 +221,7 @@ export function ConnectedCartSample() {
 					variant="primary"
 					size="sm"
 					disabled={isAdding}
-					onClick={() =>
-						addToCart({
-							productId: "prod-sample",
-							productName: "Sample Product",
-							quantity: 1,
-						})
-							.unwrap()
-							.then(() => {
-								toast.success({
-									title: "Added to cart",
-									description: "Sample Product has been added.",
-								});
-							})
-							.catch(() => {
-								toast.error({
-									title: "Failed to add",
-									description: "Could not add item to cart.",
-								});
-							})
-					}
+					onClick={onAddItem}
 				>
 					{isAdding ? "Adding…" : "Add item"}
 				</Button>
@@ -244,7 +243,15 @@ export function ConnectedCartSample() {
 						Cart is empty.
 					</div>
 				) : (
-					items.map((item) => <CartItemRow key={item.id} item={item} />)
+					items.map((item) => (
+						<CartItemRow
+							key={item.id}
+							item={item}
+							onUpdateQuantity={onUpdateQuantity}
+							onRemove={onRemove}
+							busy={busyItemIds.has(item.id)}
+						/>
+					))
 				)}
 			</div>
 		</section>

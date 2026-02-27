@@ -1,7 +1,7 @@
 import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
-import { CurrencySwitchDialog } from "@/features/dialogs/CurrencySwitchDialog";
+import { CurrencySwitchDialog } from "@/components/features/dialogs/CurrencySwitchDialog";
 import { renderWithStore } from "@/test/renderWithRedux";
 
 describe("CurrencySwitchDialog", () => {

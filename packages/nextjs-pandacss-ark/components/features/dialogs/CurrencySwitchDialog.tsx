@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/atomics/button";
 import {
 	Dialog,
 	DialogBackdrop,
@@ -10,7 +10,7 @@ import {
 	DialogPortal,
 	DialogPositioner,
 	DialogTitle,
-} from "@/components/ui/dialog";
+} from "@/components/atomics/dialog";
 import { useFlow } from "@/core/flow/useFlow";
 import { css } from "@/styled-system/css";
 

@@ -4,7 +4,7 @@ import {
 	AccordionItem,
 	AccordionItemContent,
 	AccordionItemTrigger,
-} from "@/components/ui/accordion";
+} from "@/components/atomics/accordion";
 import { css } from "@/styled-system/css";
 
 interface ModuleContainerProps {

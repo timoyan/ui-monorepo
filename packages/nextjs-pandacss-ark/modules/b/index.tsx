@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/atomics/button";
 import { useFlow } from "@/core/flow/useFlow";
 import { useToast } from "@/core/toast";
 import { css } from "@/styled-system/css";

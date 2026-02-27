@@ -106,7 +106,7 @@ Use the registry to supply **icons**, **styled UI**, or **HTML**. To show HTML i
 1. **Register an entry** (e.g. in `toastContentRegistry.tsx` or in your feature module):
 
 ```tsx
-import { registerToastContent } from "@/components/ui/toast";
+import { registerToastContent } from "@/core/toast";
 
 // At module load or in _app so it runs before any toast
 registerToastContent("success-save", {

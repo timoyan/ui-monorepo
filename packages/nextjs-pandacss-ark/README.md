@@ -78,6 +78,12 @@ To use a different domain or path, set env vars before running:
 
 For detailed architecture documentation, see [ARCHITECTURE.md](./ARCHITECTURE.md).
 
+## Docs
+
+- **Architecture**: 資料夾結構與分層規則，見 [`ARCHITECTURE.md`](./ARCHITECTURE.md)
+- **Unit Testing**: 測試技術棧與規範（Redux、MSW、斷言），見 [`UNIT_TESTING.md`](./UNIT_TESTING.md)
+- **Centralized Toast**: 全域 toast 系統設計與使用方式，見 [`core/toast/README.md`](./core/toast/README.md)
+
 ## Scripts
 
 - `pnpm dev` – Start development server (HTTP, port 3000). Do not use `--turbo`/`--turbopack`; PandaCSS works with the default Webpack dev server.

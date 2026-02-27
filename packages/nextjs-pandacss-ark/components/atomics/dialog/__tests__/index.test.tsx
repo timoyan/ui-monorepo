@@ -9,7 +9,7 @@ import {
 	DialogPortal,
 	DialogPositioner,
 	DialogTitle,
-} from "@/components/ui/dialog";
+} from "@/components/atomics/dialog";
 
 describe("Dialog components", () => {
 	it("renders Dialog.Root with content when open", () => {

@@ -3,8 +3,8 @@ import {
 	AccordionItem,
 	AccordionItemContent,
 	AccordionItemTrigger,
-} from "@/components/ui/accordion";
-import { Button } from "@/components/ui/button";
+} from "@/components/atomics/accordion";
+import { Button } from "@/components/atomics/button";
 import { useFlow } from "@/core/flow/useFlow";
 import { registerToastContent, useToast } from "@/core/toast";
 import { css } from "@/styled-system/css";

@@ -1,8 +1,11 @@
-# UI Monorepo (nextjs-pandacss-ark)
+# UI Monorepo
 
-This repository contains a single app package:
+This repository contains a UI app package managed as a pnpm workspace.
+
+## Packages
 
 - **`packages/nextjs-pandacss-ark`** – Next.js 15 app (Pages Router) with PandaCSS and Ark UI (`Button`, `Accordion`, etc.).
+  - Package docs entrypoint: see `packages/nextjs-pandacss-ark/README.md` (`Docs` section).
 
 Development is set up for **VS Code + Gemini Code Assistant**. Canonical project rules live in **AGENTS.md**; Gemini instructions in `.gemini/instructions.md` point to AGENTS.md.
 
@@ -60,8 +63,12 @@ Biome is configured in `biome.json` at the repo root.
 - `prepare` installs Husky.
 - Pre-commit runs `lint-staged`: format and lint staged files with Biome. Unfixable issues block the commit.
 
-## Project Rules (AGENTS.md)
+## Docs
 
-- Comments and docs: **English**.
-- Git commits: **Conventional Commits** in English (e.g. `feat(ui): add button`).
-- In `packages/nextjs-pandacss-ark/`: no snapshot tests; use explicit assertions. Follow `UNIT_TESTING.md` for Redux/MSW/render helpers.
+- **Repo-level**
+  - `AGENTS.md`（AI/程式碼規則、commit 規範）
+
+- **`packages/nextjs-pandacss-ark`**
+  - Architecture: `packages/nextjs-pandacss-ark/ARCHITECTURE.md`
+  - Testing guide: `packages/nextjs-pandacss-ark/UNIT_TESTING.md`
+  - Centralized toast: `packages/nextjs-pandacss-ark/core/toast/README.md`
