@@ -2,12 +2,12 @@ import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { act } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { useToast } from "@/core/toast";
 import {
 	ModuleB,
 	ModuleBFullWidthDisabled,
 	ModuleBVariantSize,
 } from "@/modules/b";
-import { useToast } from "@/core/toast";
 import { createReduxRender } from "@/test/renderWithRedux";
 
 const mockToast = {

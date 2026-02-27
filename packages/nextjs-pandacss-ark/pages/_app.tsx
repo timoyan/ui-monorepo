@@ -2,9 +2,9 @@ import "@/global.css";
 import type { AppProps } from "next/app";
 import { useEffect } from "react";
 import { Provider } from "react-redux";
+import { AppToaster } from "@/components/ui/toast";
 import { NextReduxWrapper } from "@/core/store";
 import { useMSWReady } from "@/hooks/useMSWReady";
-import { AppToaster } from "@/components/ui/toast";
 
 function AppContent(props: AppProps) {
 	const { store, props: wrappedProps } =

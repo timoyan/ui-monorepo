@@ -2,8 +2,8 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { act } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { DynamicToastDescription, ModuleA } from "@/modules/a";
 import { useToast } from "@/core/toast";
+import { DynamicToastDescription, ModuleA } from "@/modules/a";
 import { createReduxRender } from "@/test/renderWithRedux";
 
 const mockToast = {

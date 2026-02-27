@@ -6,8 +6,8 @@ import { useEffect } from "react";
 import { toaster } from "./createToaster";
 import {
 	TOAST_CONTENT_REGISTRY,
-	unregisterToastContent,
 	type ToastContentConfig,
+	unregisterToastContent,
 } from "./toastContentRegistry";
 
 type ToastMeta = { contentKey?: string; unregisterOnDismiss?: boolean };
@@ -106,7 +106,7 @@ function ToastItem({
 export function AppToaster() {
 	return (
 		<ArkToaster toaster={toaster}>
-			{(toast) => (
+			{(toast: { title?: string; description?: string; meta?: ToastMeta }) => (
 				<ToastItem
 					toast={
 						toast as { title?: string; description?: string; meta?: ToastMeta }

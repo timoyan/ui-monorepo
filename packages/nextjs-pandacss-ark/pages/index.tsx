@@ -1,14 +1,14 @@
 import Head from "next/head";
-import { CookieConfirmDialog } from "@/features/dialogs/CookieConfirmDialog";
-import { CurrencySwitchDialog } from "@/features/dialogs/CurrencySwitchDialog";
+import { cartApi } from "@/apis/cart";
 import { ModuleContainer } from "@/components/layout/module-container";
 import { Button } from "@/components/ui/button";
-import { cartApi } from "@/apis/cart";
 import { initModulesState } from "@/core/flow/flowSlice";
 import { getFlowInitFromRequest } from "@/core/flow/getFlowInitFromRequest";
-import { useFlow } from "@/core/flow/useFlow";
 import type { ModuleName } from "@/core/flow/types";
+import { useFlow } from "@/core/flow/useFlow";
 import { NextReduxWrapper } from "@/core/store";
+import { CookieConfirmDialog } from "@/features/dialogs/CookieConfirmDialog";
+import { CurrencySwitchDialog } from "@/features/dialogs/CurrencySwitchDialog";
 import {
 	ModuleA,
 	ModuleBFullWidthDisabled,

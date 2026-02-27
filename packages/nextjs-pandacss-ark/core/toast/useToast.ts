@@ -1,11 +1,11 @@
 "use client";
 
 import { useCallback } from "react";
+import { toast as coreToast, type ToastMeta } from "./toastApi";
 import {
 	registerToastContent,
 	type ToastContentConfig,
 } from "./toastContentRegistry";
-import { toast as coreToast, type ToastMeta } from "./toastApi";
 
 const NO_AUTO_CLOSE_MS = 86400000;
 const SUCCESS_AUTO_DURATION_MS = 5000;

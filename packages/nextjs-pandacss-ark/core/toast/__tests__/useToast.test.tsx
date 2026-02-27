@@ -1,4 +1,4 @@
-import { renderHook, act } from "@testing-library/react";
+import { act, renderHook } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { toast as mockToast } from "@/core/toast/toastApi";
 import { useToast } from "../useToast";

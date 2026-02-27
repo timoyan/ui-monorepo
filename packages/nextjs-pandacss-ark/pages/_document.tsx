@@ -1,6 +1,7 @@
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { Head, Html, Main, NextScript } from "next/document";
+import type { ComponentType, ReactNode } from "react";
 
 /**
  * Custom Head component that prevents CSS link tags when CSS is inlined
@@ -26,6 +27,13 @@ class InlineStylesHead extends Head {
 		return super.getCssLinks(files);
 	}
 }
+
+const InlineStylesHeadComponent = InlineStylesHead as unknown as ComponentType<{
+	__cssInlined?: boolean;
+	children?: ReactNode;
+}>;
+
+const NextScriptComponent = NextScript as unknown as ComponentType<unknown>;
 
 /**
  * Custom Document to inline critical CSS for SSR
@@ -60,7 +68,9 @@ export default function Document() {
 
 	return (
 		<Html lang="en">
-			<InlineStylesHead {...(cssContent ? { __cssInlined: true } : {})}>
+			<InlineStylesHeadComponent
+				{...(cssContent ? { __cssInlined: true } : {})}
+			>
 				{cssContent && (
 					<style
 						// biome-ignore lint/security/noDangerouslySetInnerHtml: Inline CSS for SSR performance
@@ -74,10 +84,10 @@ export default function Document() {
 					href="https://github.githubassets.com/assets/dark-b5a0f9dbeed37e9c.css"
 					crossOrigin="anonymous"
 				/> */}
-			</InlineStylesHead>
+			</InlineStylesHeadComponent>
 			<body>
 				<Main />
-				<NextScript />
+				<NextScriptComponent />
 			</body>
 		</Html>
 	);

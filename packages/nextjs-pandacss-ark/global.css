@@ -77,5 +77,6 @@
 
 /* Ensure scroll-locked body remains clickable (Ark UI / Zag) */
 body[data-zag-scroll-lock] {
-	pointer-events: auto;
+	/* biome-ignore lint/complexity/noImportantStyles: required to override inline pointer-events from Ark UI scroll lock */
+	pointer-events: auto !important;
 }

@@ -114,7 +114,9 @@ export function ModuleContainer({
 			<Accordion
 				value={value}
 				onValueChange={
-					onValueChange ? (details) => onValueChange(details) : undefined
+					onValueChange
+						? (details: { value: string[] }) => onValueChange(details)
+						: undefined
 				}
 				defaultValue={
 					value === undefined
@@ -129,13 +131,7 @@ export function ModuleContainer({
 					<AccordionItemTrigger>{triggerLabel}</AccordionItemTrigger>
 					<AccordionItemContent>
 						{/* Type assertion to avoid React type conflict in project */}
-						<div>
-							{
-								children as Parameters<
-									typeof AccordionItemContent
-								>[0]["children"]
-							}
-						</div>
+						<div>{children as ReactNode}</div>
 					</AccordionItemContent>
 				</AccordionItem>
 			</Accordion>

@@ -1,5 +1,3 @@
-
-
 const { existsSync } = require("node:fs");
 const { join } = require("node:path");
 
