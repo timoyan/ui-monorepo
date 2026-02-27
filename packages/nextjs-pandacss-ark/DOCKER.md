@@ -56,6 +56,28 @@ docker run -p 3000:3000 -e PORT=3000 -e HOSTNAME=0.0.0.0 nextjs-pandacss-ark
 
 ---
 
+## Enable MSW mocks in Docker (option A)
+
+To run the Docker image using the same mocked cart API as local development (no real backend required), enable MSW via an environment flag at build time:
+
+```bash
+# 1. From monorepo root, build with MSW enabled
+NEXT_PUBLIC_ENABLE_MSW=1 pnpm --filter nextjs-pandacss-ark build
+
+# 2. Build Docker image (uses the build output above)
+docker build \
+  -f packages/nextjs-pandacss-ark/Dockerfile \
+  -t nextjs-pandacss-ark \
+  packages/nextjs-pandacss-ark
+
+# 3. Run container
+docker run -p 3000:3000 nextjs-pandacss-ark
+```
+
+With `NEXT_PUBLIC_ENABLE_MSW=1`, the browser MSW worker is started even in production builds and the `/api/msw/worker` route stays available, so cart requests are served from the in-memory mock store instead of `http://test.com`.
+
+---
+
 ## Troubleshooting
 
 - **Cannot find module '/app/server.js'**  

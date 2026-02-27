@@ -74,3 +74,8 @@
 [data-scope="toast"][data-part="close-trigger"]:hover {
 	opacity: 1;
 }
+
+/* Ensure scroll-locked body remains clickable (Ark UI / Zag) */
+body[data-zag-scroll-lock] {
+	pointer-events: auto;
+}
