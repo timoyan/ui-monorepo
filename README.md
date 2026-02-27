@@ -66,7 +66,7 @@ Biome is configured in `biome.json` at the repo root.
 ## Docs
 
 - **Repo-level**
-  - `AGENTS.md`（AI/程式碼規則、commit 規範）
+  - `AGENTS.md` – AI/code rules and commit conventions
 
 - **`packages/nextjs-pandacss-ark`**
   - Architecture: `packages/nextjs-pandacss-ark/ARCHITECTURE.md`
