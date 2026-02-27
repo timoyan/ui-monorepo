@@ -45,7 +45,7 @@ By enforcing these boundaries, we avoid the common “everything ends up in page
 State management is a source of complexity and coupling.  
 Our philosophy is to **place state at the minimum necessary scope**:
 
-- **Redux store (global)** when:
+- **Redux store (global, including module-owned slices)** when:
   - Multiple modules/features or core need to share the same state
   - The state is part of a long-lived flow (e.g. checkout step, cart, user)
 - **Module-level state** via `useState`/Context when:
@@ -79,6 +79,35 @@ Philosophy:
   - They communicate with the module via props and callbacks
 
 This keeps **cross-feature logic in one place** (the module) instead of being sprinkled across multiple components or pages.
+
+### ViewModel vs View
+
+Conceptually we treat:
+
+- **ViewModel layer** = `modules/**` + selected **domain hooks** (e.g. `useCart`, `useFlow`, `useCheckoutStep`) that live in `core/` or `hooks/`.
+  - Responsibilities:
+    - Translate Redux / RTK Query / other infra into **UI-ready view models** (plain props, booleans, derived labels).
+    - Encode domain workflows and side effects (e.g. “when address is saved, update cart and go to next step”).
+    - Own domain-specific slices in the Redux store where needed.
+  - Consumers:
+    - `pages/**` (for page-level composition).
+    - `components/features/**` (through props or these hooks, and through `import type` of ViewModel types).
+- **View layer** = `components/**`（特別是 `components/features/**`）
+  - Responsibilities:
+    - Render UI based on already-prepared view models.
+    - Emit user intents as callbacks/events (e.g. `onSubmit`, `onSelectItem`, `onRemove`).
+    - Stay agnostic to *where* data comes from or *how* side effects are handled.
+
+In practice:
+
+- Each module may define its own ViewModel types in a file like `modules/cart/view-model.ts`.
+- Features that need those types use **type-only imports**:
+  - `import type { CartItemView } from "@/modules/cart/view-model";`
+- Modules and domain hooks can use the same ViewModel types with normal imports.
+
+This way, modules remain the single source of truth for their ViewModels, while the View layer depends only on their types (not on module implementations).
+
+This separation keeps domain and infra changes mostly inside modules + hooks (ViewModel), while components/features (View) focus on markup, layout, accessibility, and interaction details.
 
 ---
 
@@ -199,4 +228,77 @@ The goal is not to freeze the design, but to:
 - Allow **safe, incremental refactors** when the product grows.
 
 If you find yourself often unsure “where something should live”, that is a signal for us to **improve the philosophy and the tooling**, not to bypass the structure.
+
+---
+
+## 11. Practical workflow: adding or changing features
+
+This section turns the philosophy into a concrete checklist you can follow when implementing new behavior.
+
+### 11.1 Decide the scope
+
+1. **Is this a cross-cutting concern (routing, global error, app-wide state)?**
+   - Yes → Start in `core/` (and wire into `_app.tsx` / pages as needed).
+2. **Is this a page-level composition of existing modules/features?**
+   - Yes → Implement in `pages/` by assembling modules and features; keep logic thin.
+3. **Is this a domain flow that combines several sub-features?**
+   - Yes → Create or extend a **module** in `modules/{domain}/`.
+4. **Is this a reusable business feature (cart, payment, dialog) that may be used in multiple places?**
+   - Yes → Create a **feature** in `components/features/{feature-name}/`.
+5. **Is this primarily a reusable UI building block without domain meaning?**
+   - Low-level primitive → `components/atomics/`
+   - Compound UI pattern → `components/composed/`
+   - Layout container → `components/layout/`
+
+When in doubt, start with a local implementation (e.g. inside a module) and extract to a shared feature/module once reuse becomes clear.
+
+### 11.2 Choose where state lives
+
+Follow this decision tree (also in `ARCHITECTURE.md`):
+
+1. Does the state need to be used across modules/features or core?
+   - Yes → Put it in the **Redux store** (under `core/store`).
+2. Otherwise, does it need to be shared across multiple components within a module?
+   - Yes → Keep it in the **module** using `useState` or Context, pass down via props/callbacks.
+3. Otherwise:
+   - Keep it as **component local state** with `useState`.
+
+Prefer callbacks and props over “just use Redux” when the parent naturally owns the behavior.
+
+### 11.3 Wire data and side effects
+
+1. **If using RTK Query or complex store logic**:
+   - Add or extend endpoints in `apis/` and expose them through `apiSlice`.
+   - Optionally wrap them in high-level hooks (e.g. `useCart`) in `core/` or `hooks/`.
+2. **In features (`components/features/**`)**:
+   - Do **not** call Redux or RTK Query directly.
+   - Get data via props or wrapped hooks only.
+3. **In modules**:
+   - Use Redux and RTK Query freely to coordinate sub-features.
+   - Map API data into view-model props for child features/components.
+
+### 11.4 Testing checklist
+
+For any new module/feature/component:
+
+- Create tests next to the implementation (`__tests__` or `*.test.tsx`).
+- Use scope-local fixtures and MSW handlers as described in `UNIT_TESTING.md`:
+  - No shared cross-scope fixture modules.
+  - Each test declares its own `server.use(...)` handlers.
+- If the code uses Redux or RTK Query:
+  - Use `createReduxRender()` from `test/renderWithRedux.tsx`.
+  - Reset API state in `beforeEach` with `apiSlice.util.resetApiState()`.
+- Avoid snapshot assertions; assert on behaviors and visible outcomes.
+
+### 11.5 Lint and boundaries sanity-check
+
+Before opening a PR:
+
+- Run lint/format commands and fix violations.
+- Check imports:
+  - Features do not import other features, Redux, or `@/apis/*`.
+  - Composed components only import atomics (plus allowed external libs).
+  - Modules do not import other modules.
+
+If you find yourself fighting the lint rules, first ask: **“Am I putting this code in the right layer?”**. Often the fix is to move logic up or down a layer rather than weakening the rules.
 

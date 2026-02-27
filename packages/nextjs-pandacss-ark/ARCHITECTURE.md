@@ -236,8 +236,8 @@ export function Button({ onClick, children, ...props }) {
 
 ```
 Does state need to be used across modules/features or core?
-├─ Yes → Redux Store
-│   └─ Examples: Cart data, user info, current step
+├─ Yes → Redux Store (including module-owned slices)
+│   └─ Examples: Cart data, user info, current step, shipping address state owned by the shipping module
 │
 └─ No → Does it need to be shared across multiple components?
     ├─ Yes → Callback props or Context
@@ -289,6 +289,7 @@ To keep the layering rules enforceable (not only by documentation), we use Biome
 - **components/features/**
   - **Cannot import other features**: imports from `@/components/features/*` are forbidden. Features must be composed through upper layers (e.g. modules, pages).
   - **Cannot use Redux / RTK Query directly**: imports from `react-redux`, `@reduxjs/toolkit`, `@/core/store`, and `@/apis/*` are forbidden. Use wrapped hooks (e.g. `useCart`, `useFlow`) or props instead.
+  - **May use ViewModel types from modules**: `import type { X } from "@/modules/**/view-model"` is allowed so that modules can own their ViewModel definitions while features consume only the types (not the module implementations).
 - **components/composed/**
   - **Can only compose atomics (plus external libs)**: imports from `@/components/composed/*`, `@/components/layout/*`, `@/components/features/*`, and `@/modules/*` are forbidden. Composed components should stay as pure UI compositions built on top of atomics.
 - **modules/**
