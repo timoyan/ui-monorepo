@@ -161,7 +161,7 @@ export function ShippingAddressModule() {
 
 **Rule — no direct Redux in `components/features/`**: Code in the `components/features/` folder must **not** use Redux directly (no `useSelector`, `useDispatch`, or RTK Query hooks like `useGetCartQuery`). Use **wrapped APIs** provided by core or other layers instead (e.g. `useFlow`, `useCart`). This keeps features decoupled from the store and testable with plain props/mocks. This rule is also enforced by Biome (see "Linting & Constraints").
 
-**Rule — avoid API types in components**: UI components (`components/**`, especially `components/features/**`) should not import API-layer types (e.g. from `@/apis/*`). Prefer defining view-model interfaces in the UI layer and mapping from API types in upper layers (modules, hooks). The only exception is when a component is the direct caller of an RTK Query hook and needs that type for the hook itself; in that case the component should usually live outside `components/features/` (e.g. in a module or page).
+**Rule — avoid API types in components**: UI components (`components/**`, especially `components/features/**`) should not import API-layer types (e.g. from `@/apis/*`). Prefer defining UI props interfaces in the UI layer and mapping from API types in upper layers (modules, hooks). The only exception is when a component is the direct caller of an RTK Query hook and needs that type for the hook itself; in that case the component should usually live outside `components/features/` (e.g. in a module or page).
 
 **Responsibilities**:
 - Implement a single business feature
@@ -289,7 +289,7 @@ To keep the layering rules enforceable (not only by documentation), we use Biome
 - **components/features/**
   - **Cannot import other features**: imports from `@/components/features/*` are forbidden. Features must be composed through upper layers (e.g. modules, pages).
   - **Cannot use Redux / RTK Query directly**: imports from `react-redux`, `@reduxjs/toolkit`, `@/core/store`, and `@/apis/*` are forbidden. Use wrapped hooks (e.g. `useCart`, `useFlow`) or props instead.
-  - **May use ViewModel types from modules**: `import type { X } from "@/modules/**/view-model"` is allowed so that modules can own their ViewModel definitions while features consume only the types (not the module implementations).
+  - **Own their UI props contracts**: features define their own props types (e.g. `CartSummaryProps`, `AddressListProps`) based on what the UI needs. Pages/modules are responsible for mapping API/domain data into these props, so features do not depend on API response types or any additional intermediate layer.
 - **components/composed/**
   - **Can only compose atomics (plus external libs)**: imports from `@/components/composed/*`, `@/components/layout/*`, `@/components/features/*`, and `@/modules/*` are forbidden. Composed components should stay as pure UI compositions built on top of atomics.
 - **modules/**

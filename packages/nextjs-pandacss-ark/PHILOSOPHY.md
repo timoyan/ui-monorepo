@@ -80,34 +80,37 @@ Philosophy:
 
 This keeps **cross-feature logic in one place** (the module) instead of being sprinkled across multiple components or pages.
 
-### ViewModel vs View
+### Pages & Modules as data entry points
 
 Conceptually we treat:
 
-- **ViewModel layer** = `modules/**` + selected **domain hooks** (e.g. `useCart`, `useFlow`, `useCheckoutStep`) that live in `core/` or `hooks/`.
+- **Pages** (`pages/**`) as the **top-level entry points**:
   - Responsibilities:
-    - Translate Redux / RTK Query / other infra into **UI-ready view models** (plain props, booleans, derived labels).
+    - Decide **which modules** and **which features** are needed for a route.
+    - Own route-level data fetching and preloading if necessary (e.g. SSR/SSG).
+    - Compose modules and layout components to form a complete page.
+  - Consumers:
+    - The Next.js routing system (they are the public surface of the app).
+- **Modules** (`modules/**`) as **data and flow coordinators** for a domain:
+  - Responsibilities:
+    - Translate Redux / RTK Query / other infra into **UI-ready props** for features and composed components.
     - Encode domain workflows and side effects (e.g. “when address is saved, update cart and go to next step”).
     - Own domain-specific slices in the Redux store where needed.
   - Consumers:
     - `pages/**` (for page-level composition).
-    - `components/features/**` (through props or these hooks, and through `import type` of ViewModel types).
+    - `components/features/**` (through props and callbacks).
 - **View layer** = `components/**`（特別是 `components/features/**`）
   - Responsibilities:
-    - Render UI based on already-prepared view models.
+    - Render UI based on props received from pages/modules.
     - Emit user intents as callbacks/events (e.g. `onSubmit`, `onSelectItem`, `onRemove`).
     - Stay agnostic to *where* data comes from or *how* side effects are handled.
 
 In practice:
 
-- Each module may define its own ViewModel types in a file like `modules/cart/view-model.ts`.
-- Features that need those types use **type-only imports**:
-  - `import type { CartItemView } from "@/modules/cart/view-model";`
-- Modules and domain hooks can use the same ViewModel types with normal imports.
+- Pages and modules own the **mapping from API/domain types to UI props**.
+- Components (including features) own their **UI props contracts**, independent from API response shapes.
 
-This way, modules remain the single source of truth for their ViewModels, while the View layer depends only on their types (not on module implementations).
-
-This separation keeps domain and infra changes mostly inside modules + hooks (ViewModel), while components/features (View) focus on markup, layout, accessibility, and interaction details.
+This way, pages/modules remain the single source of truth for data flow and domain workflows, while the View layer focuses on markup, layout, accessibility, and interaction details.
 
 ---
 
@@ -275,7 +278,7 @@ Prefer callbacks and props over “just use Redux” when the parent naturally o
    - Get data via props or wrapped hooks only.
 3. **In modules**:
    - Use Redux and RTK Query freely to coordinate sub-features.
-   - Map API data into view-model props for child features/components.
+   - Map API/domain data into UI props for child features/components.
 
 ### 11.4 Testing checklist
 

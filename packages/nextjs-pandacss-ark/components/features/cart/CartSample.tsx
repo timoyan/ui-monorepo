@@ -47,7 +47,11 @@ const quantityInputStyles = css({
 	borderColor: "gray.300",
 });
 
-export interface CartItemViewModel {
+/**
+ * UI-level representation of a cart item.
+ * This type is owned by the feature and independent from API response types.
+ */
+export interface CartItem {
 	id: string;
 	productId: string;
 	productName: string;
@@ -55,7 +59,7 @@ export interface CartItemViewModel {
 }
 
 export interface CartSampleProps {
-	items: CartItemViewModel[];
+	items: CartItem[];
 	isLoading: boolean;
 	error: boolean;
 	onAddItem: () => void;
@@ -72,7 +76,7 @@ function CartItemRow({
 	onRemove,
 	busy,
 }: {
-	item: CartItemViewModel;
+	item: CartItem;
 	onUpdateQuantity: (itemId: string, quantity: number) => void;
 	onRemove: (itemId: string) => void;
 	busy: boolean;

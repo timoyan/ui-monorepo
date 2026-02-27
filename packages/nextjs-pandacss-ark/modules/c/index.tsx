@@ -5,12 +5,14 @@ import {
 	useRemoveFromCartMutation,
 	useUpdateQuantityMutation,
 } from "@/apis/cart";
+import type { CartItem as ApiCartItem } from "@/apis/cart";
 import { Button } from "@/components/atomics/button";
 import { AutocompleteInput } from "@/components/composed/autocomplete";
 import type { AutocompleteOption } from "@/components/composed/autocomplete";
 import { useFlow } from "@/core/flow/useFlow";
 import { useToast } from "@/core/toast";
 import { CartSample } from "@/components/features/cart";
+import type { CartItem as CartItemUi } from "@/components/features/cart";
 import { css } from "@/styled-system/css";
 
 const productOptions: AutocompleteOption[] = [
@@ -34,6 +36,13 @@ const flowStateRowStyles = css({
 	marginBottom: "1.5rem",
 });
 
+const mapCartItemToUi = (item: ApiCartItem): CartItemUi => ({
+	id: item.id,
+	productId: item.productId,
+	productName: item.productName,
+	quantity: item.quantity,
+});
+
 /**
  * Module C: business module entry. Aggregate features and coordinate interactions here.
  * Redux/RTK Query/useToast are used here and passed to CartSample via props.
@@ -41,7 +50,7 @@ const flowStateRowStyles = css({
 export function ModuleC() {
 	const { toast } = useToast();
 	const { setModuleState } = useFlow();
-	const { data: items = [], isLoading, error } = useGetCartQuery();
+	const { data: apiItems = [], isLoading, error } = useGetCartQuery();
 	const [addToCart, { isLoading: isAdding }] = useAddToCartMutation();
 	const [updateQuantity] = useUpdateQuantityMutation();
 	const [removeFromCart] = useRemoveFromCartMutation();
@@ -100,6 +109,8 @@ export function ModuleC() {
 		},
 		[removeFromCart],
 	);
+
+	const items: CartItemUi[] = apiItems.map(mapCartItemToUi);
 
 	return (
 		<div>
