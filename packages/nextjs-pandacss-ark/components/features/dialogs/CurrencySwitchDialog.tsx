@@ -41,6 +41,8 @@ export function CurrencySwitchDialog() {
 			open={currencySwitchDialogOpen}
 			onOpenChange={(details) => setCurrencySwitchDialogOpen(details.open)}
 			modal
+			lazyMount
+			unmountOnExit
 		>
 			<DialogPortal>
 				<DialogBackdrop />

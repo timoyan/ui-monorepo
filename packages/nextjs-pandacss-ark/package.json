@@ -23,7 +23,7 @@
 		"docker:standalone": "docker build -f Dockerfile -t nextjs-pandacss-ark ."
 	},
 	"dependencies": {
-		"@ark-ui/react": "^3.2.0",
+		"@ark-ui/react": "^5.34.0",
 		"@reduxjs/toolkit": "^2.3.0",
 		"immer": "^11.0.0",
 		"next": "^16.0.0",
@@ -33,7 +33,7 @@
 		"react-redux": "^9.2.0"
 	},
 	"devDependencies": {
-		"@pandacss/dev": "^0.52.0",
+		"@pandacss/dev": "^0.53.0",
 		"@testing-library/dom": "^10.4.0",
 		"@testing-library/jest-dom": "^6.1.5",
 		"@testing-library/react": "^16.3.0",

@@ -9,6 +9,7 @@ import {
 	ComboboxPositioner,
 	ComboboxRoot,
 } from "@ark-ui/react/combobox";
+import { createListCollection } from "@ark-ui/react/collection";
 import { useMemo, useState } from "react";
 import { Input } from "@/components/atomics/input";
 import { styled } from "@/styled-system/jsx";
@@ -98,24 +99,34 @@ export function AutocompleteInput({
 		() => filterOptionsByKeyword(options, inputValue),
 		[options, inputValue],
 	);
+	const collection = useMemo(
+		() =>
+			createListCollection<AutocompleteOption>({
+				items: filteredOptions,
+				itemToString: (item) => item.label,
+				itemToValue: (item) => item.value,
+			}),
+		[filteredOptions],
+	);
 
 	return (
 		<ComboboxRoot
-			items={filteredOptions}
-			itemToString={(item: AutocompleteOption) => item.label}
-			itemToValue={(item: AutocompleteOption) => item.value}
+			collection={collection}
 			closeOnSelect
 			inputBehavior="autohighlight"
 			openOnClick={false}
 			value={value != null ? [value] : undefined}
-			onValueChange={(details: { value?: string[] }) => {
+			onValueChange={(details: {
+				value?: string[];
+				items?: AutocompleteOption[];
+			}) => {
 				const v = details.value?.[0];
-				if (v != null) {
-					const item = options.find((o) => o.value === v);
-					if (item) {
-						setInputValue(item.label);
-						onValueChange?.({ value: v, item });
-					}
+				const item =
+					details.items?.[0] ??
+					(v != null ? options.find((o) => o.value === v) : undefined);
+				if (v != null && item) {
+					setInputValue(item.label);
+					onValueChange?.({ value: v, item });
 				}
 			}}
 			disabled={disabled}

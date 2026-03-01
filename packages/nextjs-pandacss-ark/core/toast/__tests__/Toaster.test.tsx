@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { act } from "react";
 import { describe, expect, it } from "vitest";
@@ -63,7 +63,13 @@ describe("AppToaster", () => {
 			expect(screen.getByText("Close me")).toBeInTheDocument();
 		});
 
-		const closeButton = screen.getByRole("button", { name: /close toast/i });
+		const toastRoot = screen
+			.getByText("Close me")
+			.closest("[data-part='root']");
+		expect(toastRoot).toBeInTheDocument();
+		const closeButton = within(toastRoot as HTMLElement).getByRole("button", {
+			name: /close toast/i,
+		});
 		expect(closeButton).toBeInTheDocument();
 	});
 
@@ -86,7 +92,13 @@ describe("AppToaster", () => {
 			expect(screen.getByText("Will unregister")).toBeInTheDocument();
 		});
 
-		const closeButton = screen.getByRole("button", { name: /close toast/i });
+		const toastRoot = screen
+			.getByText("Will unregister")
+			.closest("[data-part='root']");
+		expect(toastRoot).toBeInTheDocument();
+		const closeButton = within(toastRoot as HTMLElement).getByRole("button", {
+			name: /close toast/i,
+		});
 		await act(async () => {
 			await userEvent.click(closeButton);
 		});

@@ -28,11 +28,9 @@ const actionsClass = css({
 export function CookieConfirmDialog() {
 	const { showCookieConfirm, setCookieConfirm } = useFlow();
 
-	if (!showCookieConfirm) return null;
-
 	return (
 		<Dialog.Root
-			open={true}
+			open={showCookieConfirm}
 			onOpenChange={(details) => {
 				if (!details.open) {
 					// User closed without choosing (e.g. Escape) – treat as decline
@@ -41,6 +39,8 @@ export function CookieConfirmDialog() {
 			}}
 			modal
 			closeOnInteractOutside={false}
+			lazyMount
+			unmountOnExit
 		>
 			<DialogPortal>
 				<DialogBackdrop />
