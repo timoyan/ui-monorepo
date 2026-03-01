@@ -24,6 +24,7 @@ Open [http://localhost:3000](http://localhost:3000).
 - **HTTPS (e.g. custom domain on port 443)**: Use mkcert certs and run `pnpm dev:https:custom`; see “Custom domain and MSW” below.
 - **Clean commands**: Scripts use `rimraf` instead of `rm -rf`, so they work in Windows CMD/PowerShell as well.
 - **Custom port**: Create `.env.local` and set `PORT=3001` (must be loaded before start).
+- **Base path (local only)**: To serve the app under a URL prefix (e.g. `http://localhost:3000/my-app`), add `BASE_PATH=/my-app` to `.env.local`. Do not set `BASE_PATH` in other environments (staging/production) so they keep serving from the root. Restart the dev server after changing. Next.js `<Link>` and `router` automatically use the base path.
 
 ### Custom domain (e.g. local.timotest.com) and MSW
 
