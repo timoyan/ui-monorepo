@@ -1,6 +1,6 @@
 import type { BaseQueryFn } from "@reduxjs/toolkit/query";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { getBaseUrlForEndpoint } from "./utils/getBaseUrlForEndpoint";
+import { getBaseUrlForEndpoint } from "./helpers/getBaseUrlForEndpoint";
 
 const dynamicBaseQuery: BaseQueryFn = async (args, api, extraOptions) => {
 	const baseUrl = getBaseUrlForEndpoint(api.endpoint);

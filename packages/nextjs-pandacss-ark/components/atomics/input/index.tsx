@@ -1,5 +1,5 @@
-import { styled } from "@/styled-system/jsx";
 import { forwardRef } from "react";
+import { styled } from "@/styled-system/jsx";
 
 const StyledInput = styled("input", {
 	base: {

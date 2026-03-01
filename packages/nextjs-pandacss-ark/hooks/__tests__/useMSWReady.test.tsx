@@ -1,6 +1,6 @@
 import { renderHook, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { useMSWReady } from "../useMSWReady";
+import { useMSWReady } from "@/hooks/useMSWReady";
 
 // Mock mocks/browser module
 const mockStart = vi.fn();

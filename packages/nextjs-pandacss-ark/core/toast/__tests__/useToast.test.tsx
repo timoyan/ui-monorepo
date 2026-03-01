@@ -1,7 +1,7 @@
 import { act, renderHook } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { toast as mockToast } from "@/core/toast/toastApi";
-import { useToast } from "../useToast";
+import { useToast } from "@/core/toast/useToast";
 
 vi.mock("@/core/toast/toastApi", () => ({
 	toast: {
@@ -16,11 +16,11 @@ vi.mock("@/core/toast/toastApi", () => ({
 
 describe("useToast", () => {
 	afterEach(() => {
-		mockToast.create.mockClear();
-		mockToast.success.mockClear();
-		mockToast.error.mockClear();
-		mockToast.info.mockClear();
-		mockToast.warning.mockClear();
+		vi.mocked(mockToast.create).mockClear();
+		vi.mocked(mockToast.success).mockClear();
+		vi.mocked(mockToast.error).mockClear();
+		vi.mocked(mockToast.info).mockClear();
+		vi.mocked(mockToast.warning).mockClear();
 	});
 
 	it("returns toast API and registerAndToast", () => {

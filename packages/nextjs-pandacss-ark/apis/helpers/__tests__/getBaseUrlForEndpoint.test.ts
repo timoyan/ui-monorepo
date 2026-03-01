@@ -3,7 +3,7 @@ import {
 	CART_ENDPOINTS,
 	getBaseUrlForEndpoint,
 	getCartApiOrigin,
-} from "@/apis/utils/getBaseUrlForEndpoint";
+} from "@/apis/helpers/getBaseUrlForEndpoint";
 
 const CART_BASE_URL_HTTP = "http://test.com/api";
 const CART_BASE_URL_HTTPS = "https://test.com/api";

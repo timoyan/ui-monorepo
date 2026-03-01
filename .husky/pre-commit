@@ -9,5 +9,6 @@ for dir in packages/*/; do
 	fi
 done
 
+pnpm type-check
 pnpm lint-staged
 

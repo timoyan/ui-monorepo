@@ -48,7 +48,7 @@ const quantityInputStyles = css({
 });
 
 /**
- * UI-level representation of a cart item.
+ * Ui-level representation of a cart item.
  * This type is owned by the feature and independent from API response types.
  */
 export interface CartItem {
@@ -66,7 +66,7 @@ export interface CartSampleProps {
 	isAdding: boolean;
 	onUpdateQuantity: (itemId: string, quantity: number) => void;
 	onRemove: (itemId: string) => void;
-	/** Item IDs currently being updated or removed (buttons disabled). */
+	/** Item Ids currently being updated or removed (buttons disabled). */
 	busyItemIds?: Set<string>;
 }
 
@@ -114,7 +114,7 @@ function CartItemRow({
 					{item.productName}
 				</p>
 				<p className={css({ fontSize: "sm", color: "gray.600" })}>
-					ID: {item.productId}
+					Id: {item.productId}
 				</p>
 			</div>
 			<div className={quantityRowStyles}>

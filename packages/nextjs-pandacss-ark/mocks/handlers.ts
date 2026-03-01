@@ -1,5 +1,5 @@
 import { HttpResponse, http } from "msw";
-import { getCartApiOrigin } from "@/apis/utils/getBaseUrlForEndpoint";
+import { getCartApiOrigin } from "@/apis/helpers/getBaseUrlForEndpoint";
 import {
 	addToCart,
 	getCart,

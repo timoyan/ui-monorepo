@@ -24,7 +24,7 @@ See `CookieConfirmDialog` and `CurrencySwitchDialog` in `features/dialogs/` for 
 
 ## Active module
 
-- **activeModuleId** — The UI panel id (a | b-1 | b-2 | c) that is currently active. Recomputed when **setModuleState** runs: active = first module in order whose state is not COMPLETED. When **all** modules are COMPLETED, there is no active module (**activeModuleId** is null).
+- **activeModuleId** — The Ui panel id (a | b-1 | b-2 | c) that is currently active. Recomputed when **setModuleState** runs: active = first module in order whose state is not COMPLETED. When **all** modules are COMPLETED, there is no active module (**activeModuleId** is null).
 - **setActiveModuleId** — Set active panel directly (e.g. when user toggles accordion). **isModuleActive(name)** — whether that module is the active one.
 
 ## Usage

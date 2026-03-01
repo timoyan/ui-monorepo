@@ -18,7 +18,62 @@
 			"!**/*.tsbuildinfo"
 		]
 	},
+	"linter": {
+		"rules": {
+			"style": {
+				"useFilenamingConvention": {
+					"level": "error",
+					"options": {
+						"filenameCases": [
+							"camelCase",
+							"kebab-case",
+							"PascalCase",
+							"export"
+						],
+						"strictCase": false
+					}
+				}
+			}
+		}
+	},
 	"overrides": [
+		{
+			"includes": ["pages/**"],
+			"linter": {
+				"rules": {
+					"style": {
+						"useFilenamingConvention": "off"
+					}
+				}
+			}
+		},
+		{
+			"includes": [
+				"**/*.ts",
+				"**/*.tsx",
+				"**/*.js",
+				"**/*.jsx",
+				"!**/node_modules/**",
+				"!test/**"
+			],
+			"linter": {
+				"rules": {
+					"style": {
+						"noRestrictedImports": {
+							"level": "error",
+							"options": {
+								"patterns": [
+									{
+										"group": ["../*", "../**"],
+										"message": "Prefer @/ path alias over relative parent imports (e.g. @/components/..., @/utils/...). Use relative paths only for same-directory files (./)."
+									}
+								]
+							}
+						}
+					}
+				}
+			}
+		},
 		{
 			"includes": [
 				"components/features/**",

@@ -3,7 +3,7 @@ import {
 	registerToastContent,
 	TOAST_CONTENT_REGISTRY,
 	unregisterToastContent,
-} from "../toastContentRegistry";
+} from "@/core/toast/toastContentRegistry";
 
 describe("toastContentRegistry", () => {
 	afterEach(() => {

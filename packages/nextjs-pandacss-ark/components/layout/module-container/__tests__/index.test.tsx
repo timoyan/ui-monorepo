@@ -84,7 +84,9 @@ describe("ModuleContainer", () => {
 			expect(sectionWithBorder?.className).not.toBe(sectionNoBorder?.className);
 			expect(
 				sectionWithBorder?.className.split(/\s+/).length,
-			).toBeGreaterThanOrEqual(sectionNoBorder?.className.split(/\s+/).length);
+			).toBeGreaterThanOrEqual(
+				sectionNoBorder?.className.split(/\s+/).length ?? 0,
+			);
 		});
 	});
 

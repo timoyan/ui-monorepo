@@ -9,54 +9,82 @@ nextjs-pandacss-ark/
 ├── core/                    # App-level concerns
 │   ├── store/              # Redux store configuration
 │   ├── router/             # URL routing logic, step management
+│   ├── flow/               # Multi-step flow state (e.g. checkout flow)
+│   ├── toast/              # Toast state and registry
 │   └── error-boundary/     # Error handling
 │
 ├── pages/                  # Next.js pages (Pages Router)
-│   ├── _app.tsx           # App entry, combines core providers
-│   ├── index.tsx          # Home page
-│   └── checkout.tsx       # Checkout page (combines modules/features)
+│   ├── _app.tsx            # App entry, combines core providers
+│   ├── _document.tsx       # Document shell
+│   ├── index.tsx           # Home page
+│   └── api/                # API routes
+│       └── msw/            # MSW handler for dev/local
 │
-├── modules/                # Aggregate features (Combine multi features)
-│   └── shipping-address/   # Shipping address module example
-│       ├── index.tsx      # Module entry
-│       └── features/      # Features aggregated by this module
-│           ├── saved-addresses-list/
-│           ├── address-form/      # Add/edit address form
-│           └── pickup-map/
+├── modules/                # Aggregate features (combine multiple features)
+│   ├── a/                  # Module A (example)
+│   │   ├── index.tsx       # Module entry
+│   │   └── __tests__/
+│   ├── b/                  # Module B (example)
+│   │   ├── index.tsx
+│   │   └── __tests__/
+│   └── c/                  # Module C (cart + flow + toast demo)
+│       ├── index.tsx
+│       └── __tests__/
 │
-├── components/            # Reusable UI components
-│   ├── atomics/          # Base UI primitives (Button, Dialog, Accordion, Input)
+├── components/             # Reusable UI components
+│   ├── atomics/            # Base UI primitives (Button, Dialog, Accordion, Input)
+│   │   ├── accordion/
 │   │   ├── button/
 │   │   ├── dialog/
-│   │   ├── accordion/
 │   │   └── input/
-│   ├── composed/         # UI compositions from atomics (e.g. Autocomplete)
-│   │   │                 # May use: components/atomics only
+│   ├── composed/           # UI compositions from atomics (e.g. Autocomplete)
+│   │   │                   # May use: components/atomics only
 │   │   └── autocomplete/
-│   ├── layout/           # Layout components (ModuleContainer, etc.)
-│   │   │                 # May use: components/atomics, components/composed
+│   ├── layout/             # Layout components (ModuleContainer, etc.)
+│   │   │                   # May use: components/atomics, components/composed
 │   │   └── module-container/
-│   └── features/         # Independent features (can be used by multiple modules)
-│       │                 # May use: components/atomics, components/layout
-│       │                 # Do NOT use Redux directly; use wrapped APIs (e.g. useFlow, useCart)
+│   └── features/           # Independent features (can be used by multiple modules)
+│       │                   # May use: components/atomics, components/layout
+│       │                   # Do NOT use Redux directly; use wrapped APIs (e.g. useFlow, useCart)
 │       ├── cart/
 │       │   ├── CartSample.tsx
 │       │   ├── __tests__/
 │       │   └── index.ts
-│       └── dialogs/      # CookieConfirmDialog, CurrencySwitchDialog, etc.
+│       └── dialogs/        # CookieConfirmDialog, CurrencySwitchDialog, etc.
 │
-├── apis/                  # RTK Query API slices
-│   ├── apiSlice.ts       # Base API slice
-│   └── cart.ts           # Cart API endpoints
+├── apis/                   # RTK Query API slices
+│   ├── apiSlice.ts         # Base API slice
+│   ├── cart.ts             # Cart API endpoints
+│   └── helpers/            # API helpers (e.g. getBaseUrlForEndpoint)
 │
-├── hooks/                 # Shared hooks
+├── hooks/                  # Shared hooks
 │   └── useMSWReady.ts
 │
-└── mocks/                 # MSW configuration (for development and testing)
-    ├── handlers.ts
-    ├── browser.ts
-    └── server.ts
+├── utils/                  # Shared utilities (no UI, no Redux)
+│   └── guards/             # Type guards and predicate helpers
+│       ├── index.tsx
+│       └── __tests__/
+│
+├── mocks/                  # MSW configuration (for development and testing)
+│   ├── handlers.ts
+│   ├── browser.ts
+│   ├── server.ts
+│   ├── config.ts
+│   ├── index.ts
+│   ├── fixtures/           # Shared mock data (e.g. cart)
+│   └── local-dev-store/    # Local dev store helpers (e.g. cartStore)
+│
+├── test/                   # Test setup and shared test utilities
+│   ├── setup.ts
+│   ├── renderWithRedux.tsx
+│   └── __tests__/
+│
+├── scripts/                # Build/dev scripts (e.g. ensure-https-certs)
+├── theme/                  # Theming configuration
+└── styled-system/          # Panda CSS generated output (css, jsx, patterns, tokens, types)
 ```
+
+**Note:** `apis/helpers/` holds API-layer helpers (e.g. `getBaseUrlForEndpoint`). The root `utils/` folder is for app-wide, domain-agnostic utilities (e.g. type guards in `utils/guards/`).
 
 ## Layer Responsibilities & Trade-offs
 
@@ -97,11 +125,11 @@ nextjs-pandacss-ark/
 
 **Example**:
 ```typescript
-// pages/checkout.tsx
-import { ShippingAddressModule } from '@/modules/shipping-address';
+// pages/index.tsx (or any page that composes modules)
+import { ModuleC } from '@/modules/c';
 
-export default function CheckoutPage() {
-  return <ShippingAddressModule />;
+export default function HomePage() {
+  return <ModuleC />;
 }
 ```
 
@@ -122,44 +150,34 @@ export default function CheckoutPage() {
 
 **Example**:
 ```typescript
-// modules/shipping-address/index.tsx
-import { SavedAddressesListFeature } from './features/saved-addresses-list';
-import { AddressFormFeature } from './features/address-form';
-import { PickupMapFeature } from './features/pickup-map';
+// modules/c/index.tsx — aggregates cart feature, flow, and toast
+import { CartSample } from '@/components/features/cart';
+import { useGetCartQuery, useAddToCartMutation } from '@/apis/cart';
+import { useToast } from '@/core/toast';
 
-export function ShippingAddressModule() {
-  // Use Redux to manage state shared across features (e.g., selected address)
-  const selectedAddress = useSelector(selectSelectedAddress);
-  
-  // Use callback to handle local state (e.g., form show/hide)
-  const [showForm, setShowForm] = useState(false);
-  
+export function ModuleC() {
+  const { data, isLoading } = useGetCartQuery();
+  const [addToCart] = useAddToCartMutation();
+  const { toast } = useToast();
+  // Map API data to feature props; handle mutations and toast in the module
   return (
-    <>
-      <SavedAddressesListFeature 
-        onSelect={(address) => dispatch(setSelectedAddress(address))}
-        onAddNew={() => setShowForm(true)}
-      />
-      {showForm && (
-        <AddressFormFeature 
-          onSave={(address) => {
-            dispatch(addAddress(address));
-            setShowForm(false);
-          }}
-          onCancel={() => setShowForm(false)}
-        />
-      )}
-      <PickupMapFeature />
-    </>
+    <CartSample
+      items={data ?? []}
+      isLoading={isLoading}
+      onAddItem={() => addToCart({ productId: 'x', productName: 'Y', quantity: 1 }).unwrap().then(() => toast.success({ title: 'Added' }))}
+      onRemoveItem={() => {}}
+    />
   );
 }
 ```
 
 ### Features (Feature-level)
 
-**Purpose**: Independent business features that can be used by multiple modules, or as sub-features within a module
+Features live under **`components/features/`** (a subfolder of `components/`). They are reusable UI feature blocks, not top-level modules.
 
-**Rule — no direct Redux in `components/features/`**: Code in the `components/features/` folder must **not** use Redux directly (no `useSelector`, `useDispatch`, or RTK Query hooks like `useGetCartQuery`). Use **wrapped APIs** provided by core or other layers instead (e.g. `useFlow`, `useCart`). This keeps features decoupled from the store and testable with plain props/mocks. This rule is also enforced by Biome (see "Linting & Constraints").
+**Purpose**: Independent business features that can be used by multiple modules, or as sub-features within a module.
+
+**Rule — no direct Redux in `components/features/`**: Code in `components/features/` must **not** use Redux directly (no `useSelector`, `useDispatch`, or RTK Query hooks like `useGetCartQuery`). Use **wrapped APIs** provided by core or other layers instead (e.g. `useFlow`, `useCart`). This keeps features decoupled from the store and testable with plain props/mocks. This rule is also enforced by Biome (see "Linting & Constraints").
 
 **Rule — avoid API types in components**: UI components (`components/**`, especially `components/features/**`) should not import API-layer types (e.g. from `@/apis/*`). Prefer defining UI props interfaces in the UI layer and mapping from API types in upper layers (modules, hooks). The only exception is when a component is the direct caller of an RTK Query hook and needs that type for the hook itself; in that case the component should usually live outside `components/features/` (e.g. in a module or page).
 
@@ -181,26 +199,17 @@ export function ShippingAddressModule() {
    <CartSample items={items} isLoading={...} onAddItem={...} ... />
    ```
 
-2. **Module-specific Features** (in `modules/{module-name}/features/` directory): Only used within that module
+2. **Module-specific Features** (in `modules/{module-name}/features/` directory): Only used within that module. When a module aggregates several sub-features, each can live under `modules/{name}/features/` and may use Redux if the module owns that state.
    ```typescript
-   // modules/shipping-address/features/saved-addresses-list/index.tsx
-   export function SavedAddressesListFeature({ 
-     onSelect, 
-     onAddNew 
-   }: {
-     onSelect: (address: Address) => void;
-     onAddNew: () => void;
-   }) {
-     const addresses = useSelector(selectSavedAddresses);
-     
+   // modules/example/features/some-list/index.tsx
+   export function SomeListFeature({ onSelect, onAddNew }: Props) {
+     const items = useSelector(selectItems);
      return (
        <ul>
-         {addresses.map(address => (
-           <li key={address.id} onClick={() => onSelect(address)}>
-             {address.name}
-           </li>
+         {items.map((item) => (
+           <li key={item.id} onClick={() => onSelect(item)}>{item.name}</li>
          ))}
-         <button onClick={onAddNew}>Add Address</button>
+         <button type="button" onClick={onAddNew}>Add</button>
        </ul>
      );
    }
@@ -237,7 +246,7 @@ export function Button({ onClick, children, ...props }) {
 ```
 Does state need to be used across modules/features or core?
 ├─ Yes → Redux Store (including module-owned slices)
-│   └─ Examples: Cart data, user info, current step, shipping address state owned by the shipping module
+│   └─ Examples: Cart data, user info, current step, flow step, toast registry
 │
 └─ No → Does it need to be shared across multiple components?
     ├─ Yes → Callback props or Context
@@ -249,22 +258,36 @@ Does state need to be used across modules/features or core?
 
 ## Test Organization
 
-Tests are placed next to the feature/component they cover（例如同層的 `__tests__` 資料夾，或 `*.test.tsx` / `*.test.ts` 檔案）。
+Tests are placed next to the feature/component they cover (e.g. a co-located `__tests__` folder, or `*.test.tsx` / `*.test.ts` files).
 
 **Scope-local test data and mocks**: Each scope (feature, module, component) must use only its own test data and mock API. Define fixtures and handlers in the test file or within the same `__tests__` folder. Do not create or import shared/generic fixture modules that are reused across scopes.
 
-更完整的測試規範（技術棧、Redux 測試策略、MSW 使用方式、禁止 snapshot 的規則等），請參考：
+For the full testing guide (tech stack, Redux testing strategy, MSW usage, no-snapshot rules, etc.), see:
 
 - [`UNIT_TESTING.md`](./UNIT_TESTING.md)
 
 ## Naming Conventions
 
-- **Modules**: Use descriptive names that represent aggregated functionality (e.g., `shipping-address`)
+### Modules, features, and components (what to name)
+
+- **Modules**: Use descriptive names that represent aggregated functionality (e.g., `c` for a demo module, or `checkout`, `shipping-address` for domain modules)
 - **Features**:
-  - Independent features: Use feature names (e.g., `cart`, `payment`)
-  - Module-specific features: Use specific feature names (e.g., `saved-addresses-list`, `address-form`, `pickup-map`)
+  - Independent features: Use feature names (e.g., `cart`, `payment`, `dialogs`)
+  - Module-specific features: Use specific feature names (e.g., `saved-addresses-list`, `address-form`)
 - **Components**: Use UI component names (e.g., `button`, `accordion`, `input`, `autocomplete`)
 - **Test files**: `*.test.tsx` or `*.test.ts`
+
+### Files and folders (casing)
+
+- **Folders**: Lowercase only. Use **kebab-case** for multiple words (e.g. `module-container`, `error-boundary`, `saved-addresses-list`). Single words stay single (e.g. `cart`, `dialogs`, `guards`).
+- **React component files**: **PascalCase**, matching the component name (e.g. `CartSample.tsx`, `AutocompleteInput.tsx`).
+- **Hooks**: File name matches the hook: `use` prefix + **camelCase** (e.g. `useToast.ts`, `useMSWReady.ts`).
+- **Other TypeScript/TSX** (utils, API slices, core logic): **camelCase** (e.g. `getBaseUrlForEndpoint.ts`, `apiSlice.ts`, `flowSlice.ts`).
+- **Test files**: `<ModuleOrFileName>.test.ts` or `.test.tsx`, or `index.test.ts(x)` for barrel/scope tests.
+- **Barrel files**: `index.ts` or `index.tsx`.
+- **Avoid**: PascalCase or camelCase for folder names; camelCase for component files (use PascalCase so components are recognizable).
+
+These conventions are enforced where possible by the Biome rule `useFilenamingConvention` (see `biome.json`).
 
 **Trade-off**: This separation improves reusability and testability, but adds some structural overhead for very small features. For quick prototypes or small one-off pages, it is acceptable to start with a simpler structure and extract modules/features once the use case stabilizes.
 
@@ -272,15 +295,15 @@ Tests are placed next to the feature/component they cover（例如同層的 `__t
 
 **When to create a Module?**
 - When you need to aggregate multiple related features
-- Example: `shipping-address` module aggregates three features: `saved-addresses-list`, `address-form`, `pickup-map`
+- Example: module `c` aggregates cart UI, flow, and toast; a future `shipping-address` module could aggregate `saved-addresses-list`, `address-form`, `pickup-map`
 
 **When to create an independent Feature (in `components/features/` directory)?**
 - When the feature may be used by multiple modules
-- Example: `cart` feature may be used by checkout page, product page, and other places
+- Example: `cart` feature is used by module c and can be reused on other pages
 
 **When to create a Module-specific Feature (in `modules/{module-name}/features/` directory)?**
 - When the feature is only used within a specific module, and that module needs to combine multiple related features
-- Example: `saved-addresses-list` is only used within the `shipping-address` module
+- Example: `saved-addresses-list` would live under `modules/shipping-address/features/` if that module existed
 
 ## Linting & Constraints (Biome)
 
@@ -305,7 +328,7 @@ Use `@/` as an alias for the project root directory:
 import { Button } from '@/components/atomics/button';
 import { AutocompleteInput } from '@/components/composed/autocomplete';
 import { CartSample } from '@/components/features/cart';
-import { ShippingAddressModule } from '@/modules/shipping-address';
+import { ModuleC } from '@/modules/c';
 import { store } from '@/core/store';
 // In components/features/: use wrapped hooks (e.g. useFlow, useCart), not useGetCartQuery/useSelector
 import { useGetCartQuery } from '@/apis/cart';  // use only outside components/features/ (e.g. in core or a wrapper hook)
@@ -314,8 +337,8 @@ import { useGetCartQuery } from '@/apis/cart';  // use only outside components/f
 ## Migration Plan
 
 Current project structure:
-- `store/` → Will be moved to `core/store/` in the future
-- `components/features/cart/` → Features live under components; features may use atomics, composed, and layout
-- `components/` → atomics, composed, layout, features (composed uses atomics; layout may use atomics and composed; features may use atomics, composed, and layout)
-
-**Note**: When migrating `store/` to `core/store/`, all import paths need to be updated.
+- `core/` contains store, router, flow, toast, and error-boundary
+- `components/features/` — independent features (e.g. cart, dialogs) use atomics, composed, and layout; no direct Redux
+- `components/` — atomics, composed, layout, features (composed uses atomics; layout may use atomics and composed; features may use atomics, composed, and layout)
+- `modules/` — aggregate features (e.g. modules a, b, c); cross-module composition is done in pages
+- `utils/` — shared non-UI helpers (e.g. type guards in `utils/guards/`); no Redux, no components

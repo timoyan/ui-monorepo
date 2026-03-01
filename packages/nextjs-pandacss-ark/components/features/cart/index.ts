@@ -1,2 +1,2 @@
-export type { CartSampleProps } from "./CartSample";
+export type { CartItem, CartSampleProps } from "./CartSample";
 export { CartSample } from "./CartSample";

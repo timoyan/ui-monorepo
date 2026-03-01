@@ -16,11 +16,11 @@ import type { RootState } from "@/core/store";
 import { useAppDispatch } from "@/core/store";
 
 interface UseFlowOptions {
-	/** Reserved for future use (e.g. initial open module ID). */
+	/** Reserved for future use (e.g. initial open module Id). */
 	initialOpenModuleId?: string | null;
 }
 
-const MODULE_NAME_TO_ID: Record<ModuleName, string> = {
+const MODULE_NAME_TO_Id: Record<ModuleName, string> = {
 	A: "a",
 	B1: "b-1",
 	B2: "b-2",
@@ -35,7 +35,7 @@ const MODULE_NAME_TO_ID: Record<ModuleName, string> = {
  * setModuleState is dispatched, the reducer updates modulesState and
  * recomputes activeModuleId, so subscribed components re-render.
  *
- * **activeModuleId** is the UI panel id (a | b-1 | b-2 | c) that is active.
+ * **activeModuleId** is the Ui panel id (a | b-1 | b-2 | c) that is active.
  * Use it to pass value/onValueChange to ModuleContainer so accordion open/close is driven by Redux.
  * When all modules are COMPLETED, activeModuleId is null.
  *
@@ -103,7 +103,7 @@ export function useFlow(_options?: UseFlowOptions) {
 	/** Whether this module (by ModuleName) is active. Subscribes via Redux. */
 	const isModuleActive = useCallback(
 		(name: ModuleName): boolean => {
-			return activeModuleId === MODULE_NAME_TO_ID[name];
+			return activeModuleId === MODULE_NAME_TO_Id[name];
 		},
 		[activeModuleId],
 	);
@@ -113,7 +113,7 @@ export function useFlow(_options?: UseFlowOptions) {
 		setModuleState,
 		/** Order of modules for this request (set by initModulesState on SSR). Use to render panels in flow order. */
 		moduleOrder,
-		/** Current active panel (UI moduleId: a | b-1 | b-2 | c). Recomputed on setModuleState. No active when all COMPLETED. */
+		/** Current active panel (Ui moduleId: a | b-1 | b-2 | c). Recomputed on setModuleState. No active when all COMPLETED. */
 		activeModuleId,
 		/** Set active panel (e.g. when user toggles accordion). */
 		setActiveModuleId,

@@ -1,0 +1,33 @@
+---
+description: Prefer @/ path alias for imports; use relative paths only when necessary
+globs: "**/*.{ts,tsx,js,jsx}"
+alwaysApply: false
+---
+
+# Import Path: Prefer @/ Alias
+
+Use the **`@/`** path alias for imports unless there is a good reason to use a relative path.
+
+## Prefer
+
+```ts
+import { Button } from '@/components/atomics/button';
+import { useCart } from '@/core/store';
+import { formatPrice } from '@/utils/format';
+```
+
+## Avoid (unless necessary)
+
+```ts
+import { Button } from '../../../components/atomics/button';
+import { useCart } from '../../../../core/store';
+```
+
+## When relative paths are acceptable
+
+- **Same directory / colocated files**: `./LocalComponent`, `./styles.css`, `./constants`
+- **Package has no `@/`**: In packages or apps where `tsconfig` does not define the `@/*` alias
+
+## Note
+
+In `packages/nextjs-pandacss-ark/`, `@/*` is mapped to the package root (see `tsconfig.json`). Keep import order consistent with the project’s Biome/ESLint import sort rules that group `@/` imports.

@@ -1,5 +1,5 @@
-import { AutocompleteInput } from "../AutocompleteInput";
 import { render, screen } from "@testing-library/react";
+import { AutocompleteInput } from "@/components/composed/autocomplete/AutocompleteInput";
 
 const defaultOptions = [
 	{ label: "Apple", value: "apple" },

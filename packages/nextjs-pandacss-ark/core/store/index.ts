@@ -4,11 +4,13 @@ import { createWrapper, HYDRATE } from "next-redux-wrapper";
 import { useDispatch } from "react-redux";
 import { apiSlice } from "@/apis/apiSlice";
 import { flowSlice } from "@/core/flow/flowSlice";
+import { moduleSlice } from "@/core/module/moduleSlice";
 import { toastMiddleware } from "./toastMiddleware";
 
 const combinedReducer = combineReducers({
 	[apiSlice.reducerPath]: apiSlice.reducer,
 	[flowSlice.name]: flowSlice.reducer,
+	[moduleSlice.name]: moduleSlice.reducer,
 });
 
 const rootReducer = (

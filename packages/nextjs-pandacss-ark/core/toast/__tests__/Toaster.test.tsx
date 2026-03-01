@@ -3,12 +3,12 @@ import userEvent from "@testing-library/user-event";
 import { act } from "react";
 import { describe, expect, it } from "vitest";
 import { AppToaster } from "@/core/toast";
-import { toast } from "../toastApi";
+import { toast } from "@/core/toast/toastApi";
 import {
 	registerToastContent,
 	TOAST_CONTENT_REGISTRY,
 	unregisterToastContent,
-} from "../toastContentRegistry";
+} from "@/core/toast/toastContentRegistry";
 
 describe("AppToaster", () => {
 	it("renders without crashing", () => {

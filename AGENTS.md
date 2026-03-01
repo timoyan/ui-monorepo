@@ -7,6 +7,7 @@ This file is the **canonical project rules** for AI coding agents. It is read by
 ## Code & Comments
 
 - **Comments in English**: Write all code comments, block comments, JSDoc/TSDoc, and TODO/FIXME in **English** for consistency across locales.
+- **Import paths**: Prefer the `@/` path alias for imports (e.g. `@/components/...`, `@/utils/...`). Use relative paths only when necessary (e.g. same-directory colocated files, or packages where `@/` is not configured).
 
 ---
 

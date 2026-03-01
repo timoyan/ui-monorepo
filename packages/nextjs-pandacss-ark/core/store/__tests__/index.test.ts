@@ -55,6 +55,8 @@ describe("store", () => {
 			expect(typeof store.subscribe).toBe("function");
 			expect(store.getState()).toBeDefined();
 			expect(store.getState().flow).toBeDefined();
+			expect(store.getState().module).toBeDefined();
+			expect(store.getState().module.byModuleId).toEqual({});
 		});
 	});
 
@@ -68,11 +70,17 @@ describe("store", () => {
 					cookieConfirmResult: { isAccept: true },
 					currencySwitchDialogOpen: false,
 				},
+				module: {
+					byModuleId: { c: { selectedProduct: "prod-sample" } },
+				},
 			});
 			expect(store.getState().flow.moduleOrder).toEqual(["A"]);
 			expect(store.getState().flow.activeModuleId).toBe("a");
 			expect(store.getState().flow.cookieConfirmResult).toEqual({
 				isAccept: true,
+			});
+			expect(store.getState().module.byModuleId.c).toEqual({
+				selectedProduct: "prod-sample",
 			});
 		});
 	});

@@ -1,17 +1,17 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { Input } from "@/components/atomics/input";
-import { styled } from "@/styled-system/jsx";
 import {
+	ComboboxInput as ArkComboboxInput,
 	ComboboxContent,
 	ComboboxControl,
-	ComboboxInput as ArkComboboxInput,
 	ComboboxItem,
 	ComboboxItemText,
 	ComboboxPositioner,
 	ComboboxRoot,
 } from "@ark-ui/react/combobox";
+import { useMemo, useState } from "react";
+import { Input } from "@/components/atomics/input";
+import { styled } from "@/styled-system/jsx";
 
 const StyledPositioner = styled(ComboboxPositioner, {
 	base: {

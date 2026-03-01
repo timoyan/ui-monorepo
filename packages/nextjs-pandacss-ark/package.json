@@ -14,6 +14,7 @@
 		"start": "next start",
 		"test": "vitest",
 		"test:run": "vitest run",
+		"type-check": "tsc --noEmit",
 		"test:report": "vitest run --reporter=default --reporter=html --outputFile=./test-result/test-report.html",
 		"test:report:view": "npx --yes serve test-result -l 3131",
 		"test:coverage": "vitest run --coverage",

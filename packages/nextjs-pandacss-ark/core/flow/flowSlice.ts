@@ -11,7 +11,7 @@ import type {
 /** Default order when not set by initModulesState (e.g. client-only). */
 const DEFAULT_MODULE_ORDER: ModuleName[] = ["A", "B1", "B2", "C"];
 
-/** One UI moduleId per ModuleName (b-1 and b-2 are independent modules). */
+/** One Ui moduleId per ModuleName (b-1 and b-2 are independent modules). */
 const MODULE_NAME_TO_ID: Record<ModuleName, string> = {
 	A: "a",
 	B1: "b-1",
@@ -23,7 +23,7 @@ const MODULE_NAME_TO_ID: Record<ModuleName, string> = {
  * Computes which single module should be active from current modulesState.
  * Active = first module in order whose state is not COMPLETED.
  * When all modules are COMPLETED, there is no active module (returns null).
- * Returns UI moduleId (a | b-1 | b-2 | c) or null.
+ * Returns Ui moduleId (a | b-1 | b-2 | c) or null.
  */
 function computeActiveModuleId(
 	modulesState: ModulesState,
@@ -45,7 +45,7 @@ export const flowSlice = createSlice({
 		modulesState: {} as ModulesState,
 		/** Order of modules for this request (flow progression and listing). Set by initModulesState. */
 		moduleOrder: DEFAULT_MODULE_ORDER,
-		/** Which module panel is active (UI moduleId: a | b-1 | b-2 | c). Recomputed on setModuleState; set directly on user toggle. No active when all COMPLETED. */
+		/** Which module panel is active (Ui moduleId: a | b-1 | b-2 | c). Recomputed on setModuleState; set directly on user toggle. No active when all COMPLETED. */
 		activeModuleId: null as string | null,
 		/** Cookie consent: isAccept null = show dialog; true/false = user answered (persisted in sessionStorage). */
 		cookieConfirmResult: { isAccept: null } as CookieConfirmResult,
@@ -89,7 +89,7 @@ export const flowSlice = createSlice({
 				state.moduleOrder,
 			);
 		},
-		/** Set active panel directly (e.g. when user toggles accordion). Payload: UI moduleId or null. */
+		/** Set active panel directly (e.g. when user toggles accordion). Payload: Ui moduleId or null. */
 		setActiveModuleId(state, action: { payload: string | null }) {
 			state.activeModuleId = action.payload;
 		},

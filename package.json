@@ -10,6 +10,7 @@
 		"check": "biome check .",
 		"check:fix": "biome check --write --unsafe .",
 		"validate": "biome check .",
+		"type-check": "pnpm --filter nextjs-pandacss-ark run type-check",
 		"prepare": "husky",
 		"lint-staged": "lint-staged",
 		"test": "pnpm --filter nextjs-pandacss-ark run test:run",
