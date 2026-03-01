@@ -2,7 +2,7 @@
 
 This doc describes recommended CI setup for this monorepo: job order, caching, and example workflows for **GitHub Actions** and **Bitbucket Pipelines**. For SonarCloud report paths and multi-package setup, see [SONAR_TEST_REPORTS.md](./SONAR_TEST_REPORTS.md).
 
-Use **Node 22** in CI to match `engines` in `packages/nextjs-pandacss-ark` (`>=22.0.0`).
+Use **Node.js >=22** in CI to match `engines` in `packages/nextjs-pandacss-ark` (`>=22.0.0`).
 
 ---
 

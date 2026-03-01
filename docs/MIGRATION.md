@@ -52,7 +52,7 @@ Important sub-paths:
 
 - `pages/`, `components/`, `features/`, `modules/`, `core/`, `apis/`, `hooks/`, `mocks/`, `test/`
 - `next.config.js`, `panda.config.ts`, `postcss.config.mjs`, `tsconfig.json`, `vitest.config.ts`
-- `UNIT_TESTING.md`, `ARCHITECTURE.md`, `ONBOARDING.md`, `DOCKER.md`, `README.md`, `.env.example`, `.dockerignore`, `biome.json`
+- `ARCHITECTURE.md`, `DOCKER.md`, `README.md`, `.env.example`, `.dockerignore`, `biome.json` (repo docs at root: `docs/ONBOARDING.md`, `docs/UNIT_TESTING.md`, `docs/PHILOSOPHY.md`)
 
 Do **not** copy from the old repo:
 
@@ -94,8 +94,8 @@ Do **not** copy from the old repo:
 
 ### 3.5 Docs and Links
 
-- Update **README.md** (repo name, clone URL, “how to run”, links to AGENTS.md / UNIT_TESTING.md).
-- In **AGENTS.md**, if you renamed the package, replace `packages/nextjs-pandacss-ark` with `packages/<new-name>` in the Testing section and in the path to `UNIT_TESTING.md`.
+- Update **README.md** (repo name, clone URL, “how to run”, links to AGENTS.md, docs/UNIT_TESTING.md).
+- In **AGENTS.md**, if you renamed the package, replace `packages/nextjs-pandacss-ark` with `packages/<new-name>` in the Testing section; UNIT_TESTING.md lives in `docs/` at root.
 - In **.gemini/instructions.md**, adjust the “Quick summary” if the package path or rules changed.
 - Search the repo for the old repo URL or old package name and replace with the new one.
 

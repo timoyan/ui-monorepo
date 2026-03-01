@@ -67,7 +67,7 @@ To require a specific Node version for a package (e.g. Node 22 only), add to tha
 
 ```json
 "engines": {
-  "node": ">=22.0.0 <23.0.0"
+  "node": ">=22.0.0"
 }
 ```
 

@@ -81,9 +81,9 @@ For detailed architecture documentation, see [ARCHITECTURE.md](./ARCHITECTURE.md
 
 ## Docs
 
-- **Architecture**: 資料夾結構與分層規則，見 [`ARCHITECTURE.md`](./ARCHITECTURE.md)
-- **Unit Testing**: 測試技術棧與規範（Redux、MSW、斷言），見 [`UNIT_TESTING.md`](./UNIT_TESTING.md)
-- **Centralized Toast**: 全域 toast 系統設計與使用方式，見 [`core/toast/README.md`](./core/toast/README.md)
+- **Architecture**: Folder structure and layering rules; see [ARCHITECTURE.md](./ARCHITECTURE.md)
+- **Unit Testing**: Testing stack and conventions (Redux, MSW, assertions); see [docs/UNIT_TESTING.md](../../docs/UNIT_TESTING.md)
+- **Centralized Toast**: App-wide toast system design and usage; see [core/toast/README.md](./core/toast/README.md)
 
 ## Scripts
 

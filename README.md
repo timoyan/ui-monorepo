@@ -2,6 +2,8 @@
 
 This repository contains a UI app package managed as a pnpm workspace.
 
+**New to the repo?** → **[docs/ONBOARDING.md](docs/ONBOARDING.md)** — first-time setup, daily commands, conventions, troubleshooting.
+
 ## Packages
 
 - **`packages/nextjs-pandacss-ark`** – Next.js 16 app (Pages Router) with PandaCSS and Ark UI (`Button`, `Accordion`, etc.).
@@ -48,7 +50,7 @@ pnpm test
 pnpm --filter nextjs-pandacss-ark run test:run
 ```
 
-See `packages/nextjs-pandacss-ark/UNIT_TESTING.md` for testing conventions (Redux isolation, MSW, no snapshot tests).
+See [docs/UNIT_TESTING.md](docs/UNIT_TESTING.md) for testing conventions (Redux isolation, MSW, no snapshot tests).
 
 ## Linting & Formatting (Biome)
 
@@ -67,9 +69,13 @@ Biome is configured in `biome.json` at the repo root.
 ## Docs
 
 - **Repo-level**
+  - [docs/ONBOARDING.md](docs/ONBOARDING.md) – onboarding, setup, daily workflow, conventions
   - `AGENTS.md` – AI/code rules and commit conventions
+  - `docs/` – CI, migration, pnpm overrides, dependency policy, etc.
 
 - **`packages/nextjs-pandacss-ark`**
-  - Architecture: `packages/nextjs-pandacss-ark/ARCHITECTURE.md`
-  - Testing guide: `packages/nextjs-pandacss-ark/UNIT_TESTING.md`
-  - Centralized toast: `packages/nextjs-pandacss-ark/core/toast/README.md`
+  - [README](packages/nextjs-pandacss-ark/README.md) – app overview and package docs
+  - [ARCHITECTURE.md](packages/nextjs-pandacss-ark/ARCHITECTURE.md) – structure and layers
+  - [docs/UNIT_TESTING.md](docs/UNIT_TESTING.md) – testing guide (Redux, MSW, no snapshots)
+  - [docs/PHILOSOPHY.md](docs/PHILOSOPHY.md) – architecture philosophy
+  - [core/toast/README.md](packages/nextjs-pandacss-ark/core/toast/README.md) – centralized toast

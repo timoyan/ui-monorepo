@@ -1,7 +1,7 @@
 import { act, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { describe, expect, it } from "vitest";
-import { ModuleContainer } from "@/components/layout/module-container";
+import { describe, expect, it, vi } from "vitest";
+import { ModuleContainer } from "@/components/composed/layout/module-container";
 
 describe("ModuleContainer", () => {
 	describe("non-collapsible mode", () => {

@@ -121,11 +121,11 @@
 									{
 										"group": [
 											"@/components/composed/*",
-											"@/components/layout/*",
+											"@/components/composed/layout/*",
 											"@/components/features/*",
 											"@/modules/*"
 										],
-										"message": "components/composed may only compose atomics (plus external libs). Do not depend on layout, features, or modules directly."
+										"message": "components/composed (except layout) may only compose atomics. Do not depend on composed/layout, features, or modules."
 									}
 								]
 							}

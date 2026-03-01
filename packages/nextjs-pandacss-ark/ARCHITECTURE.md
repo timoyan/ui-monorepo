@@ -37,14 +37,13 @@ nextjs-pandacss-ark/
 │   │   ├── button/
 │   │   ├── dialog/
 │   │   └── input/
-│   ├── composed/           # UI compositions from atomics (e.g. Autocomplete)
-│   │   │                   # May use: components/atomics only
-│   │   └── autocomplete/
-│   ├── layout/             # Layout components (ModuleContainer, etc.)
-│   │   │                   # May use: components/atomics, components/composed
-│   │   └── module-container/
-│   └── features/           # Independent features (can be used by multiple modules)
-│       │                   # May use: components/atomics, components/layout
+│   ├── composed/           # UI compositions from atomics (e.g. Autocomplete, layout)
+│   │   │                   # May use: components/atomics only (layout is a subfolder)
+│   │   ├── autocomplete/
+│   │   └── layout/         # Layout components (ModuleContainer, etc.)
+│   │       └── module-container/
+│   └── features/          # Independent features (can be used by multiple modules)
+│       │                   # May use: components/atomics, components/composed (incl. layout)
 │       │                   # Do NOT use Redux directly; use wrapped APIs (e.g. useFlow, useCart)
 │       ├── cart/
 │       │   ├── CartSample.tsx
@@ -220,9 +219,8 @@ Features live under **`components/features/`** (a subfolder of `components/`). T
 **Purpose**: Define reusable UI components. Layering within `components/`:
 
 - **atomics**: Base UI primitives (Button, Dialog, Accordion, Input). No dependency on other component folders.
-- **composed**: UI compositions built from atomics (e.g. Autocomplete, SearchField). May use **atomics** only. Use when combining primitives into a reusable compound component without business logic.
-- **layout**: Layout components (e.g. ModuleContainer). May use **atomics** and **composed**.
-- **features**: Independent business features. May use **atomics**, **composed**, and **layout** (not other features).
+- **composed**: UI compositions built from atomics. Includes compound widgets (e.g. Autocomplete) and **layout** (e.g. ModuleContainer under `composed/layout/`). Composed may use **atomics** only; other composed (e.g. autocomplete) must not import `composed/layout`. Use when combining primitives into a reusable compound or layout component without business logic.
+- **features**: Independent business features. May use **atomics** and **composed** (including layout) (not other features).
 
 **Responsibilities**:
 - Implement reusable UI components
@@ -264,7 +262,7 @@ Tests are placed next to the feature/component they cover (e.g. a co-located `__
 
 For the full testing guide (tech stack, Redux testing strategy, MSW usage, no-snapshot rules, etc.), see:
 
-- [`UNIT_TESTING.md`](./UNIT_TESTING.md)
+- [docs/UNIT_TESTING.md](../../docs/UNIT_TESTING.md), [docs/PHILOSOPHY.md](../../docs/PHILOSOPHY.md)
 
 ## Naming Conventions
 
@@ -314,7 +312,7 @@ To keep the layering rules enforceable (not only by documentation), we use Biome
   - **Cannot use Redux / RTK Query directly**: imports from `react-redux`, `@reduxjs/toolkit`, `@/core/store`, and `@/apis/*` are forbidden. Use wrapped hooks (e.g. `useCart`, `useFlow`) or props instead.
   - **Own their UI props contracts**: features define their own props types (e.g. `CartSummaryProps`, `AddressListProps`) based on what the UI needs. Pages/modules are responsible for mapping API/domain data into these props, so features do not depend on API response types or any additional intermediate layer.
 - **components/composed/**
-  - **Can only compose atomics (plus external libs)**: imports from `@/components/composed/*`, `@/components/layout/*`, `@/components/features/*`, and `@/modules/*` are forbidden. Composed components should stay as pure UI compositions built on top of atomics.
+  - **Can only compose atomics (plus external libs)**: imports from `@/components/composed/*` (including `composed/layout/*`), `@/components/features/*`, and `@/modules/*` are forbidden for non-layout composed code. Composed components (including layout) stay as pure UI compositions built on top of atomics.
 - **modules/**
   - **Modules cannot import each other**: imports from `@/modules/*` inside `modules/**` are forbidden (except tests). Cross-module composition should happen in pages or higher-level orchestrators.
 
@@ -327,6 +325,7 @@ Use `@/` as an alias for the project root directory:
 ```typescript
 import { Button } from '@/components/atomics/button';
 import { AutocompleteInput } from '@/components/composed/autocomplete';
+import { ModuleContainer } from '@/components/composed/layout/module-container';
 import { CartSample } from '@/components/features/cart';
 import { ModuleC } from '@/modules/c';
 import { store } from '@/core/store';
@@ -338,7 +337,7 @@ import { useGetCartQuery } from '@/apis/cart';  // use only outside components/f
 
 Current project structure:
 - `core/` contains store, router, flow, toast, and error-boundary
-- `components/features/` — independent features (e.g. cart, dialogs) use atomics, composed, and layout; no direct Redux
-- `components/` — atomics, composed, layout, features (composed uses atomics; layout may use atomics and composed; features may use atomics, composed, and layout)
+- `components/features/` — independent features (e.g. cart, dialogs) use atomics and composed (incl. layout); no direct Redux
+- `components/` — atomics, composed (incl. layout under composed/layout/), features (composed uses atomics only; features may use atomics and composed)
 - `modules/` — aggregate features (e.g. modules a, b, c); cross-module composition is done in pages
 - `utils/` — shared non-UI helpers (e.g. type guards in `utils/guards/`); no Redux, no components

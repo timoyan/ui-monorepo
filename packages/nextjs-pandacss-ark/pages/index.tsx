@@ -3,7 +3,7 @@ import { cartApi } from "@/apis/cart";
 import { Button } from "@/components/atomics/button";
 import { CookieConfirmDialog } from "@/components/features/dialogs/CookieConfirmDialog";
 import { CurrencySwitchDialog } from "@/components/features/dialogs/CurrencySwitchDialog";
-import { ModuleContainer } from "@/components/layout/module-container";
+import { ModuleContainer } from "@/components/composed/layout/module-container";
 import { initModulesState } from "@/core/flow/flowSlice";
 import { getFlowInitFromRequest } from "@/core/flow/getFlowInitFromRequest";
 import type { ModuleName } from "@/core/flow/types";
