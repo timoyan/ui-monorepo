@@ -61,7 +61,8 @@ Biome is configured in `biome.json` at the repo root.
 ## Git Hooks (Husky + lint-staged)
 
 - `prepare` installs Husky.
-- Pre-commit runs `lint-staged`: format and lint staged files with Biome. Unfixable issues block the commit.
+- **Pre-commit** runs `lint-staged`: format and lint staged files with Biome. Unfixable issues block the commit.
+- **Pre-push** runs the app build (`pnpm --filter nextjs-pandacss-ark run build`) so broken builds are caught before push.
 
 ## Docs
 

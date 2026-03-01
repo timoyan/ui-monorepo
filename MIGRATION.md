@@ -21,7 +21,7 @@ This document describes how to move this project (slim monorepo with **nextjs-pa
 | `pnpm-workspace.yaml` | Defines `packages/*`. |
 | `biome.json` | Lint and format config. |
 | `.gitignore` | Ignore patterns (build, coverage, env, etc.). |
-| `.husky/` | Pre-commit hook (runs lint-staged). |
+| `.husky/` | Pre-commit (lint-staged) and pre-push (build). |
 | `AGENTS.md` | Canonical AI/agent rules (single source of truth). |
 | `scripts/verify-overrides.js` | Optional; verifies pnpm overrides if you keep overrides. |
 

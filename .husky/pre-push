@@ -1,0 +1,5 @@
+#!/usr/bin/env sh
+set -e
+
+# Run build before push to ensure the project compiles
+pnpm --filter nextjs-pandacss-ark run build
