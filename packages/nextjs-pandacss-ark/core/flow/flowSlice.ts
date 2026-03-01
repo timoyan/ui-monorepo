@@ -1,4 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit";
+import {
+	DEFAULT_MODULE_ORDER,
+	MODULE_NAME_TO_ID,
+} from "@/core/constants/module";
 import type {
 	CookieConfirmResult,
 	InitModulesStatePayload,
@@ -7,17 +11,6 @@ import type {
 	ModuleStatePayload,
 	ModulesState,
 } from "@/core/flow/types";
-
-/** Default order when not set by initModulesState (e.g. client-only). */
-const DEFAULT_MODULE_ORDER: ModuleName[] = ["A", "B1", "B2", "C"];
-
-/** One Ui moduleId per ModuleName (b-1 and b-2 are independent modules). */
-const MODULE_NAME_TO_ID: Record<ModuleName, string> = {
-	A: "a",
-	B1: "b-1",
-	B2: "b-2",
-	C: "c",
-};
 
 /**
  * Computes which single module should be active from current modulesState.
@@ -35,7 +28,7 @@ function computeActiveModuleId(
 		(name) => (modulesState[name] as ModuleState).state !== "COMPLETED",
 	);
 	if (firstIncomplete == null) return null;
-	return MODULE_NAME_TO_ID[firstIncomplete];
+	return MODULE_NAME_TO_ID[firstIncomplete] ?? null;
 }
 
 export const flowSlice = createSlice({

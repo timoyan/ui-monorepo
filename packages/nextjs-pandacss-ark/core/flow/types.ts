@@ -1,3 +1,5 @@
+import type { ModuleName } from "@/core/constants/module";
+
 /**
  * Flow types shared by useFlow and the Redux flow slice.
  * Keep here to avoid circular imports (store → flowSlice → useFlow → store).
@@ -7,7 +9,7 @@
  * Data shape for one module. Modules/page pass this to drive flow (state, message, etc.).
  */
 export interface ModuleStatePayload {
-	name: "A" | "B1" | "B2" | "C";
+	name: ModuleName;
 	state: "INIT" | "PROCESSING" | "COMPLETED" | "FAILED";
 	message?: string;
 	data?: unknown;
@@ -17,8 +19,8 @@ export interface ModuleState extends ModuleStatePayload {
 	timestamp: number;
 }
 
-/** Module name as unique identifier; must match ModuleData.name. */
-export type ModuleName = ModuleState["name"];
+/** Re-export for consumers that only need the type. */
+export type { ModuleName } from "@/core/constants/module";
 
 /**
  * State for multiple modules keyed by module name.

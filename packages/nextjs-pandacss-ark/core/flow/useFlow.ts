@@ -1,5 +1,6 @@
 import { useCallback, useEffect } from "react";
 import { shallowEqual, useSelector } from "react-redux";
+import { MODULE_NAME_TO_ID } from "@/core/constants/module";
 import {
 	getCookieConfirmFromStorage,
 	setCookieConfirmInStorage,
@@ -19,13 +20,6 @@ interface UseFlowOptions {
 	/** Reserved for future use (e.g. initial open module Id). */
 	initialOpenModuleId?: string | null;
 }
-
-const MODULE_NAME_TO_Id: Record<ModuleName, string> = {
-	A: "a",
-	B1: "b-1",
-	B2: "b-2",
-	C: "c",
-};
 
 /**
  * Hook for global user flow: per-module state (Redux) and updater.
@@ -103,7 +97,7 @@ export function useFlow(_options?: UseFlowOptions) {
 	/** Whether this module (by ModuleName) is active. Subscribes via Redux. */
 	const isModuleActive = useCallback(
 		(name: ModuleName): boolean => {
-			return activeModuleId === MODULE_NAME_TO_Id[name];
+			return activeModuleId === MODULE_NAME_TO_ID[name];
 		},
 		[activeModuleId],
 	);

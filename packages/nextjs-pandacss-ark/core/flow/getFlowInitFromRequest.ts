@@ -1,4 +1,5 @@
 import type { GetServerSidePropsContext } from "next";
+import { DEFAULT_MODULE_ORDER, MODULE_NAMES } from "@/core/constants/module";
 import type {
 	InitModulesStatePayload,
 	ModuleName,
@@ -12,9 +13,6 @@ const DEFAULT_MODULE_MESSAGES: Record<ModuleName, string> = {
 	B2: "Button – fullWidth + disabled",
 	C: "Cart",
 };
-
-/** Default order when no request-specific logic applies. */
-const DEFAULT_ORDER: ModuleName[] = ["A", "B1", "B2", "C"];
 
 /**
  * Builds flow init payload from request context. Override or extend this to decide
@@ -44,9 +42,10 @@ export function getFlowInitFromRequest(
 	const orderParam = (query.order as string) ?? (query.modules as string);
 	const order: ModuleName[] = orderParam
 		? (orderParam.split(",").map((s) => s.trim()) as ModuleName[]).filter(
-				(name): name is ModuleName => ["A", "B1", "B2", "C"].includes(name),
+				(name): name is ModuleName =>
+					(MODULE_NAMES as readonly string[]).includes(name),
 			)
-		: DEFAULT_ORDER;
+		: [...DEFAULT_MODULE_ORDER];
 
 	const modules = Object.fromEntries(
 		order.map((name) => [

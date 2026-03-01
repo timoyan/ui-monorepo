@@ -7,7 +7,8 @@ This document describes the folder structure and organization principles of the 
 ```
 nextjs-pandacss-ark/
 ├── core/                    # App-level concerns
-│   ├── store/              # Redux store configuration
+│   ├── store/              # Redux store configuration (all slices registered statically)
+│   ├── module/             # ModuleId type and slice re-exports (each module owns its slice in modules/*)
 │   ├── router/             # URL routing logic, step management
 │   ├── flow/               # Multi-step flow state (e.g. checkout flow)
 │   ├── toast/              # Toast state and registry
@@ -23,12 +24,16 @@ nextjs-pandacss-ark/
 ├── modules/                # Aggregate features (combine multiple features)
 │   ├── a/                  # Module A (example)
 │   │   ├── index.tsx       # Module entry
+│   │   ├── moduleASlice.ts # Redux slice for module A (static in store)
 │   │   └── __tests__/
-│   ├── b/                  # Module B (example)
+│   ├── b/                  # Module B (example; B1 + B2 variants)
 │   │   ├── index.tsx
+│   │   ├── moduleB1Slice.ts
+│   │   ├── moduleB2Slice.ts
 │   │   └── __tests__/
 │   └── c/                  # Module C (cart + flow + toast demo)
 │       ├── index.tsx
+│       ├── moduleCSlice.ts
 │       └── __tests__/
 │
 ├── components/             # Reusable UI components

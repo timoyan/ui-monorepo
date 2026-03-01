@@ -55,8 +55,14 @@ describe("store", () => {
 			expect(typeof store.subscribe).toBe("function");
 			expect(store.getState()).toBeDefined();
 			expect(store.getState().flow).toBeDefined();
-			expect(store.getState().module).toBeDefined();
-			expect(store.getState().module.byModuleId).toEqual({});
+			expect(store.getState().moduleA).toBeDefined();
+			expect(store.getState().moduleB1).toBeDefined();
+			expect(store.getState().moduleB2).toBeDefined();
+			expect(store.getState().moduleC).toBeDefined();
+			expect(store.getState().moduleC).toEqual({
+				selectedProduct: "",
+				busyItemIds: [],
+			});
 		});
 	});
 
@@ -70,8 +76,9 @@ describe("store", () => {
 					cookieConfirmResult: { isAccept: true },
 					currencySwitchDialogOpen: false,
 				},
-				module: {
-					byModuleId: { c: { selectedProduct: "prod-sample" } },
+				moduleC: {
+					selectedProduct: "prod-sample",
+					busyItemIds: [],
 				},
 			});
 			expect(store.getState().flow.moduleOrder).toEqual(["A"]);
@@ -79,9 +86,8 @@ describe("store", () => {
 			expect(store.getState().flow.cookieConfirmResult).toEqual({
 				isAccept: true,
 			});
-			expect(store.getState().module.byModuleId.c).toEqual({
-				selectedProduct: "prod-sample",
-			});
+			expect(store.getState().moduleC.selectedProduct).toBe("prod-sample");
+			expect(store.getState().moduleC.busyItemIds).toEqual([]);
 		});
 	});
 });

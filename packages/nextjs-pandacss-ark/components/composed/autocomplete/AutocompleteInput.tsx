@@ -1,5 +1,6 @@
 "use client";
 
+import { createListCollection } from "@ark-ui/react/collection";
 import {
 	ComboboxInput as ArkComboboxInput,
 	ComboboxContent,
@@ -9,7 +10,6 @@ import {
 	ComboboxPositioner,
 	ComboboxRoot,
 } from "@ark-ui/react/combobox";
-import { createListCollection } from "@ark-ui/react/collection";
 import { useMemo, useState } from "react";
 import { Input } from "@/components/atomics/input";
 import { styled } from "@/styled-system/jsx";

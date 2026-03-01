@@ -1,12 +1,12 @@
 import Head from "next/head";
 import { cartApi } from "@/apis/cart";
 import { Button } from "@/components/atomics/button";
+import { ModuleContainer } from "@/components/composed/layout/module-container";
 import { CookieConfirmDialog } from "@/components/features/dialogs/CookieConfirmDialog";
 import { CurrencySwitchDialog } from "@/components/features/dialogs/CurrencySwitchDialog";
-import { ModuleContainer } from "@/components/composed/layout/module-container";
+import { MODULE_NAME_TO_ID, type ModuleName } from "@/core/constants/module";
 import { initModulesState } from "@/core/flow/flowSlice";
 import { getFlowInitFromRequest } from "@/core/flow/getFlowInitFromRequest";
-import type { ModuleName } from "@/core/flow/types";
 import { useFlow } from "@/core/flow/useFlow";
 import { NextReduxWrapper } from "@/core/store";
 import {
@@ -31,18 +31,37 @@ const headingStyles = css({
 	fontWeight: "bold",
 });
 
+const MODULE_TITLES: Record<ModuleName, string> = {
+	A: "A",
+	B1: "B1",
+	B2: "B2",
+	C: "C",
+};
+
 const MODULE_UI: Record<
 	ModuleName,
 	{ moduleId: string; title: string; children: React.ReactNode }
 > = {
-	A: { moduleId: "a", title: "A", children: <ModuleA /> },
-	B1: { moduleId: "b-1", title: "B1", children: <ModuleBVariantSize /> },
+	A: {
+		moduleId: MODULE_NAME_TO_ID.A,
+		title: MODULE_TITLES.A,
+		children: <ModuleA />,
+	},
+	B1: {
+		moduleId: MODULE_NAME_TO_ID.B1,
+		title: MODULE_TITLES.B1,
+		children: <ModuleBVariantSize />,
+	},
 	B2: {
-		moduleId: "b-2",
-		title: "B2",
+		moduleId: MODULE_NAME_TO_ID.B2,
+		title: MODULE_TITLES.B2,
 		children: <ModuleBFullWidthDisabled />,
 	},
-	C: { moduleId: "c", title: "C", children: <ModuleC /> },
+	C: {
+		moduleId: MODULE_NAME_TO_ID.C,
+		title: MODULE_TITLES.C,
+		children: <ModuleC />,
+	},
 };
 
 export default function Home() {
