@@ -79,3 +79,4 @@ Biome is configured in `biome.json` at the repo root.
   - [docs/UNIT_TESTING.md](docs/UNIT_TESTING.md) – testing guide (Redux, MSW, no snapshots)
   - [docs/PHILOSOPHY.md](docs/PHILOSOPHY.md) – architecture philosophy
   - [core/toast/README.md](packages/nextjs-pandacss-ark/core/toast/README.md) – centralized toast
+  - [core/flow/README.md](packages/nextjs-pandacss-ark/core/flow/README.md) – flow and module state

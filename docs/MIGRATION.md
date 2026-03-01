@@ -30,9 +30,9 @@ This document describes how to move this project (slim monorepo with **nextjs-pa
 | Item | Purpose |
 |------|--------|
 | `README.md` | Update for the new repo name and context. |
-| `DEPENDENCY_UPDATE_POLICY.md` | Lockfile and upgrade policy. |
-| `MIGRATION.md` | This file; keep for future moves or remove. |
-| `PNPM_OVERRIDES_GUIDE.md` | Only if you use pnpm overrides. |
+| `docs/DEPENDENCY_UPDATE_POLICY.md` | Lockfile and upgrade policy. |
+| `docs/MIGRATION.md` | This file; keep for future moves or remove. |
+| `docs/PNPM_OVERRIDES_GUIDE.md` | Only if you use pnpm overrides. |
 
 ### 2.3 Root – Editor / AI (Optional)
 

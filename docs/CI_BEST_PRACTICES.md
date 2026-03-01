@@ -1,6 +1,6 @@
 # CI Best Practices (GitHub Actions & Bitbucket Pipelines)
 
-This doc describes recommended CI setup for this monorepo: job order, caching, and example workflows for **GitHub Actions** and **Bitbucket Pipelines**. For SonarCloud report paths and multi-package setup, see [SONAR_TEST_REPORTS.md](./SONAR_TEST_REPORTS.md).
+This doc describes recommended CI setup for this repo: job order, caching, and example workflows for **GitHub Actions** and **Bitbucket Pipelines**. For SonarCloud report paths and multi-package setup, see [SONAR_TEST_REPORTS.md](./SONAR_TEST_REPORTS.md). The repo does not include `.github/workflows` by default; use this doc as a template when adding CI.
 
 Use **Node.js >=22** in CI to match `engines` in `packages/nextjs-pandacss-ark` (`>=22.0.0`).
 
@@ -142,7 +142,7 @@ pipelines:
   default:
     - step:
         name: Lint, type-check, test
-        image: node:20
+        image: node:22
         caches:
           - pnpm
         script:
@@ -163,7 +163,7 @@ pipelines:
   default:
     - step:
         name: Lint, type-check, test
-        image: node:20
+        image: node:22
         caches:
           - pnpm
         script:

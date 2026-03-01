@@ -84,6 +84,7 @@ For detailed architecture documentation, see [ARCHITECTURE.md](./ARCHITECTURE.md
 - **Architecture**: Folder structure and layering rules; see [ARCHITECTURE.md](./ARCHITECTURE.md)
 - **Unit Testing**: Testing stack and conventions (Redux, MSW, assertions); see [docs/UNIT_TESTING.md](../../docs/UNIT_TESTING.md)
 - **Centralized Toast**: App-wide toast system design and usage; see [core/toast/README.md](./core/toast/README.md)
+- **Flow**: Multi-step flow and module state; see [core/flow/README.md](./core/flow/README.md)
 
 ## Scripts
 

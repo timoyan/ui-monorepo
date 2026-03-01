@@ -66,7 +66,7 @@ nextjs-pandacss-ark/
 │
 ├── utils/                  # Shared utilities (no UI, no Redux)
 │   └── guards/             # Type guards and predicate helpers
-│       ├── index.tsx
+│       ├── index.ts
 │       └── __tests__/
 │
 ├── mocks/                  # MSW configuration (for development and testing)
