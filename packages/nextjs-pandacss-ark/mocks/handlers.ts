@@ -1,4 +1,9 @@
 import { HttpResponse, http } from "msw";
+import type {
+	AddToCartRequest,
+	RemoveFromCartRequest,
+	UpdateQuantityRequest,
+} from "@/apis/cart";
 import { getCartApiOrigin } from "@/apis/helpers/getBaseUrlForEndpoint";
 import {
 	addToCart,
@@ -21,11 +26,12 @@ export const devHandlers = [
 	}),
 
 	http.post(`${cartBase}/cart/add`, async ({ request }) => {
-		const body = (await request.json()) as {
-			productId?: string;
-			productName?: string;
-			quantity?: number;
-		};
+		let body: Partial<AddToCartRequest>;
+		try {
+			body = (await request.json()) as Partial<AddToCartRequest>;
+		} catch {
+			body = {};
+		}
 		const item = addToCart({
 			productId: body.productId ?? "prod-1",
 			productName: body.productName,
@@ -35,10 +41,12 @@ export const devHandlers = [
 	}),
 
 	http.patch(`${cartBase}/cart/updateQuantity`, async ({ request }) => {
-		const body = (await request.json()) as {
-			itemId?: string;
-			quantity?: number;
-		};
+		let body: Partial<UpdateQuantityRequest>;
+		try {
+			body = (await request.json()) as Partial<UpdateQuantityRequest>;
+		} catch {
+			body = {};
+		}
 		const itemId = body.itemId;
 		const quantity = body.quantity ?? 1;
 		if (!itemId) {
@@ -57,7 +65,7 @@ export const devHandlers = [
 	http.delete(`${cartBase}/cart/remove`, async ({ request }) => {
 		let itemId: string | undefined;
 		try {
-			const body = (await request.json()) as { itemId?: string };
+			const body = (await request.json()) as Partial<RemoveFromCartRequest>;
 			itemId = body.itemId;
 		} catch {
 			// Body may be empty
