@@ -6,7 +6,7 @@ This document describes how to move this project (slim monorepo with **nextjs-pa
 
 ## 1. What This Repo Is
 
-- **Structure**: pnpm workspace with a single package: `packages/nextjs-pandacss-ark` (Next.js 15 + PandaCSS + Ark UI).
+- **Structure**: pnpm workspace with a single package: `packages/nextjs-pandacss-ark` (Next.js 16 + PandaCSS + Ark UI).
 - **Tooling**: Biome (lint/format), Husky + lint-staged, Conventional Commits. Optional: VS Code + Gemini (`.gemini/instructions.md`), Cursor rules (`.cursor/`, `.agent/`).
 
 ---

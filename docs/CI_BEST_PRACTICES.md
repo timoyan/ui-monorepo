@@ -2,6 +2,8 @@
 
 This doc describes recommended CI setup for this monorepo: job order, caching, and example workflows for **GitHub Actions** and **Bitbucket Pipelines**. For SonarCloud report paths and multi-package setup, see [SONAR_TEST_REPORTS.md](./SONAR_TEST_REPORTS.md).
 
+Use **Node 22** in CI to match `engines` in `packages/nextjs-pandacss-ark` (`>=22.0.0`).
+
 ---
 
 ## General best practices
@@ -57,7 +59,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "22"
           cache: "pnpm"
 
       - name: Install dependencies
@@ -101,7 +103,7 @@ To cache the pnpm store for faster installs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "22"
           cache: "pnpm"
 
       # Optional: cache pnpm store more explicitly (store is in ~/.local/share/pnpm/store by default)

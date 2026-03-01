@@ -4,14 +4,14 @@ This repository contains a UI app package managed as a pnpm workspace.
 
 ## Packages
 
-- **`packages/nextjs-pandacss-ark`** – Next.js 15 app (Pages Router) with PandaCSS and Ark UI (`Button`, `Accordion`, etc.).
+- **`packages/nextjs-pandacss-ark`** – Next.js 16 app (Pages Router) with PandaCSS and Ark UI (`Button`, `Accordion`, etc.).
   - Package docs entrypoint: see `packages/nextjs-pandacss-ark/README.md` (`Docs` section).
 
 Development is set up for **VS Code + Gemini Code Assistant**. Canonical project rules live in **AGENTS.md**; Gemini instructions in `.gemini/instructions.md` point to AGENTS.md.
 
 ## Tech Stack
 
-- **Next.js 15** (Pages Router)
+- **Next.js 16** (Pages Router)
 - **PandaCSS** – Build-time CSS-in-JS
 - **Ark UI** – Headless, accessible components
 - **Tooling**: pnpm workspaces, Biome (lint/format), Husky + lint-staged

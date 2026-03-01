@@ -61,7 +61,7 @@ All unit tests should pass. If you are in a monorepo, you can run from repo root
 
 | Task              | Command           | Notes                                      |
 |-------------------|-------------------|--------------------------------------------|
-| Dev server (HTTP) | `pnpm dev`        | Port 3000; no Turbopack (PandaCSS + Webpack) |
+| Dev server (HTTP) | `pnpm dev`        | Port 3000; Next.js 16 uses Turbopack by default (PandaCSS works with it) |
 | Dev server (HTTPS)| `pnpm dev:https:custom` | Port 443; needs mkcert certs in `certs/` |
 | Production build  | `pnpm build`      | Runs `panda codegen` then `next build`     |
 | Production run    | `pnpm start`      | After `pnpm build`                         |

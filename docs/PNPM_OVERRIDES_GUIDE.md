@@ -227,5 +227,5 @@ Or use the clean-install script:
 ## Related Documentation
 
 - [pnpm Overrides Documentation](https://pnpm.io/package_json#pnpmoverrides)
-- [README.md](./README.md) - General project documentation
+- [README.md](../README.md) – General project documentation
 
