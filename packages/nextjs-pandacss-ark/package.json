@@ -33,7 +33,7 @@
 		"react-redux": "^9.2.0"
 	},
 	"devDependencies": {
-		"@pandacss/dev": "^0.53.0",
+		"@pandacss/dev": "^0.53.6",
 		"@testing-library/dom": "^10.4.0",
 		"@testing-library/jest-dom": "^6.1.5",
 		"@testing-library/react": "^16.3.0",
