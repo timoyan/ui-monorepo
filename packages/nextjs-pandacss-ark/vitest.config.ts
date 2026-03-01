@@ -13,6 +13,10 @@ export default defineConfig({
 		environment: "happy-dom",
 		globals: true,
 		setupFiles: ["./test/setup.ts"],
+		reporters: [
+			"default",
+			["vitest-sonar-reporter", { outputFile: "test-result/sonar-report.xml" }],
+		],
 		exclude: [
 			"**/node_modules/**",
 			"**/dist/**",

@@ -18,6 +18,7 @@
 		"test:report": "vitest run --reporter=default --reporter=html --outputFile=./test-result/test-report.html",
 		"test:report:view": "npx --yes serve test-result -l 3131",
 		"test:coverage": "vitest run --coverage",
+		"test:sonar": "vitest run --coverage",
 		"lint:test": "! grep -rE 'toMatch(Inline)?Snapshot' --include='*.test.ts' --include='*.test.tsx' --exclude-dir=node_modules . 2>/dev/null",
 		"docker:standalone": "docker build -f Dockerfile -t nextjs-pandacss-ark ."
 	},
@@ -40,16 +41,17 @@
 		"@types/react": "^19.0.0",
 		"@types/react-dom": "^19.0.0",
 		"@vitejs/plugin-react": "^4.2.1",
-		"@vitest/coverage-istanbul": "^1.6.1",
-		"@vitest/coverage-v8": "^1.6.1",
-		"@vitest/ui": "^1.6.1",
+		"@vitest/coverage-istanbul": "^4.0.0",
+		"@vitest/coverage-v8": "^4.0.0",
+		"@vitest/ui": "^4.0.0",
 		"concurrently": "^9.2.1",
 		"happy-dom": "^20.0.0",
 		"msw": "^2.7.0",
 		"postcss": "^8.4.49",
 		"rimraf": "^6.0.1",
 		"typescript": "^5.9.3",
-		"vitest": "^1.0.4"
+		"vitest": "^4.0.0",
+		"vitest-sonar-reporter": "^3.0.0"
 	},
 	"msw": {
 		"workerDirectory": [

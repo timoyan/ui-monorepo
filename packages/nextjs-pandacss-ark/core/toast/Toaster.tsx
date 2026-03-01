@@ -12,6 +12,13 @@ import {
 
 type ToastMeta = { contentKey?: string; unregisterOnDismiss?: boolean };
 
+/** Compatible with Ark UI Toaster children callback (toast: Options<ReactNode>). */
+type ToastRenderOptions = {
+	title?: ReactNode;
+	description?: ReactNode;
+	meta?: Record<string, unknown>;
+};
+
 /** Ref-count and delayed unregister so we don't unregister during React Strict Mode's fake unmount. */
 const unregisterRefCount: Record<string, number> = {};
 const unregisterTimeouts: Record<string, ReturnType<typeof setTimeout>> = {};
@@ -34,11 +41,7 @@ function scheduleUnregister(contentKey: string): void {
  * the toast is actually removed (not on React Strict Mode's fake unmount), so
  * one-time dynamic toasts show content correctly.
  */
-function ToastItem({
-	toast,
-}: {
-	toast: { title?: string; description?: string; meta?: ToastMeta };
-}) {
+function ToastItem({ toast }: { toast: ToastRenderOptions }) {
 	const meta = toast.meta as ToastMeta | undefined;
 	const contentKey =
 		typeof meta?.contentKey === "string" ? meta.contentKey : undefined;
@@ -106,13 +109,7 @@ function ToastItem({
 export function AppToaster() {
 	return (
 		<ArkToaster toaster={toaster}>
-			{(toast: { title?: string; description?: string; meta?: ToastMeta }) => (
-				<ToastItem
-					toast={
-						toast as { title?: string; description?: string; meta?: ToastMeta }
-					}
-				/>
-			)}
+			{(toast: ToastRenderOptions) => <ToastItem toast={toast} />}
 		</ArkToaster>
 	);
 }

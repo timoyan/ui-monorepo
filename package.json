@@ -15,6 +15,7 @@
 		"lint-staged": "lint-staged",
 		"test": "pnpm --filter nextjs-pandacss-ark run test:run",
 		"test:unit": "pnpm --filter nextjs-pandacss-ark run test:run",
+		"test:sonar": "pnpm --filter nextjs-pandacss-ark run test:sonar",
 		"verify-overrides": "node scripts/verify-overrides.js",
 		"clean-install": "rm -rf node_modules packages/*/node_modules pnpm-lock.yaml && pnpm install"
 	},
