@@ -86,7 +86,7 @@ For detailed architecture documentation, see [ARCHITECTURE.md](./ARCHITECTURE.md
 
 ## Scripts
 
-- `pnpm dev` – Start development server (HTTP, port 3000). Do not use `--turbo`/`--turbopack`; PandaCSS works with the default Webpack dev server.
+- `pnpm dev` – Start development server (HTTP, port 3000). Next.js 16+ uses Turbopack by default; PandaCSS works with it.
 - `pnpm dev:https:custom` – HTTPS on port 443 with mkcert certs for a custom domain (e.g. https://local.timotest.com). Requires certs in `certs/`; see “Custom domain and MSW” above.
 - `pnpm build` – Run `panda codegen` then build for production
 - `pnpm start` – Start production server
