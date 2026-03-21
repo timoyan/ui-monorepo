@@ -12,6 +12,7 @@ A React component library styled with [Vanilla Extract](https://vanilla-extract.
 - **Peer dependencies**: `react`, `react-dom`, and Radix packages are installed by the app and are not bundled into the library.
 - **Per-component outputs**: `dist/components/<Name>.js` plus matching `dist/components/<Name>.css` when styles exist.
 - **CSS loading**: The build injects `import './<Name>.css'` into component chunks via `vite-plugin-lib-inject-css`, so consumers usually **do not** need a separate CSS `import`.
+- **Next.js App Router**: Put `"use client";` as the **first line** of each library entry source (`src/index.ts`, `src/components/<Name>.tsx`). The Vite plugin reads that line from the facade file and prepends it to the built entry so it stays **before** any `import` (Rollup otherwise drops or reorders it). Shared `dist/chunks/*` omit the directive—import only via `package.json` `exports`.
 - **Tree-shaking friendly**: `sideEffects` is limited to `**/*.css`; other ESM can be analyzed by bundlers.
 
 ---
@@ -41,11 +42,15 @@ Inside a monorepo, link this package with your workspace protocol as usual.
 
 ## Consumer bundling & CSS
 
-- Published component JS (e.g. `dist/components/DialogDemo.js`) starts with a relative `import "./DialogDemo.css"` (injected by `vite-plugin-lib-inject-css`).
+- Published component entries (e.g. `dist/components/DialogDemo.js`) begin with `"use client";` (for Next.js), then ESM imports, including a relative `import "./DialogDemo.css"` injected by `vite-plugin-lib-inject-css`.
 - Your **app bundler** (Vite, Webpack, Next.js, Rspack, etc.) must **resolve and process** `.css` imports from `node_modules` during the build—the same as `import './foo.css'` in your own code.
 - Typical React setups already include a CSS pipeline; **usually no extra config**.
 - If the toolchain **does not** handle CSS imports, styles never enter the bundle; fix the build or import `./components/DialogDemo.css` explicitly and ensure that path is processed.
 - With **TypeScript**, you may need `declare module "*.css"` in the app if typechecking follows CSS imports from dependencies (depends on `tsconfig` and bundler).
+
+### Next.js App Router & CSS order
+
+Next.js requires `"use client"` **before** any imports. Authors add it as **line 1** of each entry module; the build plugin (`emit-use-client-from-facade-source` in `vite.config.ts`) reads that line and prepends a single `"use client";` to the emitted entry so it stays first even after Rollup hoists imports and `vite-plugin-lib-inject-css` injects the CSS `import`. You do not need a separate CSS import in the app for default styling; Next’s bundler follows the injected `./DialogDemo.css` from the package like any other dependency. Non-Next apps ignore `"use client"` as a no-op string statement.
 
 ---
 
@@ -105,7 +110,7 @@ pnpm --filter vite-radix-vanilla-extract run build
 
 ## Checklist: add a component
 
-1. Add `src/components/<Name>.tsx`; with Vanilla Extract, add `<Name>.css.ts` and `import * as styles from "./<Name>.css"` in the component.
+1. Add `src/components/<Name>.tsx` with `"use client";` as the **first line**; with Vanilla Extract, add `<Name>.css.ts` and `import * as styles from "./<Name>.css"` in the component.
 2. Add an entry to `libEntry` in `vite.config.ts`, e.g. `"components/<Name>": path.resolve(packageDir, "src/components/<Name>.tsx")`.
 3. Add `./components/<Name>` and (if applicable) `./components/<Name>.css` to `exports` in `package.json`.
 4. Re-export from `src/index.ts`.

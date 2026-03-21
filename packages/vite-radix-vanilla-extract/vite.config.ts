@@ -1,9 +1,46 @@
+import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { vanillaExtractPlugin } from "@vanilla-extract/vite-plugin";
 import react from "@vitejs/plugin-react";
-import { defineConfig } from "vite";
+import { defineConfig, type Plugin } from "vite";
 import { libInjectCss } from "vite-plugin-lib-inject-css";
+
+const USE_CLIENT_FIRST_LINE = /^\uFEFF?\s*["']use client["']\s*;\s*$/;
+
+/**
+ * Authors put `"use client"` in entry source, but Rollup often drops it as side-effect free and
+ * hoists imports above any surviving copy. Read the facade file and prepend one directive to the emit.
+ */
+function emitUseClientFromFacadeSource(rootDir: string): Plugin {
+	const directiveLine = /^\s*["']use client["']\s*;\s*/gm;
+
+	return {
+		name: "emit-use-client-from-facade-source",
+		enforce: "post",
+		renderChunk(code, chunk) {
+			if (!chunk.isEntry) return null;
+			const facade = chunk.facadeModuleId;
+			if (!facade || facade.includes("\0")) return null;
+			const normalizedFacade = path.normalize(facade);
+			if (!normalizedFacade.startsWith(rootDir)) return null;
+
+			let sourceHead: string;
+			try {
+				sourceHead = fs.readFileSync(normalizedFacade, "utf8").slice(0, 2048);
+			} catch {
+				return null;
+			}
+
+			const firstLine = sourceHead.split(/\r?\n/, 1)[0] ?? "";
+			if (!USE_CLIENT_FIRST_LINE.test(firstLine)) return null;
+
+			directiveLine.lastIndex = 0;
+			const stripped = code.replace(directiveLine, "");
+			return { code: `"use client";\n${stripped}`, map: null };
+		},
+	};
+}
 
 const packageDir = path.dirname(fileURLToPath(import.meta.url));
 
@@ -44,6 +81,7 @@ export default defineConfig({
 		react(),
 		// Injects `import './…css'` at the top of emitted chunks so apps need not import CSS manually.
 		libInjectCss(),
+		emitUseClientFromFacadeSource(packageDir),
 	],
 	build: {
 		lib: {
