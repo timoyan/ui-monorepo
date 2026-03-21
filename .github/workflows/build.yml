@@ -71,6 +71,10 @@ jobs:
         working-directory: packages/vite-react19
         run: pnpm build
 
+      - name: Build vite-radix-vanilla-extract
+        working-directory: packages/vite-radix-vanilla-extract
+        run: pnpm build
+
       - name: Verify build outputs
         run: |
           echo "Verifying build outputs..."
@@ -81,5 +85,6 @@ jobs:
           test -d packages/ui-react19/build && echo "✓ ui-react19 build exists" || (echo "✗ ui-react19 build missing" && exit 1)
           test -d packages/vite-react18/dist && echo "✓ vite-react18 build exists" || (echo "✗ vite-react18 build missing" && exit 1)
           test -d packages/vite-react19/dist && echo "✓ vite-react19 build exists" || (echo "✗ vite-react19 build missing" && exit 1)
+          test -d packages/vite-radix-vanilla-extract/dist && echo "✓ vite-radix-vanilla-extract build exists" || (echo "✗ vite-radix-vanilla-extract build missing" && exit 1)
           echo "All builds verified successfully!"
 
