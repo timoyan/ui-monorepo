@@ -108,6 +108,25 @@ pnpm --filter vite-radix-vanilla-extract run build
 
 ---
 
+## Publishing & Git tags (monorepo)
+
+This package lives in a monorepo where other packages may also ship versions. Prefer **per-package tags** so a tag name identifies the npm package and semver (not just a bare `v0.1.0` on the whole repo):
+
+```text
+vite-radix-vanilla-extract@<semver>
+```
+
+Example after `version` in `package.json` matches the release (e.g. `0.1.0`), on the commit you want to mark:
+
+```bash
+git tag -a "vite-radix-vanilla-extract@0.1.0" -m "vite-radix-vanilla-extract 0.1.0"
+git push origin "vite-radix-vanilla-extract@0.1.0"
+```
+
+Then publish from a clean checkout (with `dist` built; see npm publishing steps your team uses).
+
+---
+
 ## Checklist: add a component
 
 1. Add `src/components/<Name>.tsx` with `"use client";` as the **first line**; with Vanilla Extract, add `<Name>.css.ts` and `import * as styles from "./<Name>.css"` in the component.
