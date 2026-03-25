@@ -47,6 +47,10 @@ const packageDir = path.dirname(fileURLToPath(import.meta.url));
 /** Library entries: barrel + one file per component (each gets its own JS/CSS chunks). */
 const libEntry = {
 	index: path.resolve(packageDir, "src/index.ts"),
+	"components/Button/Button": path.resolve(
+		packageDir,
+		"src/components/Button/Button.tsx",
+	),
 	"components/Dialog/Dialog": path.resolve(
 		packageDir,
 		"src/components/Dialog/Dialog.tsx",
