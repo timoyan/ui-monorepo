@@ -108,6 +108,25 @@ pnpm --filter vite-radix-vanilla-extract run build
 
 ---
 
+## 發佈與 Git 標籤（monorepo）
+
+本套件位於 monorepo，日後若有多個可發佈套件，**建議**使用「含 npm 套件名」的 tag，一眼能看出對應哪個套件與版號，不要只用整 repo 通用的 `v0.1.0`：
+
+```text
+vite-radix-vanilla-extract@<semver>
+```
+
+在 `package.json` 的 `version` 已對齊要發佈的版號（例如 `0.1.0`）、且已落在目標 commit 上時：
+
+```bash
+git tag -a "vite-radix-vanilla-extract@0.1.0" -m "vite-radix-vanilla-extract 0.1.0"
+git push origin "vite-radix-vanilla-extract@0.1.0"
+```
+
+接著依團隊流程在本機或 CI 建置 `dist` 後執行 `npm publish`／`pnpm publish`。
+
+---
+
 ## 新增一個元件時要做的事
 
 1. 在 `src/components/` 新增 `<Name>.tsx`，**第一行**為 `"use client";`；若用 Vanilla Extract，新增 `<Name>.css.ts` 並在元件內 `import * as styles from "./<Name>.css"`。
