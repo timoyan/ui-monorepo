@@ -88,7 +88,8 @@ function isPeerDependency(id: string): boolean {
 		id === "react" ||
 		id === "react/jsx-runtime" ||
 		id === "react-dom" ||
-		id === "@radix-ui/react-dialog"
+		id === "@radix-ui/react-dialog" ||
+		id === "@radix-ui/react-slot"
 	) {
 		return true;
 	}
@@ -96,6 +97,9 @@ function isPeerDependency(id: string): boolean {
 		return true;
 	}
 	if (id.startsWith("@radix-ui/react-dialog/")) {
+		return true;
+	}
+	if (id.startsWith("@radix-ui/react-slot/")) {
 		return true;
 	}
 	return false;
