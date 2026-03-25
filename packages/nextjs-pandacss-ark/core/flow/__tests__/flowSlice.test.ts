@@ -3,9 +3,9 @@ import {
 	flowSlice,
 	initCookieConfirmFromStorage,
 	initModulesState,
+	setActiveModuleId,
 	setCookieConfirmResult,
 	setCurrencySwitchDialogOpen,
-	setActiveModuleId,
 	setModuleState,
 } from "@/core/flow/flowSlice";
 

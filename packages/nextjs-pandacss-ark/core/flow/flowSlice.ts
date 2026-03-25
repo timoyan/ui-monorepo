@@ -4,8 +4,8 @@ import type {
 	InitModulesStatePayload,
 	ModuleName,
 	ModuleState,
-	ModulesState,
 	ModuleStatePayload,
+	ModulesState,
 } from "@/core/flow/types";
 
 /** Default order when not set by initModulesState (e.g. client-only). */

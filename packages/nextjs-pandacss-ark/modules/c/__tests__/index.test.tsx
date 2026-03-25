@@ -6,8 +6,8 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { apiSlice } from "@/apis/apiSlice";
 import { useToast } from "@/core/toast";
 import { server } from "@/mocks/server";
-import { createReduxRender } from "@/test/renderWithRedux";
 import { ModuleC } from "@/modules/c";
+import { createReduxRender } from "@/test/renderWithRedux";
 
 const mockToast = {
 	create: vi.fn(),

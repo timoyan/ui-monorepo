@@ -5,8 +5,8 @@ import { describe, expect, it } from "vitest";
 import { AppToaster } from "@/core/toast";
 import { toast } from "../toastApi";
 import {
-	TOAST_CONTENT_REGISTRY,
 	registerToastContent,
+	TOAST_CONTENT_REGISTRY,
 	unregisterToastContent,
 } from "../toastContentRegistry";
 

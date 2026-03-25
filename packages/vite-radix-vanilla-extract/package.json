@@ -21,12 +21,12 @@
 			"import": "./dist/index.js",
 			"default": "./dist/index.js"
 		},
-		"./components/DialogDemo": {
-			"types": "./dist/components/DialogDemo.d.ts",
-			"import": "./dist/components/DialogDemo.js",
-			"default": "./dist/components/DialogDemo.js"
+		"./components/Dialog/Dialog": {
+			"types": "./dist/components/Dialog/Dialog.d.ts",
+			"import": "./dist/components/Dialog/Dialog.js",
+			"default": "./dist/components/Dialog/Dialog.js"
 		},
-		"./components/DialogDemo.css": "./dist/components/DialogDemo.css"
+		"./components/Dialog/Dialog.css": "./dist/components/Dialog/Dialog.css"
 	},
 	"scripts": {
 		"dev": "vite build --watch",

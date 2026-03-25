@@ -1,6 +1,6 @@
+import type { GetServerSidePropsContext } from "next";
 import { describe, expect, it } from "vitest";
 import { getFlowInitFromRequest } from "@/core/flow/getFlowInitFromRequest";
-import type { GetServerSidePropsContext } from "next";
 
 function createContext(
 	query: GetServerSidePropsContext["query"],

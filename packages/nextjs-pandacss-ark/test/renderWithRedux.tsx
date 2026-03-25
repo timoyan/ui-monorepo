@@ -1,6 +1,6 @@
-import { render, type RenderResult } from "@testing-library/react";
-import { Provider } from "react-redux";
+import { type RenderResult, render } from "@testing-library/react";
 import type { ReactElement } from "react";
+import { Provider } from "react-redux";
 import type { AppStore, DeepPartial, RootState } from "@/core/store";
 import { createTestStore } from "@/core/store";
 

@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { toaster } from "@/core/toast/createToaster";
-import { toast } from "../toastApi";
 import type { ToastMeta } from "@/core/toast/toastApi";
+import { toast } from "../toastApi";
 
 vi.mock("@/core/toast/createToaster", () => ({
 	toaster: {

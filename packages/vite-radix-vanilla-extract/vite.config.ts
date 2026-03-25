@@ -47,11 +47,33 @@ const packageDir = path.dirname(fileURLToPath(import.meta.url));
 /** Library entries: barrel + one file per component (each gets its own JS/CSS chunks). */
 const libEntry = {
 	index: path.resolve(packageDir, "src/index.ts"),
-	"components/DialogDemo": path.resolve(
+	"components/Dialog/Dialog": path.resolve(
 		packageDir,
-		"src/components/DialogDemo.tsx",
+		"src/components/Dialog/Dialog.tsx",
 	),
 } as const;
+
+/**
+ * Co-locate Vanilla Extract CSS with its entry: path relative to `src/` matches dist layout
+ * (e.g. `components/Dialog/Dialog.css` next to `components/Dialog/Dialog.js`).
+ */
+function cssAssetPathFromLibEntry(
+	entry: Record<string, string>,
+	root: string,
+): (cssBasename: string) => string | undefined {
+	const srcRoot = path.join(root, "src");
+	const map = new Map<string, string>();
+	for (const [key, absPath] of Object.entries(entry)) {
+		if (key === "index") continue;
+		const base = path.basename(absPath, path.extname(absPath));
+		const relDir = path.relative(srcRoot, path.dirname(absPath));
+		const posixDir = relDir.split(path.sep).join("/");
+		map.set(`${base}.css`, `${posixDir}/${base}.css`);
+	}
+	return (cssBasename: string) => map.get(cssBasename);
+}
+
+const resolveCssAssetPath = cssAssetPathFromLibEntry(libEntry, packageDir);
 
 /** Runtime packages shipped by the consumer app, not bundled into the library. */
 function isPeerDependency(id: string): boolean {
@@ -94,10 +116,12 @@ export default defineConfig({
 			external: isPeerDependency,
 			output: {
 				chunkFileNames: "chunks/[name]-[hash].js",
-				// Keep CSS next to component JS (e.g. components/DialogDemo.css).
+				// Keep CSS next to component JS (e.g. components/Dialog/Dialog.css).
 				assetFileNames: (assetInfo) => {
 					const base = assetInfo.names?.[0] ?? assetInfo.name ?? "asset";
 					if (base.endsWith(".css")) {
+						const coLocated = resolveCssAssetPath(base);
+						if (coLocated) return coLocated;
 						return `components/${base}`;
 					}
 					return base;
