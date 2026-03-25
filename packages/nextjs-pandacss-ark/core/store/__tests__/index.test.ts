@@ -1,9 +1,9 @@
 import { HYDRATE } from "next-redux-wrapper";
 import { describe, expect, it } from "vitest";
 import {
+	type AppStore,
 	createTestStore,
 	makeStore,
-	type AppStore,
 	type RootState,
 } from "@/core/store";
 

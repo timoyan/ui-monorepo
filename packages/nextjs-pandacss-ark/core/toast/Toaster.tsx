@@ -6,8 +6,8 @@ import { useEffect } from "react";
 import { toaster } from "./createToaster";
 import {
 	TOAST_CONTENT_REGISTRY,
-	unregisterToastContent,
 	type ToastContentConfig,
+	unregisterToastContent,
 } from "./toastContentRegistry";
 
 type ToastMeta = { contentKey?: string; unregisterOnDismiss?: boolean };

@@ -1,19 +1,19 @@
-import {
-	initCookieConfirmFromStorage as initCookieConfirmFromStorageAction,
-	setCookieConfirmResult as setCookieConfirmResultAction,
-	setCurrencySwitchDialogOpen as setCurrencySwitchDialogOpenAction,
-	setActiveModuleId as setActiveModuleIdAction,
-	setModuleState as setModuleStateAction,
-} from "@/core/flow/flowSlice";
+import { useCallback, useEffect } from "react";
+import { shallowEqual, useSelector } from "react-redux";
 import {
 	getCookieConfirmFromStorage,
 	setCookieConfirmInStorage,
 } from "@/core/flow/cookieConfirmStorage";
+import {
+	initCookieConfirmFromStorage as initCookieConfirmFromStorageAction,
+	setActiveModuleId as setActiveModuleIdAction,
+	setCookieConfirmResult as setCookieConfirmResultAction,
+	setCurrencySwitchDialogOpen as setCurrencySwitchDialogOpenAction,
+	setModuleState as setModuleStateAction,
+} from "@/core/flow/flowSlice";
 import type { ModuleName, ModuleStatePayload } from "@/core/flow/types";
-import { useAppDispatch } from "@/core/store";
 import type { RootState } from "@/core/store";
-import { useCallback, useEffect } from "react";
-import { shallowEqual, useSelector } from "react-redux";
+import { useAppDispatch } from "@/core/store";
 
 interface UseFlowOptions {
 	/** Reserved for future use (e.g. initial open module ID). */

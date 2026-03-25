@@ -1,5 +1,7 @@
+"use client";
+
 export {
-	DialogDemo,
-	type DialogDemoProps,
-} from "./components/DialogDemo";
-export { default } from "./components/DialogDemo";
+	Dialog,
+	type DialogProps,
+	default,
+} from "./components/Dialog/Dialog";
